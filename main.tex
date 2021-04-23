@@ -57,7 +57,7 @@ Master's thesis in Computer Engineering\\ &
 \pagenumbering{gobble}
 \section*{Abstract}
 \section*{Keywords}
-\section*{Abbrevations}
+\section*{Abbreviations}
 
 \tableofcontents
 \listoffigures
@@ -77,7 +77,7 @@ Hardware design can be inspired by software algorithms when designed for a speci
 
     % \section{Purpose}
 % implementation purpose: Deliver attitude data to scientific instruments, purpose of the thesis
-To complete a set of tasks in any environment, a scientific project needs a well defined tools to reach its goals. In a space environment the tools often needs to be multi purpose for optimal use. An image sensor is in this case used for providing reference data for a star tracker. This image sensor can provide data to multiple systems by reuse of data or capturing new images with other settings. The purpose of the system in this project is to refine data from pre defined sensors to provide additional and reinforcing information about the environment for the use of other scientific instruments. The goal of this thesis is to create a roadmap of the system design process and include theory of relevant areas.
+To complete a set of tasks in any environment, a scientific project needs a well defined tools to reach its goals. In technologically restricted environments such as space, tools often needs to be multi purpose for optimal use. An image sensor is in this case used for providing reference data for a star tracker. This image sensor can provide data to multiple systems by reuse of data or capturing new images with other settings. The purpose of the system in this project is to refine data from pre defined sensors to provide additional and reinforcing information about the environment for the use of other scientific instruments. The goal of this thesis is to create a roadmap of the system design process and include theory of relevant areas.
 
     %\section{Limitations}
 % Mission technical details. System verification/ space hardening
@@ -86,9 +86,25 @@ To complete a set of tasks in any environment, a scientific project needs a well
 % Overview of thesis, not system
 \chapter{System Requirements Analysis}
 
+A hardware implementation of a image analysis software component is to be developed to be used on a FPGA. The software in question is a product of a European space agency funded research project regarding detection and analysis of space debris in low earth orbit. Computer vision other analysis methods are used to identify debris from image data and with the help of a star catalog the image is mapped to a position in space. A diagram of the system is shown in figure \ref{fig:0}. The software component in focus will be the astrometry and photometry part of the diagram, which is a part of the output phase of the complete system. 
+
+\citep{StreakDet}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.2]{figures/streakdet.png}
+    \caption{\citep{StreakDet}}
+    \label{fig:0}
+\end{figure}
+
+\section{System Components}
+
+\section{Tools}
+
 \chapter{Aerospace concepts}
+
 \chapter{Custom hardware design}
-    \section{Single and general purpose processors}
+\section{Single and general purpose processors}
 A general purpose processor refers to a hardware computing platform which is designed for universal use with broad benefits across different problem solving domains. Computing platforms such as microprocessors and CPUs are examples of this type of processor, their hardware logic is implemented in such a way that it enables a large variety of computations to be performed. 
 The characteristics of a processor for general problem solving are well suited to common tasks where there might be many hard- and software abstractions between the application interface and hardware logic. This is a necessity in for example PCs.
 \par
@@ -108,17 +124,18 @@ specialized hardware in high performance computing \citep{GenPurpTech}}
 \end{figure}
 
 \section{FPGA Overview}
-A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are main advantages when using an FPGA as computing platform \citep{XilFPGAIntro}. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and high level of parallel processing. When comparing FPGAs among each other the main performance metrics are power consumption and number of logic cells, which describes and complexity of the design that the FPGA can fit. 
+A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are main advantages when using an FPGA as computing platform. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and high level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of computing platform, but the FPGA can pipeline the result directly into another register or operation which saves clock cycles \citep{XilFPGAIntro}.
+  
 \par
-Xilinx is one of the key companies involved in FPGAs both currently and historically. They introduced the world to FPGAs in 1985 and has since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense and communications.The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
+Xilinx is one of the key companies involved in FPGAs both currently and historically. They introduced the world to FPGAs in 1985 and has since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
 \par
-The basic internal elements of an FPGA consists of look-up tables, flip-flops, wires and input/ output pads. Using these elements the FPGA design is implemented in the hardware.
-The architecture is explained by figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with wires running between them. The wires also run to the input/ output pads which enables interfacing with off-chip components such as SDRAM or sensors \citep{XilFPGAArch}. Configurable logic blocks contains the look-up tables and flip flops. An overview of a CLB is shown in figure \ref{fig:3}.
+The basic internal elements of an FPGA consists of circuits such as look-up tables, flip-flops, wires and input/ output pads. Using these elements the FPGA design is implemented in the hardware.
+The architecture is explained by figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with wires running between them. The wires also run to the input/ output pads which enables interfacing with off-chip components such as SDRAM or sensors \citep{XilFPGAIntro}. Configurable logic blocks contains the look-up tables and flip flops. An overview of a CLB is shown in figure \ref{fig:3}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.55]{figures/basic_fpga.png}
-    \caption{FPGA architecture. An FPGA consists of configurable logic blocks, wires and input/ output pads \citep{XilFPGAArch}.}
+    \caption{FPGA architecture. An FPGA consists of configurable logic blocks, wires and input/ output pads \citep{XilFPGAIntro}.}
     \label{fig:2}
 \end{figure}
 
@@ -129,27 +146,33 @@ The architecture is explained by figure \ref{fig:2} which shows a matrix arrange
     \label{fig:3}
 \end{figure}
 
-The slices in figure \ref{fig:3} represents the core element of any FPGA. This is an instance of an element where a significant amount of an FPGA design will be implemented. The slice consists of look-up tables, storage elements, multiplexers and carry logic \citep{XilClbMan}.
+The slices in figure \ref{fig:3} represents the core element of any FPGA. Slices consist of look-up tables, storage elements, multiplexers and carry logic. Depending on the FPGA there are different number of slices per CLB. The slices are collectively responsible for implementing a significant portion of FPGA design \citep{XilClbMan}.
 
-Look-up tables or LUTs, are mainly used as logic elements in FPGAs. They can implement any boolean logic operation by combining memory cells with multiplexers. The look-up table is essentially a truth table that can be used for reading the result of boolean operations. Memory cells and multiplexer routings are initialized by the FPGA design, which is what makes the look-up table element configurable \citep{XilLUT}. An example of a 4 memory cell wide LUT is shown in figure \ref{fig:4}.
+Look-up tables or LUTs, are mainly used as logic elements in FPGAs. They can implement any boolean logic operation by combining memory cells with multiplexers. The look-up table is essentially a truth table that can be used for reading the result of boolean operations. Memory cells and multiplexer routings are initialized by the FPGA design, which is what makes the look-up table element configurable \citep{XilFPGAIntro}. An example of a 4 memory cell wide LUT is shown in figure \ref{fig:4}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.5]{figures/lut.png}
-    \caption{Look-up table with 4 memory cells and two multiplexers. The FPGA design initializes memory cells \textbf{a-b} and uses inputs \textbf{x1} and \textbf{x0} to select value \textbf{y} \citep{XilLUT}}
+    \caption{Look-up table with 4 memory cells and two multiplexers. The FPGA design initializes memory cells \textbf{a-b} and uses inputs \textbf{x1} and \textbf{x0} to select value \textbf{y} \citep{XilFPGAIntro}}
     \label{fig:4}
 \end{figure}
 
-The circuit elements discussed in this chapter forms the basic blocks of FPGA technology. A larger set of elements are often included in an FPGA to enable some optimizations and further functionality in the design. For example there are different types of slices a CLB can contain which makes it more suitable for storage purposes rather than logic. Signal processing pipelines are a popular use case for FPGAs and they often contain slices specialized for operations in this problem domain. Digital signal processing can be accelerated by parallelizing operations in a SIMD fashion, thus to maximize the advantage, there can often be found a large number of these slices. Figure \ref{fig:5} shows an example of a FPGA configuration with some of these specialized blocks mapped out. The green CLBs are designated to memory usage and are closely coupled to the red DSP blocks to enable fast processing of the stored data. The purple external memory controllers uses the input/ output pads to interface with external memory such as SDRAM.
+The circuit elements discussed in this chapter forms the basic blocks of FPGA technology. A larger set of elements are often included in an FPGA to enable some optimizations and further functionality in the design. For example there are different types of slices a CLB can contain which makes it more suitable for storage purposes rather than logic. Signal processing pipelines are a popular use case for FPGAs and they often contain slices specialized for operations in this problem domain. Digital signal processing can be accelerated by parallelizing operations in a SIMD fashion, thus to maximize the advantage there can often be found a large number of these slices. Figure \ref{fig:5} shows an example of a FPGA configuration with some of these specialized blocks mapped out. The green CLBs are designated to memory usage and are closely coupled to the red DSP blocks to enable fast processing of the stored data. The purple external memory controllers uses the input/ output pads to interface with external memory such as SDRAM \citep{XilFPGAIntro} \citep{XilClbMan}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.5]{figures/contemporary_fpga.png}
-    \caption{ \citep{XilFPGAArch}}
+    \caption{ \citep{XilFPGAIntro}}
     \label{fig:5}
 \end{figure}
 
+When comparing FPGAs among each other the main performance metrics are power consumption and number of logic cells. The number of logic cells describes size and complexity of the design that the FPGA can fit. Additionally the FPGAs can often be compared by specifications such as specialized CLB slices, IO interfaces and communication rates. Clock speed is seldom compared because although there is an upper limit, it is often design specific \citep{XilClbMan} \citep{XilFPGAIntro}.
+
 \section{Xilinx 7-Series}
+  
+
+\section{IP Cores and FPGA design}
+
 
 \chapter{Discussion}
 

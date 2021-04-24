@@ -86,16 +86,35 @@ To complete a set of tasks in any environment, a scientific project needs a well
 % Overview of thesis, not system
 \chapter{System Requirements Analysis}
 
-A hardware implementation of a image analysis software component is to be developed to be used on a FPGA. The software in question is a product of a European space agency funded research project regarding detection and analysis of space debris in low earth orbit. Computer vision other analysis methods are used to identify debris from image data and with the help of a star catalog the image is mapped to a position in space. A diagram of the system is shown in figure \ref{fig:0}. The software component in focus will be the astrometry and photometry part of the diagram, which is a part of the output phase of the complete system. 
-
-\citep{StreakDet}
+A hardware implementation of a image analysis software component is to be developed to be used on a FPGA. The software in question is a product of a European space agency funded research project regarding detection and analysis of space debris in low earth orbit. Computer vision and other analysis methods are used to identify debris from image data. With the help of a star catalog the image is mapped to a position in space to provide positional data of the detected debris. A diagram of the system is shown in figure \ref{fig:0}. The software component in focus is the astrometry and photometry part of the diagram, which is in the output phase of the complete system \citep{StreakDet}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.2]{figures/streakdet.png}
-    \caption{\citep{StreakDet}}
+    \caption{Flowchart of StreakDet software \citep{StreakDet}}
     \label{fig:0}
 \end{figure}
+
+\par
+A list of requirements for the system is created based on meetings and discussions with Aboa Space Research Oy. Some requirements are derived from higher level requirements to suit the development process. The system requirements are listed in a functional and non-functional fashion.
+
+\section{Functional requirements}
+\begin{itemize}
+    \item Detect the celestial position of an optical image of stars.
+    \item Captured image is uploaded from host machine to an FPGA target that performs the computing.
+    \item Key steps in the processing pipeline are parameterized and adjustable trough host machine.
+    \item Processed images can be read back to host to verify intermediate results.
+    \item Output coordinates are read back to host machine.
+\end{itemize}  
+
+\section{Non-functional requirements}
+\begin{itemize}
+    \item The processing pipeline runs on an FPGA.
+    \item The system is modeled using a HDL. 
+    \item Input images are 8 bit, single channel with 480 by 270 pixel resolution.
+    \item Output consists of coordinates according to the equatorial coordinate system. 
+\end{itemize}
+\citep{Starmatch}
 
 \section{System Components}
 

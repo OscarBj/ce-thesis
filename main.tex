@@ -61,6 +61,7 @@ Master's thesis in Computer Engineering\\ &
 
 \tableofcontents
 \listoffigures
+\listoftables
 
 \chapter{Introduction}
 \pagenumbering{arabic}
@@ -84,9 +85,9 @@ To complete a set of tasks in any environment, a scientific project needs a well
 
     %\section{Overview}
 % Overview of thesis, not system
-\chapter{System Requirements Analysis}
+\chapter{System requirements}
 
-A hardware implementation of a image analysis software component is to be developed to be used on a FPGA. The software in question is a product of a European space agency funded research project regarding detection and analysis of space debris in low earth orbit. Computer vision and other analysis methods are used to identify debris from image data. With the help of a star catalog the image is mapped to a position in space to provide positional data of the detected debris. A diagram of the system is shown in figure \ref{fig:0}. The software component in focus is the astrometry and photometry part of the diagram, which is in the output phase of the complete system \citep{StreakDet}.
+A hardware implementation of a image analysis software component is to be developed to be used on a FPGA. The software in question is a product of a European space agency funded research project regarding detection and analysis of space debris in low earth orbit. Computer vision and other analysis methods are used to identify debris from image data. With the help of a star catalog the image is mapped to a position in space to provide positional data of the detected debris. A diagram of the system is shown in figure \ref{fig:0}. The software component in focus is the astrometry and photometry part of the diagram, which is in the output phase of the complete system \citep{StreakDet} \citep{Starmatch}.
 
 \begin{figure}[h]
     \centering
@@ -95,30 +96,44 @@ A hardware implementation of a image analysis software component is to be develo
     \label{fig:0}
 \end{figure}
 
-\par
-A list of requirements for the system is created based on meetings and discussions with Aboa Space Research Oy. Some requirements are derived from higher level requirements to suit the development process. The system requirements are listed in a functional and non-functional fashion.
+\section{Specification}
 
-\section{Functional requirements}
-\begin{itemize}
-    \item Detect the celestial position of an optical image of stars.
-    \item Captured image is uploaded from host machine to an FPGA target that performs the computing.
-    \item Key steps in the processing pipeline are parameterized and adjustable trough host machine.
-    \item Processed images can be read back to host to verify intermediate results.
-    \item Output coordinates are read back to host machine.
-\end{itemize}  
+The specification consists of development and system requirements as well as description of tools and components. System requirements are created based on meetings and discussions with Aboa Space Research Oy. Some requirements are derived from higher level requirements to suit the development process. Table \ref{table:1} presents the system requirements in a functional and non-functional fashion.
 
-\section{Non-functional requirements}
-\begin{itemize}
-    \item The processing pipeline runs on an FPGA.
-    \item The system is modeled using a HDL. 
-    \item Input images are 8 bit, single channel with 480 by 270 pixel resolution.
-    \item Output consists of coordinates according to the equatorial coordinate system. 
-\end{itemize}
-\citep{Starmatch}
+\begin{table}
+    \begin{tabular}{|p{6.75cm}|p{6.75cm}|}
+        \hline
+        \textbf{Functional requirement} & \textbf{Non-functional requirement} \\
+        \hline
+        \hline
+        Detect the celestial position of an optical image of stars & The processing pipeline runs on an FPGA \\
+        \hline
+        Captured image is uploaded from host machine to an FPGA target & The system is modeled using a HDL \\
+        \hline
+        Key steps in processing pipeline are parameterized and adjustable trough host machine & Input images are 8 bit, single channel with 480 by 270 pixel resolution \\
+        \hline
+        Processed images can be read back to host to verify intermediate results & Output consists of coordinates according to the equatorial coordinate system. \\
+        \hline
+        Output coordinates are read back to host machine & \\
+        \hline
+    \end{tabular}
+    \caption{Table of functional and non-functional system requirements}
+    \label{table:1}
+\end{table}
 
-\section{System Components}
+The development requirements involves critical steps that are necessary when working towards the system requirements.
 
-\section{Tools}
+\subsection{System components}
+\subsubsection{Processing nodes}
+The system consists of two nodes, the host machine and target FPGA. Because the application of this system different in a production environment, the FPGA part should not be too depending on the host machine. When integrated into a larger system with shared memories and communication, the FPGA will have to be able to read input image directly from memory. The same applies for the output, the register where the output is written needs to be configurable and not sent to a host machine by default.
+
+\subsubsection{FPGA module}
+The FPGA module Opal Kelly XEM7305 chip with a Xilinx Spartan-7 FPGA will function as a testbed for development. The module contains a part from the FPGA external SDRAM memory and communication interfaces such as USB 3. These features allows for host machine communication and data storage of features such as images, star catalog and output. These data could be stored on the FPGA itself but using the SDRAM is a sustainable solution because it allows for shared memory usage in production and more flexible image and star catalog sizes.
+
+\subsubsection{Interfaces and formats}
+
+\section{Requirements Analysis}
+
 
 \chapter{Aerospace concepts}
 
@@ -181,7 +196,7 @@ The circuit elements discussed in this chapter forms the basic blocks of FPGA te
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.5]{figures/contemporary_fpga.png}
-    \caption{ \citep{XilFPGAIntro}}
+    \caption{DSP system design on FPGA \citep{XilFPGAIntro}}
     \label{fig:5}
 \end{figure}
 
@@ -190,8 +205,13 @@ When comparing FPGAs among each other the main performance metrics are power con
 \section{Xilinx 7-Series}
   
 
-\section{IP Cores and FPGA design}
+\section{IP Cores and system design}
 
+\chapter{Development process}
+
+\chapter{Documentation}
+
+\chapter{Review and reflection}
 
 \chapter{Discussion}
 

@@ -106,6 +106,16 @@ The specification consists of development and system requirements as well as des
         \textbf{Functional requirement} & \textbf{Non-functional requirement} \\
         \hline
         \hline
+        Extract stars from optical image & Use processing pipeline in StreakDet to extract stars \\
+        \hline
+        Form quadrants of extracted stars & TODO: StreakDet quad stuff \\
+        \hline
+        Form star quadrants from UCAC4 star catalog & TODO: StreakDet quad stuff \\
+        \hline
+        Match star catalog quadrants to quadrants extracted from input image & TODO: StreakDet quad stuff \\
+        \hline
+        Infer position of image using star catalog and matching quadrants & TODO: StreakDet quad stuff \\
+        \hline
         Detect the celestial position of an optical image of stars & The processing pipeline runs on an FPGA \\
         \hline
         Captured image is uploaded from host machine to an FPGA target & The system is modeled using a HDL \\
@@ -135,7 +145,7 @@ The FPGA module Opal Kelly XEM7305 chip with a Xilinx Spartan-7 FPGA will functi
 \section{Requirements Analysis}
 
 
-\chapter{Aerospace concepts}
+% \chapter{Aerospace concepts}
 
 \chapter{Custom hardware design}
 \section{Single and general purpose processors}
@@ -200,16 +210,31 @@ The circuit elements discussed in this chapter forms the basic blocks of FPGA te
     \label{fig:5}
 \end{figure}
 
-When comparing FPGAs among each other the main performance metrics are power consumption and number of logic cells. The number of logic cells describes size and complexity of the design that the FPGA can fit. Additionally the FPGAs can often be compared by specifications such as specialized CLB slices, IO interfaces and communication rates. Clock speed is seldom compared because although there is an upper limit, it is often design specific \citep{XilClbMan} \citep{XilFPGAIntro}.
+When comparing FPGAs among each other the main performance metrics are power consumption and number of logic cells. The number of logic cells describes size and complexity of the design that the FPGA can fit. Additionally the FPGAs can often be compared by specifications such as specialized CLB slices, IO interfaces and communication rates. Clock speed is seldom compared because although there is an upper limit, it is often design specific \citep{XilClbMan} \citep{XilFPGAIntro}. 
 
-\section{Xilinx 7-Series}
-  
+\section{System modeling with HDL}
+The main tool for creating a FPGA design is a hardware description language. VHDL and Verilog are examples of commonly used HDLs. Compared to conventional computer programming languages, HDLs are used in a data flow fashion to describe the timing and logic of an integrated circuit. The data flow description of a circuit in a HDL is such that all code blocks are executed simultaneously by default. This is one of the main advantages of FPGAs as the system is inherently parallelized. It creates also one of the biggest challenges in HDL based design as it complicates the timing of events and resource concurrency.
+\par
+The output of a HDL design is produced by a build process that computes the high level data flow description into low level circuit elements and routing. This can be compared to the compilation phase of code written in a statically typed software programming language. 
+\par
+The synthesis process is where the HDL design known as register transfer level code is transformed to a gate level description called netlist. The netlist is a mapping of circuit components that are found inside the FPGA. The convenience of HDL based design is being able to describe the circuit at a higher level. In practice this means that registers and buses are created and connected to be inferred into low level circuitry at the synthesis phase. When developing a design against a specific FPGA, a bitstream file is created to configure the device with. The end product of a HDL based design is the bitstream file, or alternatively the synthesis result as it can be used for simulation purposes by a test bench \citep{XilVivado}.
 
-\section{IP Cores and system design}
+\section{System modeling with IP cores}
+Designing a hardware system often involves components of reusable nature, such as dividers, communication protocols and memory controllers. Intellectual property cores are distributions of components such as these. An IP core can be of varying complexity as it can consist of a solution for a specific task or describe a complete SoC. They are licensed trough a patented design which is what the name refers to. IP cores can often be configured to suit different properties of the implementation such as data width and clock rate. The core is then connected to the system using a HDL. The core it self may consist of software or hardware macros. The software macro is a HDL implementation of the IP core logic that is built to the specific FPGA with rest of the system design. A hardware macro is pre built and FPGA specific \citep{EERefBook} \citep{XilVivado}.
 
+\section{Memory modules}
+%The image processing pipeline uses three different storage mechanisms. 
+\subsection{SDRAM}
+%The main working memory of the image processing pipeline is a off-chip 512MiByte, 32-bit wide DDR3 SDRAM memory module.
+\subsection{BRAM}
+\subsection{FIFO}
+%\subsection{PipeIn/PipeOut}
 \chapter{Development process}
 
 \chapter{Documentation}
+
+\subsection{Box Filter}
+\subsection{Connected component labeling and analysis}
 
 \chapter{Review and reflection}
 

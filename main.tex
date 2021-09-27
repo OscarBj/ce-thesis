@@ -167,7 +167,12 @@ The synthesis process is where the HDL design known as register transfer level c
 
 \section{System modeling with IP cores}
 Designing a hardware system often involves components of a reusable nature, such as dividers, communication protocols, and memory controllers. Intellectual property (IP) cores are distributions of components such as these. An IP core can be of varying complexity as it can consist of a solution for a specific task or describe a complete SoC. IP cores are licensed through a patented design which is what the name refers to. They can often be configured to suit different properties of the implementation such as data width and clock rate. The core is then connected to the system using an HDL. The core itself may consist of software or hardware macros. The software macro is an HDL implementation of the IP core logic that is built to the specific FPGA with the rest of the system design. A hardware macro IP core is prebuilt and FPGA specific \citep{EERefBook} \citep{XilVivado}.
+\par
+The hardware sector and consumer electronics industry relies heavily on reusable IP cores. For example, SoCs found in most mobile phones often include an ARM based processor which is licensed trough the IP core designer. In this case, the mobile phone producer benefits from avoiding the development of the processing unit but still has the ability to customize the SoC to a high degree with combining different processing units, memories, and other IP cores.
+\par
+In aerospace applications, the advantage of IP cores are utilized in the same manner as within the mobile phone industry. Additional requirements such as fault tolerance limits, redundancy, and formal verification of the IP cores increase their advantage when comparing to in house development. This in turn comes with pricier licenses compared to non aerospace grade IP core designs. Also, due to the specialized requirements, lower competition in the market sector can be expected, increasing the prices even more.
 
+%\section{Licensing and  standards}
 %\section{Memory modules}
 %The image processing pipeline uses three different storage mechanisms. 
 %\subsection{SDRAM}

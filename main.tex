@@ -158,28 +158,44 @@ The circuit elements discussed in this chapter form the basic blocks of FPGA tec
 
 When comparing FPGAs with each other the main performance metrics are power consumption and number of logic cells. The number of logic cells determines the size and complexity of the design that the FPGA can fit. Additionally, the FPGAs can often be compared by specifications such as specialized CLB slices, IO interfaces, and communication rates. Clock speed is seldom compared because although there is an upper limit, it is often design specific \citep{XilClbMan} \citep{XilFPGAIntro}. 
 
-\section{System modeling with HDL}
+\section{System design with HDL}
 The main tool for creating an FPGA design is a hardware description language (HDL). VHDL and Verilog are examples of commonly used HDLs. Compared to conventional computer programming languages, HDLs are used in a data flow fashion to describe the timing and logic of an integrated circuit. The data flow description of a circuit in an HDL is such that all code blocks are executed simultaneously by default. This is one of the main advantages of FPGAs as the system is inherently parallelized. It creates also one of the biggest challenges in HDL based design as it complicates the timing of events and resource concurrency.
 \par
 The output of an HDL design is produced by a build process that computes the high level data flow description into low level circuit elements and routing. This can be compared to the compilation phase of code written in a statically typed software programming language. 
 \par
 The synthesis process is where the HDL design known as register transfer level code is transformed to a gate level description called netlist. The netlist is a mapping of circuit components that are found inside the FPGA. The convenience of HDL based design is being able to describe the circuit at a higher level. In practice this means that registers and buses are created and connected to be inferred into low level circuitry at the synthesis phase. When developing a design against a specific FPGA, a bitstream file is created to configure the device with. The end product of an HDL based design is the bitstream file or, alternatively, the synthesis result as it can be used for simulation purposes by a test bench \citep{XilVivado}.
 
-\section{System modeling with IP cores}
+\section{System design with IP cores}
 Designing a hardware system often involves components of a reusable nature, such as dividers, communication protocols, and memory controllers. Intellectual property (IP) cores are distributions of components such as these. An IP core can be of varying complexity as it can consist of a solution for a specific task or describe a complete SoC. IP cores are licensed through a patented design which is what the name refers to. They can often be configured to suit different properties of the implementation such as data width and clock rate. The core is then connected to the system using an HDL. The core itself may consist of software or hardware macros. The software macro is an HDL implementation of the IP core logic that is built to the specific FPGA with the rest of the system design. A hardware macro IP core is prebuilt and FPGA specific \citep{EERefBook} \citep{XilVivado}.
 \par
-The hardware sector and consumer electronics industry relies heavily on reusable IP cores. For example the SoC or motherboard found in mobile phones often include ARM based processor cores licensed from ARM holdings. The producer of the mobile phone benefit from avoiding the development of the processing unit but still have the ability to customize the SoC to a high degree with combining different processing units, memories, and other IP cores \citep{ArmInMobile} \citep{HarvIPCore}.
-\par
-In aerospace applications, the advantage of IP cores are utilized in the same manner as within the mobile phone industry. Additional requirements such as fault tolerance limits, redundancy, and formal verification of the IP cores increase their advantage when comparing to in house development. This however, comes with pricier licenses compared to non aerospace grade IP core designs. Also, due to the specialized requirements, lower competition in the market sector can be expected, increasing the prices even more \citep{DO254Cadence}.
+The hardware sector and consumer electronics industry relies heavily on reusable IP cores. For example the SoC or motherboard found in mobile phones often include ARM based processor cores licensed from ARM holdings. The producer of the mobile phone benefits from avoiding the development of the processing unit but still have the ability to customize the SoC to a high degree by combining different processing units, memories, and other IP cores \citep{ArmInMobile} \citep{HarvIPCore}. Figure \ref{fig:6} shows the architecture of a SoC which has an ARM based CPU, and other modules commonly found in mobile phones. In addition to the CPU, any of the remaining modules might also be licensed IP cores.
 
-%\section{Licensing and  standards}
-%\section{Memory modules}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.25]{figures/arm_soc.png}
+    \caption{Common SoC found in smartphones include ARM based CPU and a DSP. \citep{ArmInMobile}}
+    \label{fig:6}
+\end{figure}
+
+\par
+In aerospace applications, the advantage of IP cores are utilized in the same manner as within the mobile phone industry. Additional requirements such as fault tolerance limits, redundancy, and formal verification of the IP cores increase the advantage of their usage when comparing to in house developed solutions. This however, comes with pricier licenses compared to non aerospace grade IP core designs. Also, due to the specialized requirements, lower competition in the market sector can be expected, increasing the prices even more \citep{DO254Cadence}.
+\par
+In addition to FPGA products, Xilinx also provides design tools and IP cores to help with development on their FPGA platforms. Their IP core library range from common IC to complete microcontrollers. Some of the cores are available free to use through Vivado design suite, and a majority of them are soft cores to allow compatibility across their FPGAs. Integration of the IP cores and other development is also done through Vivado \citep{XilVivado}.
+%OPENCORES
+
 %The image processing pipeline uses three different storage mechanisms. 
 %\subsection{SDRAM}
 %The main working memory of the image processing pipeline is a off-chip 512MiByte, 32-bit wide DDR3 SDRAM memory module.
 %\subsection{BRAM}
 %\subsection{FIFO}
 %\subsection{PipeIn/PipeOut}
+
+%\section{Licensing and standards}
+%\subsection{IEEE}
+%\subsection{ISO}
+%\subsection{DO-254}
+%\subsection{MIL}
+
 
 \chapter{System requirements}
 
@@ -193,7 +209,7 @@ A hardware implementation of an image analysis software component is to be devel
 \end{figure}
 
 %\section{Scope}
-The star extraction process in StreakDet passes the input image trough a series of algorithms to identify stars. The algorithms are well known image filters and analysis methods that in combination with each other produces a way to pick out objects from an image. The main task in this project is to identify these algorithms and fit them into a hardware design using a hardware description language.
+The star extraction process in StreakDet passes the input image through a series of algorithms to identify stars. The algorithms are well known image filters and analysis methods that in combination with each other produces a way to pick out objects from an image. The main task in this project is to identify these algorithms and fit them into a hardware design using a hardware description language.
 \par
 Star extraction is a key stage of a star tracker system which uses a star catalog to match the extracted stars against. Using the star matches and catalog information the position and orientation of the captured image can be determined. The goal of this project is to create a pre-processing pipeline to be used in a star tracker.
 
@@ -202,7 +218,7 @@ Star extraction is a key stage of a star tracker system which uses a star catalo
 The specification consists of development and system requirements as well as description of tools and components. System requirements are created based on meetings and discussions with Aboa Space Research Oy. Some requirements are derived from higher level requirements to suit the development process. Table \ref{table:1} presents an overview of the system in a functional and non-functional requirements fashion.
 
 \begin{table}[h]
-    \begin{tabular}{|p{1.75cm}|p{6.75cm}|p{6.75cm}|}
+    \begin{tabular}{|p{1cm}|p{6.15cm}|p{6.15cm}|}
         \hline
         \textbf{Req. Id}& \textbf{Functional requirement}& \textbf{Non-functional requirement}\\
         \hline
@@ -232,12 +248,43 @@ The system consists of two nodes, the host machine and target FPGA. Because the 
 The FPGA module Opal Kelly XEM7305 chip with a Xilinx Spartan-7 FPGA will function as a testbed for development. The module contains a part from the FPGA external SDRAM memory and communication interfaces such as USB 3. These features allow for host machine communication and data storage of features such as images, star catalog and output. These data could be stored on the FPGA itself but using the SDRAM is a sustainable solution because it allows for shared memory usage in production and more flexible image and star catalog sizes.
 
 
-\chapter{Development process}
+\chapter{FPGA based computer hardware}
+Common computer hardware is the corner stone of any digital circuit that needs to perform common tasks such as storing and transmitting data. With the help of the basic elements of an FPGA discussed in Chapter 2, circuits of this nature can be created. Although an 8-bit adder circuit can be regarded as common computer hardware, the focus of this chapter is on larger circuits used as hardware modules such as memory and communication interfaces. The components discussed are essential building blocks for the image processing pipeline.
+
+\section{Communication}
+The system requirements states a communication channel for shared memory usage which is needed for controlling the FPGA. Machine to machine communication is enabled trough the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB 3.0.
+\par
+The advantage of the USB standard in general is flexibility and ease of use. Transfer speed is not a high priority in this case because of the relatively small size of data. The USB module on the XEM7305 contains the port it self and a microcontroller which is exposed to various systems on the FPGA module. The HDL interface of the USB controller is a hard IP core.
+\par
+Internally, the FPGA uses communication channels defined by the HDL. The limiting factor and bottleneck is often some hardware module that place certain requirements on the communication, for example the USB3 or memory controller. When working outside these type of dependencies, the throughput of the system can be optimized by maximizing the bit width between modules. When applying this to the image processing pipeline context, this might be practical within communication of image data. The implementation of this requires more memory cells and wires, which in turn increases the footprint of the FPGA design.
+\par
+When comparing to a software program the same optimization method of maximizing bit width might be considered. This however does not inherently result in a gain in throughput because conventional CPU's have a fixed bit width for its operations. When this limit is exceeded the operation needs to be performed across multiple clock cycles which counter acts the wanted result. The bit width of an operation on a FPGA during a clock cycle is consistent with the HDL definition. 
+
+% Image of low vs high bit width circuit/ footprint
+% More in depth on USB3, images
+% PipeIn PipeOut
+
+\section{Memory}
+To enable processing of image data, a set of storage mechanisms is necessary. The dependence to a mechanism is mostly based on the size of the data and how it will be used. As in conventional CPU architectures, different levels of memory is used to satisfy these dependencies.
+\par
+The FPGA is generally not suited for storing the bulkiest type of data. This results in inefficient usage of the available FPGA fabric, which could be used for other logic and computation. Off chip memory is instead used to allow storage of large data, freeing up FPGA fabric to other usage. Any off chip component is usually the bottleneck of a FPGA based system.
+
+\subsection{SDRAM}
+\par
+The XEM7305 features a 512MiB Micron DDR3 SDRAM chip with a 32-bit wide interface. The double data rate nature of the memory works by transferring two words per clock cycle, which in this case is 32-bit. This means that for this memory part, one word is 16-bit. Another typical feature for this type of memory is operating in burst mode which 
+
+A memory controller interface is needed in order to use it from the FPGA.
+
+\section{Computation}
 
 \chapter{Documentation}
 
+\section{Pipeline algorithms}
 \subsection{Box Filter}
+\subsection{Tresholding}
 \subsection{Connected component labeling and analysis}
+
+\chapter{Development process}
 
 \chapter{Review and reflection}
 

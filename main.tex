@@ -281,7 +281,11 @@ At the core of SDRAM lies capacitors trapping the charge representing a bit. An 
     \label{fig:7}
 \end{figure}
 
-The XEM7305 features a 512MiB Micron DDR3 SDRAM chip with a 32-bit wide interface. The double data rate nature of the memory works by transferring two words per clock cycle, which in this case is 32-bit. Thus one word, or memory cell, is 16-bit. Another typical feature for this memory type is operating in burst mode. The read and write operations are optimized for the shape of the memory banks. A burst read or write contains the memory cells neighboring the specified one, favoring data where read and write operations occur in subsequent addresses. The memory banks contain memory cells in a row-column fashion where a burst access one column at a time. The shape of the XEM7305 SDRAM is 8 banks with 32 rows and 8 columns each. A burst spans over four clock cycles, enabling 128 bits on each read and write operation \citep{XEM7305Man} \citep{MicronSDRAM}.
+The memory cells in SDRAM is placed in a array to form rows and columns. The arrays are referd to as memory banks. The number of rows, columns, and banks varies depending on the type of SDRAM, but is usually a power of 2. Each element in a memory bank contains multiple memory cells. The number of memory cells for each element is called the data width of the SDRAM.
+\par
+Modern SDRAM feature DDR meaining it works on both rising and falling edge of the clock cycle. This allows the external interface to be double the data width of the SDRAM.
+\par
+The XEM7305 features a 512MiB Micron DDR3 SDRAM chip with a 32-bit wide interface. The double data rate nature of the memory works by transferring two words per clock cycle, which in this case is 32-bit. Thus one word, or memory location, is 16-bit. Another typical feature for this memory type is operating in burst mode. The read and write operations are optimized for the shape of the memory banks. A burst read or write contains the memory cells neighboring the specified one, favoring data where read and write operations occur in subsequent addresses. The memory banks contain memory cells in a row-column fashion where a burst access one column at a time. The shape of the XEM7305 SDRAM is 8 banks with 32 rows and 8 columns each. A burst spans over four clock cycles, enabling 128 bits on each read and write operation \citep{XEM7305Man} \citep{MicronSDRAM}.
 
 A memory controller interface is needed in order to use it from the FPGA.
 

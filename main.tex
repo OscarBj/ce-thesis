@@ -270,9 +270,18 @@ To enable processing of image data, a set of storage mechanisms is necessary. Th
 FPGAs are generally not well suited for storing a large quantity of data as it's considered inefficient use of available CLBs. Since customization is a key feature, the most standardized parts, such as memory, is often placed outside the FPGA. Off chip memory allows storage of large data, such as images, freeing up CLBs to other usage such as computation and logic. The downside with off chip components is them often being a bottleneck in the system. This is due to a number of factors such as restrictions in clock speed, concurrency, and bus width. A larger FPGA with increased number of CLBs could offset the need for off chip memory avoiding the bottleneck, with consequences being greater power consumption and physical size, potentially invalidating the solution.
 
 \subsection{SDRAM}
-One of the most common storage mechanism is SDRAM which is usefull to store data that is frequently used and ranges from kilobytes to megabytes in size. SDRAM typically has low power consumption and features reasonably high bandwidth. It is often paired with FPGAs because it is next in the memory hierarchy after on chip storage mechanisms.
+One of the most common storage mechanism is SDRAM which is useful to store data that is frequently used and ranges from kilobytes to megabytes in size. Key features include random access, meaning same access time for any part of the memory, and high bandwidth. It is often paired with FPGAs because it is next in the memory hierarchy after on chip storage mechanisms.
 \par
-The XEM7305 features a 512MiB Micron DDR3 SDRAM chip with a 32-bit wide interface. The double data rate nature of the memory works by transferring two words per clock cycle, which in this case is 32-bit. Thus one word, or memory cell, is 16-bit. Another typical feature for this memory type is operating in burst mode. The read and write operations are optmized for the shape of the memory banks. A burst read or write containins the memory cells neighboring the specified one, favoring data where read and write operations occur in subsequenct addresses. The memory banks contain memory cells in a row-column fashion where a burst access one column at a time. The shape of the XEM7305 SDRAM is 8 banks with 32 rows and 8 columns each. A burst spans over four clock cycles, enabling 128 bits on each read and write operation \citep{MicronSDRAM}.
+At the core of SDRAM lies capacitors trapping the charge representing a bit. An overview of a typical SDRAM circuit is shown in Figure \ref{fig:7}. The capacitors are refreshed periodically to retain the stored data. This makes SDRAM a volatile memory, requiring power to function. The advantage against closely related memory types such as flash memory, is that it does not degrade at the same rate of read/write cycles and it's truly random access, giving the advantage to SDRAM as a volatile working memory in most FPGA applications \citep{SDRAMFLASH} \citep{NANDNORFlash}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{figures/DRAM.jpg}
+    \caption{SDRAM memory cell. The capacitor traps the charge which is controlled by the transistor at the top \citep{SDRAMFLASH}.}
+    \label{fig:7}
+\end{figure}
+
+The XEM7305 features a 512MiB Micron DDR3 SDRAM chip with a 32-bit wide interface. The double data rate nature of the memory works by transferring two words per clock cycle, which in this case is 32-bit. Thus one word, or memory cell, is 16-bit. Another typical feature for this memory type is operating in burst mode. The read and write operations are optimized for the shape of the memory banks. A burst read or write contains the memory cells neighboring the specified one, favoring data where read and write operations occur in subsequent addresses. The memory banks contain memory cells in a row-column fashion where a burst access one column at a time. The shape of the XEM7305 SDRAM is 8 banks with 32 rows and 8 columns each. A burst spans over four clock cycles, enabling 128 bits on each read and write operation \citep{XEM7305Man} \citep{MicronSDRAM}.
 
 A memory controller interface is needed in order to use it from the FPGA.
 
@@ -282,7 +291,7 @@ A memory controller interface is needed in order to use it from the FPGA.
 
 \section{Pipeline algorithms}
 \subsection{Box Filter}
-\subsection{Tresholding}
+\subsection{Thresholding}
 \subsection{Connected component labeling and analysis}
 
 \chapter{Development process}

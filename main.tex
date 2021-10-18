@@ -115,7 +115,11 @@ specialized hardware in high performance computing \citep{GenPurpTech}}
 
 \section{FPGA Overview}
 A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and high a level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles \citep{XilFPGAIntro}.
-  
+
+% Volatile vs non volatile FPGA (SRAM, flash, anti-fuse)
+%https://www.edn.com/a-comparison-of-space-grade-fpgas-part-1/
+%https://www.edn.com/fpga-architectures-from-a-to-z-part-1/
+
 \par
 Xilinx is one of the key companies involved in FPGA production both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
 \par
@@ -195,7 +199,6 @@ In addition to FPGA products, Xilinx also provides design tools and IP cores to 
 %\subsection{ISO}
 %\subsection{DO-254}
 %\subsection{MIL}
-
 
 \chapter{System requirements}
 
@@ -292,12 +295,12 @@ The number of rows, columns, arrays, and banks varies depending on the type of S
 \par
 To increase SDRAM performance, double data rate (DDR) is used to access data at double the clock rate. DDR enables accessing a memory bank on both the rising and falling edge of the clock cycle. A prefetch mechanism enables the transfer of multiple bits concurrently per bank access, increasing the throughput even more. This mechanism enables efficient use of the internal SDRAM bus width by also transferring data from neighboring addresses. The gain comes from the fact that the time to access a single address is the same as accessing the neighboring ones as well. The prefetch mechanism gives an advantage to data which is structured in a way where each access is in adjacent addresses. The width of the prefetch data depends on the DDR version. Other variations between DDR versions are the supported clock frequency and burst length, which is a feature related to the prefetch mechanism. The burst length specifies the number of SDRAM words contained in each read or write operation \citep{MicronSDRAMGeneral}.
 \par
-The XEM7305 features a Micron DDR3 SDRAM chip with a 32-bit wide interface. The memory part has 8 banks, 32 000 row addresses, 1000 column addresses, and 16 bits to each address, giving the a capacity of 4Gb. As previously discussed, the DDR version dictates the prefetch data width, which in DDR3 is 8 words, as is the burst length. The word length of the memory is 16 bit, which results in 128-bit burst transfers. The SDRAM is rated with a clock frequency of 1600 MHz, giving a theoretical peak bandwidth of 3.2 GB/s. In practice, the bandwidth is lower and depending on system state and access location.
+The XEM7305 features a Micron DDR3 SDRAM chip with a 32-bit wide interface. The memory part has 8 banks, 32 000 row addresses, 1000 column addresses, and 16 bits to each address, giving the a capacity of 4Gb. As previously discussed, the DDR version dictates the prefetch data width, which in DDR3 is 8 words, as is the burst length. The word length of the memory is 16 bit, which results in 128-bit burst transfers. The SDRAM is rated with a clock frequency of 1600 MHz, giving a theoretical peak bandwidth of 3.2 GB/s. In practice, the bandwidth is lower and depending on system state and access location \citep{XEM7305Man}.
 \par
 The oscillator on the FPGA board provides a 200 MHz signal, which is also the limit of the Spartan 7 FPGA. This allows a maximum clock frequency of 325 MHz to be generated through the SDRAM controller interface and then scaled up to 650 MHz with DDR at the SDRAM.
 \citep{XEM7305Man} \citep{MicronSDRAM}.
 \par
-The memory controller interface connects the FPGA to the SDRAM controller, which in turn sends commands to the SDRAM core. The interface is unique to each memory controller and depends on all parameters discussed in this chapter such as memory geometry, DDR version, and clock frequency.
+The memory controller interface connects the FPGA to the SDRAM controller, which in turn sends commands to the SDRAM core. The interface is unique to each memory controller and depends on all parameters discussed in this chapter such as memory geometry, DDR version, and clock frequency \citep{XEM7305Man}.
 
 %((32k * 1k)*8) = addr
 %addr * 16 = capacity
@@ -311,10 +314,14 @@ The memory controller interface connects the FPGA to the SDRAM controller, which
 %https://www.es.ele.tue.nl/premadona/files/akesson01.pdf
 %https://www.design-reuse.com/articles/13805/the-love-hate-relationship-with-ddr-sdram-controllers.html
 
-\subsection{BRAM}
-When data size is a few kilobytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is on chip memory that uses memory cells available on the FPGA. The specification of a FPGA chip often include number of memory cells or available BRAM. The Series 7 FPGA has 
+\subsection{Block RAM}
+When data size is a few kilobytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is on chip memory that uses memory cells available on the FPGA. The specification of an FPGA chip often include the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. BRAM is  
+% shift register vs block ram
+\subsection{Distributed RAM}
 
 \section{Computation}
+
+\chapter{FPGA based data structures and algorithms}
 
 \chapter{Documentation}
 
@@ -328,6 +335,8 @@ When data size is a few kilobytes or less, lower level storage mechanisms become
 \chapter{Review and reflection}
 
 \chapter{Discussion}
+
+%\section{Space grade hardware design}
 
 \addcontentsline{toc}{chapter}{Bibliography}
 

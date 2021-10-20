@@ -120,6 +120,8 @@ A field programmable gate array, or FPGA, is a digital integrated circuit that c
 %https://www.edn.com/a-comparison-of-space-grade-fpgas-part-1/
 %https://www.edn.com/fpga-architectures-from-a-to-z-part-1/
 
+% FPGA Interconnect
+
 \par
 Xilinx is one of the key companies involved in FPGA production both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
 \par
@@ -315,8 +317,13 @@ The memory controller interface connects the FPGA to the SDRAM controller, which
 %https://www.design-reuse.com/articles/13805/the-love-hate-relationship-with-ddr-sdram-controllers.html
 
 \subsection{Block RAM}
-When data size is a few kilobytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is on chip memory that uses memory cells available on the FPGA. The specification of an FPGA chip often include the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. BRAM is  
+When data size is a few kilobytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is on chip memory that uses memory cells available on the FPGA. The specification of an FPGA chip often include the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. BRAM is available in   
 % shift register vs block ram
+
+% https://eprint.iacr.org/2018/717.pdf
+% https://archive.org/details/eu_SciAm_1997-06_OCR/page/n55/mode/2up?q=configurable+computing+scientific+america
+% http://www.righto.com/2020/09/reverse-engineering-first-fpga-chip.html
+% https://ieeexplore.ieee.org/document/6487750?reload=true
 \subsection{Distributed RAM}
 
 \section{Computation}

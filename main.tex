@@ -119,19 +119,20 @@ A field programmable gate array, or FPGA, is a digital integrated circuit that c
 % Volatile vs non volatile FPGA (SRAM, flash, anti-fuse)
 %https://www.edn.com/a-comparison-of-space-grade-fpgas-part-1/
 %https://www.edn.com/fpga-architectures-from-a-to-z-part-1/
-
+% https://www.eetimes.com/all-about-fpgas/#
 % FPGA Interconnect
 
 \par
-Xilinx is one of the key companies involved in FPGA production both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
+Xilinx is one of the key companies involved in FPGA production both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}. 
+Due to the significance of Xilinx, and relevancy in this project, FPGA technology discussed in this work is Xilinx based. Differences between manufacturers include terminology and architectural nuances. For example, Xilinx exclusively manufactures static random access memory (SRAM) based FGPAs. This refers to the programmable parts of the FPGA. Other types such as anti-fuse and flash based FPGAs exist, but are not as common as SRAM \citep{FPGAarch1}.
 \par
 The basic internal elements of an FPGA consist of circuits such as look-up tables, flip-flops, wires, and input/output pads. Using these elements the FPGA design is implemented in the hardware.
-The architecture is explained by Figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with wires running between them. The wires also run to the input/output pads, which enables interfacing with off-chip components such as synchronous dynamic random access memory (SDRAM) or sensors \citep{XilFPGAIntro}. Configurable logic blocks (CLBs) contain the look-up tables and flip flops. An overview of a CLB is shown in Figure \ref{fig:3}.
+The architecture is explained by Figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with the interconnect, consisting of wires. The wires also run to the input/output pads, which enables interfacing with off-chip components such as synchronous dynamic random access memory (SDRAM) or sensors \citep{XilFPGAIntro}. Configurable logic blocks (CLBs) contain the look-up tables and flip flops. An overview of a CLB is shown in Figure \ref{fig:3}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.55]{figures/basic_fpga.png}
-    \caption{FPGA architecture. An FPGA consist of configurable logic blocks, wires, and input/output pads \citep{XilFPGAIntro}.}
+    \caption{FPGA architecture. An FPGA consist of configurable logic blocks, interconnect, and input/output pads \citep{XilFPGAIntro}.}
     \label{fig:2}
 \end{figure}
 

@@ -117,17 +117,21 @@ specialized hardware in high performance computing \citep{GenPurpTech}}
 A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and high a level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles \citep{XilFPGAIntro}.
 
 % Volatile vs non volatile FPGA (SRAM, flash, anti-fuse)
-%https://www.edn.com/a-comparison-of-space-grade-fpgas-part-1/
-%https://www.edn.com/fpga-architectures-from-a-to-z-part-1/
+% https://www.edn.com/a-comparison-of-space-grade-fpgas-part-1/
+% https://www.edn.com/fpga-architectures-from-a-to-z-part-1/
 % https://www.eetimes.com/all-about-fpgas/#
 % FPGA Interconnect
+% IO Cell, clocks http://xilinx.eetrend.com/files-eetrend-xilinx/forum/201509/9204-20390-7_series_architecture_overview.pdf
+% https://nanopdf.com/download/fpga-programmable-interconnect-and-i-o-cells_pdf
+% https://www.analog.com/en/analog-dialogue/articles/care-and-feeding-of-fpga-power-supplies-a-how-and-why-guide-to-success.html
 
 \par
-Xilinx is one of the key companies involved in FPGA production both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}. 
-Due to the significance of Xilinx, and relevancy in this project, FPGA technology discussed in this work is Xilinx based. Differences between manufacturers include terminology and architectural nuances. For example, Xilinx exclusively manufactures static random access memory (SRAM) based FGPAs. This refers to the programmable parts of the FPGA. Other types such as anti-fuse and flash based FPGAs exist, but are not as common as SRAM \citep{FPGAarch1}.
+Xilinx is one of the key companies involved in FPGA production both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
+\par 
+Due to the significance of Xilinx, and relevancy in this project, FPGA technology discussed in this work is Xilinx based. Differences between manufacturers includes technological and architectural nuances. For example, Xilinx exclusively manufactures static random access memory (SRAM) based FGPAs. This refers to the technology of the programmable parts of the FPGA. Other available tehcnologies are flash and anti-fuse, which are less common than SRAM \citep{FPGAarch1}.
 \par
 The basic internal elements of an FPGA consist of circuits such as look-up tables, flip-flops, wires, and input/output pads. Using these elements the FPGA design is implemented in the hardware.
-The architecture is explained by Figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with the interconnect, consisting of wires. The wires also run to the input/output pads, which enables interfacing with off-chip components such as synchronous dynamic random access memory (SDRAM) or sensors \citep{XilFPGAIntro}. Configurable logic blocks (CLBs) contain the look-up tables and flip flops. An overview of a CLB is shown in Figure \ref{fig:3}.
+The architecture is explained by Figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with the interconnect, consisting of wires and switch matrices. The wires also run to the input/output pads, which enables interfacing with off-chip components such as synchronous dynamic random access memory (SDRAM) or sensors \citep{XilFPGAIntro}. Configurable logic blocks (CLBs) contain the look-up tables and flip flops. An overview of a CLB is shown in Figure \ref{fig:3}.
 
 \begin{figure}[h]
     \centering
@@ -139,12 +143,12 @@ The architecture is explained by Figure \ref{fig:2} which shows a matrix arrange
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.25]{figures/clb.png}
-    \caption{Diagram of a configurable logic block. A CLB consists of logic element containers called slices, inputs and outputs, and a switch matrix which connects the CLB to other CLBs \citep{XilClbMan}.}
+    \caption{Diagram of a configurable logic block. A CLB consists of logic element containers, called slices, inputs, and outputs. Both slices are attached to the switch matrix, connecting the CLB to other CLBs \citep{XilClbMan}.}
     \label{fig:3}
 \end{figure}
 
-The slices in Figure \ref{fig:3} represent the core element of any FPGA. Slices consist of look-up tables, storage elements, multiplexers, and carry logic. Depending on the FPGA there are different numbers of slices per CLB. The slices are collectively responsible for implementing a significant portion of the FPGA design \citep{XilClbMan}.
-
+The slices in Figure \ref{fig:3} represent core elements of an FPGA. Slices consist of look-up tables, storage elements, multiplexers, and carry logic. Depending on the FPGA there are different numbers of slices per CLB. The slices are collectively responsible for implementing a significant portion of the FPGA design \citep{XilClbMan}.
+\par
 Look-up tables, or LUTs, are mainly used as logic elements in FPGAs. They can implement any boolean logic operation by combining memory cells with multiplexers. The look-up table is essentially a truth table that can be used for reading the result of boolean operations. Memory cells and multiplexer routings are initialized by the FPGA design, which is what makes the look-up table element configurable \citep{XilFPGAIntro}. An example of a 4 memory cell wide LUT is shown in Figure \ref{fig:4}.
 
 \begin{figure}[h]
@@ -318,7 +322,9 @@ The memory controller interface connects the FPGA to the SDRAM controller, which
 %https://www.design-reuse.com/articles/13805/the-love-hate-relationship-with-ddr-sdram-controllers.html
 
 \subsection{Block RAM}
-When data size is a few kilobytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is on chip memory that uses memory cells available on the FPGA. The specification of an FPGA chip often include the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. BRAM is available in   
+When data size is a few kilobytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is on chip memory that uses memory cells available on the FPGA. The specification of an FPGA chip often include the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. In the case of SRAM based FPGAs, the memory cells of the BRAM are essentially SRAM cells, arranged in arrays. The BRAM is made available to the other CLBs by being attached to the FPGA interconnect.
+\par
+BRAM is a synchronous memory with fully latched outputs
 % shift register vs block ram
 
 % https://eprint.iacr.org/2018/717.pdf
@@ -328,7 +334,7 @@ When data size is a few kilobytes or less, lower level storage mechanisms become
 \subsection{Distributed RAM}
 
 \section{Computation}
-
+% clocks, dsp, bitwidth etc.
 \chapter{FPGA based data structures and algorithms}
 
 \chapter{Documentation}

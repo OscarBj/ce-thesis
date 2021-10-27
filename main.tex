@@ -193,7 +193,9 @@ In aerospace applications, the advantages of IP cores are utilized in the same m
 \par
 In addition to FPGA products, Xilinx also provides design tools and IP cores to help with development on their FPGA platforms. Their IP core library ranges from common IC to complete microcontrollers. Some of the cores are available free to use through the Vivado design suite, and a majority of them are soft cores to allow compatibility across their FPGAs. Integration of the IP cores and other development is also done through Vivado \citep{XilVivado}.
 %OPENCORES
-
+% https://www.xilinx.com/content/dam/xilinx/support/documentation/white_papers/wp523-xqrku060.pdf
+% https://www.techspot.com/article/1989-arm-inside/
+% https://www.techspot.com/article/1821-how-cpus-are-designed-and-built/
 %The image processing pipeline uses three different storage mechanisms. 
 %\subsection{SDRAM}
 %The main working memory of the image processing pipeline is a off-chip 512MiByte, 32-bit wide DDR3 SDRAM memory module.
@@ -205,6 +207,8 @@ In addition to FPGA products, Xilinx also provides design tools and IP cores to 
 %\subsection{IEEE}
 %\subsection{ISO}
 %\subsection{DO-254}
+% https://www.cadence.com/content/dam/cadence-www/global/en_US/documents/solutions/aerospace-and-defense/do-254-explained-wp.pdf
+% https://people.duke.edu/~goodw010/Wiki/hwswstds.html
 %\subsection{MIL}
 
 \chapter{System requirements}
@@ -272,6 +276,8 @@ When comparing to a software program, the same optimization method of maximizing
 
 % Image of low vs high bit width circuit/ footprint
 % More in depth on USB3, images
+% https://www.usb.org/sites/default/files/CabConn_3_0_Compliance_Document_20101020.pdf
+% https://www.usb.org/documents?search=&category%5B%5D=49&tid_2%5B%5D=39&items_per_page=50
 % PipeIn PipeOut
 % Cypress FX3 Microcontroller
 
@@ -312,7 +318,7 @@ The memory controller interface connects the FPGA to the SDRAM controller, which
 %((32k * 1k)*8) = addr
 %addr * 16 = capacity
 
-
+%https://www.xilinx.com/support/documentation/user_guides/ug473_7Series_Memory_Resources.pdf
 %https://user.eng.umd.edu/~blj/memory/Book-Overview.pdf
 %https://www.allaboutcircuits.com/technical-articles/executing-commands-memory-dram-commands/
 %http://taututorial.yolasite.com/sdram-controller.php
@@ -326,11 +332,12 @@ When data size is a few kilobytes or less, lower level storage mechanisms become
 \par
 BRAM is a synchronous memory with fully latched outputs
 % shift register vs block ram
-
+% https://www.xilinx.com/support/documentation/white_papers/wp377_7Series_Embed_Mem_Advantages.pdf
 % https://eprint.iacr.org/2018/717.pdf
 % https://archive.org/details/eu_SciAm_1997-06_OCR/page/n55/mode/2up?q=configurable+computing+scientific+america
 % http://www.righto.com/2020/09/reverse-engineering-first-fpga-chip.html
 % https://ieeexplore.ieee.org/document/6487750?reload=true
+% https://www.xilinx.com/support/documentation/ip_documentation/blk_mem_gen/v8_3/pg058-blk-mem-gen.pdf
 \subsection{Distributed RAM}
 
 \section{Computation}

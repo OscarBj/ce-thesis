@@ -344,7 +344,9 @@ Similarly as SDRAM, BRAM also is synchronous and requires a clock signal. The la
 % https://ieeexplore.ieee.org/document/6487750?reload=true
 % https://www.xilinx.com/support/documentation/ip_documentation/blk_mem_gen/v8_3/pg058-blk-mem-gen.pdf
 \subsection{Distributed RAM}
-
+The most low level memory found in FPGAs is distributed RAM. It is a type of on-chip memory, and in contrast to BRAM, distributed RAM utilizes the same CLBs that is common with the logic of the FPGA design. This leads to a tradeoff between the use of CLB resources. If the FPGA design is large there might not be room for distributed RAM, leading to slightly less performant BRAM to be used instead.
+% SLICEL SLICEM
+The slices in Xilinx CLBs are either of type SLICEL or SLICEM. Distributed memory is available only on SLICEM type of slices. In the FPGA specification the number of each type is often mentioned.   
 \section{Computation}
 % clocks, dsp, bitwidth etc.
 \chapter{FPGA based data structures and algorithms}

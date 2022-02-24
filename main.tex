@@ -114,7 +114,14 @@ specialized hardware in high performance computing \citep{GenPurpTech}}
 \end{figure}
 
 \section{FPGA Overview}
-A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and high a level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles \citep{XilFPGAIntro}.
+A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and high a level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles \citep{XilFPGAIntro}. The pipeline principle is demonstrated in figure \ref{fig:pipeline} by comparing it to a non pipelined solution. The pipeline transformation enables the inactive parts of the calculation to be utilized when they normally would idle, waiting for all parts to finish.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.7]{figures/structure_fpga_imp_compute_function.png}
+    \caption{Figure showing two execution paths for the expression $y=(a \times x) +  b + c$. The operations in the first path depends on the output from previous operations whereas the operations in the second path depends on a separate input registers. The second path is a pipeline transformation of the first path \citep{XilFPGAIntro}}.
+    \label{fig:pipeline}
+\end{figure}
 
 % Volatile vs non volatile FPGA (SRAM, flash, anti-fuse)
 % https://www.edn.com/a-comparison-of-space-grade-fpgas-part-1/
@@ -263,23 +270,23 @@ The FPGA module Opal Kelly XEM7305 chip with a Xilinx Spartan-7 FPGA will functi
 
 
 \chapter{FPGA based computer hardware}
-Common computer hardware is the corner stone of any digital circuit that needs to perform common tasks such as storing and transmitting data. With the help of the basic elements of an FPGA discussed in Chapter 2, circuits of this nature can be created. Although an 8-bit adder circuit can be regarded as common computer hardware, the focus of this chapter is on larger circuits used as hardware modules such as memory and communication interfaces. The components discussed are essential building blocks for the image processing pipeline. Figure \ref{fig:9} shows an overview of these components on the XEM7305 FPGA module.
+Common computer hardware is the corner stone of any digital circuit that needs to perform common tasks such as storing and transmitting data. With the help of the basic elements of an FPGA discussed in Chapter 2, circuits of this nature can be created. Although an 8-bit adder circuit can be regarded as common computer hardware, the focus of this chapter is on larger circuits used as hardware modules such as memory and communication interfaces. The components discussed are essential building blocks for the image processing pipeline. Figure \ref{fig:xemOverview} shows an overview of these components on the XEM7305 FPGA module.
 
 \section{Communication}
-The system requirements state a communication channel to be available for shared memory usage and controlling the FPGA. Machine to machine communication is enabled trough the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB C.
+The system requirements state a communication channel to be available for shared memory usage and controlling the FPGA. Machine to machine communication is enabled trough the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB C \citep{XEM7305Man}.
 \par
-The advantage of the USB is flexibility and ease of use. Transfer speed is not a high priority in this case because of the relatively small size of data, which is less than a megabyte. The USB module on the XEM7305 contains a USB C port and a Cypress FX3 peripheral controller, shown in figure \ref{fig:9}.
-The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module such as a image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided.
+The advantage of the USB is flexibility and ease of use. Transfer speed is not a high priority in this case because of the relatively small size of data, which is less than a megabyte. The USB module on the XEM7305 contains a USB C port and a Cypress FX3 peripheral controller, shown in figure \ref{fig:xemOverview}.
+The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module such as a image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided \citep{XEM7305Man} \citep{FX3Man}.
 
 \begin{figure}
     \centering
     \includegraphics[scale=0.4]{figures/2XEM7305-BlockDiagram.png}
     \caption{Overview of FPGA module showing the FPGA itself in the center, SDRAM off-chip memory on the top right, and USB interface on the left. \citep{XEM7305Man}}
-    \label{fig:9}
+    \label{fig:xemOverview}
 \end{figure}
 
-Both the USB 3 standard and the FX3 peripheral controller supports serial and parallel communication but the hard IP core connecting to the FX3 interface supports only serial communication. This simplifies the use of the IP core, requiring less FPGA fabric, but also reduces the throughput.
-% USB C & 3 source needed 
+Both the USB 3 standard and the FX3 peripheral controller supports serial and parallel communication but the hard IP core connecting to the FX3 interface supports only serial communication. This simplifies the use of the IP core, requiring less FPGA fabric, but also reduces the throughput \citep{XEM7305Man} \citep{FX3Man}.
+
 \par
 The internal communication mechanism of an FPGA consists the FPGA interconnect. The interconnect is the physical layer of the communication protocol stack leaving the rest of the stack to be implemented in the FPGA design with HDL or IP cores. 
 \par
@@ -299,7 +306,7 @@ To enable processing of image data, a set of storage mechanisms is necessary. Th
 \par
 FPGAs are generally not well suited for storing a large quantity of data as it is considered inefficient use of available CLBs. Since customization is a key feature, the most standardized parts, such as memory, are often placed outside the FPGA. Off-chip memory allows storage of large data, such as images, freeing up CLBs to other usage such as computation and logic. The downside with off chip components is them often being a bottleneck in the system. This is due to a number of factors such as restrictions in clock speed, concurrency, and bus width. A larger FPGA with an increased number of CLBs could offset the need for off chip memory avoiding the bottleneck, with consequences being greater power consumption and physical size, potentially invalidating the solution.
 \par
-An overview of the XEM7305 module and the memory types can be seen in figure \ref{fig:9} where the off-chip SDRAM memory is on the top right and the lower level memories inside the Xilinx Spartan 7 FPGA in the center.
+An overview of the XEM7305 module and the memory types can be seen in figure \ref{fig:xemOverview} where the off-chip SDRAM memory is on the top right and the lower level memories inside the Xilinx Spartan 7 FPGA in the center.
 
 \subsection{SDRAM}
 One of the most common storage mechanisms is SDRAM which is useful to store data that is frequently used and ranges from kilobytes to megabytes in size. Key features include random access, meaning same access time for any part of the memory, and high bandwidth. It is often paired with FPGAs because it is next in the memory hierarchy after on chip storage mechanisms.
@@ -349,11 +356,11 @@ The memory controller interface connects the FPGA to the SDRAM controller, which
 \subsection{Block RAM}
 When data size is within a few megabytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is a type of on-chip memory, which uses memory cells available on the FPGA. The specification of an FPGA chip often include the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. In the case of SRAM based FPGAs, the memory cells of the BRAM are essentially SRAM cells, arranged in arrays. The BRAM is made available to the other CLBs by being attached to the FPGA interconnect.
 \par
-BRAM can be configured in size and functionality depending on the needs. Common BRAM arrays are 36Kb, that can either be divided into smaller arrays, or combined with other arrays to form a larger memory resource. A useful feature often found regarding BRAM is multi port support. This enables concurrent usage of the memory resource. In case of concurrency issues, the configurable operation mode of the BRAM dictates how to resolve them. For example, in a dual port configuration, the read first operation mode will prioritize a read operation when the other port requests a write operation on the same address.
+BRAM can be configured in size and functionality depending on the needs. Common BRAM arrays are 36Kb, that can either be divided into smaller arrays, or combined with other arrays to form a larger memory resource. A useful feature often found regarding BRAM is multi port support. This enables concurrent usage of the memory resource. In case of concurrency issues, the configurable operation mode of the BRAM dictates how to resolve them. For example, in a dual port configuration, the read first operation mode will prioritize a read operation when the other port requests a write operation on the same address \citep{XilMemMan}.
 \par
 % example configuration & geometry
 \par
-Similarly as SDRAM, BRAM also is synchronous and requires a clock signal. The latency is depending on the configuration and state of the memory, but usually within a few clock cycles. The low latency, together with the high configurability makes BRAM a useful resource in most FPGA designs.
+Similarly as SDRAM, BRAM also is synchronous and requires a clock signal. The latency is depending on the configuration and state of the memory, but usually within a few clock cycles. The low latency, together with the high configurability makes BRAM a useful resource in most FPGA designs \citep{XilMemMan}.
 
 % shift register vs block ram
 % https://www.xilinx.com/support/documentation/white_papers/wp377_7Series_Embed_Mem_Advantages.pdf
@@ -363,20 +370,19 @@ Similarly as SDRAM, BRAM also is synchronous and requires a clock signal. The la
 % https://ieeexplore.ieee.org/document/6487750?reload=true
 % https://www.xilinx.com/support/documentation/ip_documentation/blk_mem_gen/v8_3/pg058-blk-mem-gen.pdf
 \subsection{Distributed RAM}
-The lowest level of memory found in FPGAs is distributed RAM. It is a type of on-chip memory which utilizes the same CLBs that is common with other logic of the FPGA design. This makes the use of distributed RAM a tradeoff between fast memory and CLB resources. If the FPGA design is large there might not be room for distributed RAM, leading to slightly less performant BRAM to be used instead.
-% SLICEL SLICEM
-The slices in Xilinx CLBs are either of type SLICEL or SLICEM. Distributed memory is available only on SLICEM type of slices. In the FPGA specification the number of each type is often mentioned.
+The lowest level of memory found in FPGAs is distributed RAM (DRAM). It is a type of on-chip memory which utilizes the same CLBs that is common with other logic of the FPGA design. This makes the use of DRAM a tradeoff between fast memory and CLB resources. If other parts of the FPGA design is large, there might not be room for DRAM, leading to slightly less performant BRAM to be used instead.
 \par
-Since the distributed RAM resides in the FPGA fabric, it communicates trough the FPGA interconnect making read and write operations fast. Read and write operations require a single clock cycle to complete, making it also very simple to use from a HDL design perspective.  
+The slices in Xilinx CLBs are either of type SLICEL or SLICEM. The slices in a Xilinx 7 series FPGA CLB consists either two SLICEL or one SLICEL and one SLICEM. DRAM is available only on SLICEM type of slices. The SLICEM contains a superset of SLICEL elements, allowing SLICEM to be used in non storage purposes as well. The geometry of DRAM memory is defined by the configuration of SLICEM slices. The configuration and decision to use DRAM is inferred from the FPGA design. A single SLICEM CLB in the Xilinx 7 series FPGA allows for 256 bits of DRAM storage. The DRAM capacity is increased beyond this by connecting DRAM enabled CLBs together. The DRAM capacity and number of SLICEM enabled CLBs is often mentioned in the FPGA product specification \citep{XilMemMan}. 
+\par
+Since DRAM resides in the FPGA fabric, it communicates trough the FPGA interconnect making read and write operations fast. Read and write operations require a single clock cycle to complete, making it also very simple to use from a HDL design perspective \citep{XilMemMan}.  
 
 \section{Clock}
-As most digital hardware systems, FPGAs use clocks to synchronize operations. The clock is an off-chip component, providing the signal trough input/output pads to the FPGA. The clock signal is generated by an oscillator circuit that produces a specific frequency. This frequency may then be used as is or transformed into additional clock signals within a HDL design or IP core. For example, the DDR SDRAM utilize the clock signal on both the rising and falling edge to increase the throughput of data. The clock signal on the XEM7305 is passed from the external clock module to the SDRAM module within the HDL design. This ensures that the SDRAM and FPGA design is synchronized.
+As most digital hardware systems, FPGAs use clocks to synchronize operations. The clock is an off-chip component, providing the signal trough input/output pads to the FPGA. Figure \ref{fig:xemOverview} shows the off-chip clock circuit on the left side of the FPGA on the XEM7305 module. The clock signal is generated by an oscillator circuit that produces a specific frequency. This frequency may then be used as is or transformed into additional clock signals within a HDL design or IP core. For example, the DDR SDRAM utilize the clock signal on both the rising and falling edge to increase the throughput of data. The clock signal on the XEM7305 is passed from the external clock module to the SDRAM module within the HDL design. This ensures that the SDRAM and FPGA design is synchronized \citep{XEM7305Man}.
 \par
-The clock module on the XEM7305 provides a 200MHz frequency signal. An additional 100.8MHz clock signal is provided by the USB interface, which is required interacting with the USB peripheral controller. A third clock is used by the SDRAM, which is derived from the 200MHz clock module.
+The clock module on the XEM7305 provides a 200MHz frequency signal. An additional 100.8MHz clock signal is provided by the USB interface, which is required interacting with the USB peripheral controller. A third clock is used by the SDRAM, which is derived from the 200MHz clock module \citep{XEM7305Man}.
 \par
-In addition to using the clock signal to drive tasks, a common practice within system modeling with a HDL is to drive tasks using signals that occur more spontaneously. This could for example be a signal originating from a sensor on the FPGA module that has an interface to the FPGA design without a dependence to a clock.
+In addition to using the clock signal to drive tasks, a common practice within system modeling with a HDL is to drive tasks using signals that occur more spontaneously. This could for example be a signal originating from a sensor on the FPGA module that has an interface to the FPGA design without a dependence to a clock. This enhances the suitability of using FPGAs for real-time requirements since the reaction to an input can be within clock cycles instead of milliseconds. Another reason to use FPGAs for real-time applications is predictability. For example, when using a clock divider to run a task at every 5ms, the task will run precisely at 5ms intervals as long as the clock oscillator itself is accurate. Software based real-time applications cannot guarantee the same level of confidence for the timing requirements due to possible scheduling and concurrency related overhead.
 
-% clocks, dsp, bitwidth etc.
 \chapter{FPGA based data structures and algorithms}
 
 \chapter{Documentation}

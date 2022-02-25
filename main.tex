@@ -239,22 +239,33 @@ Star extraction is a key stage of a star tracker system which uses a star catalo
 The specification consists of development and system requirements as well as a description of tools and components. System requirements are created based on meetings and discussions with Aboa Space Research Oy. Some requirements are derived from higher level requirements to suit the development process. Table \ref{table:1} presents an overview of the system in a functional and non-functional requirements fashion.
 
 \begin{table}[h]
-    \begin{tabular}{|p{1cm}|p{6.15cm}|p{6.15cm}|}
+    \begin{tabular}{|p{1.75cm}|p{10cm}|}
         \hline
-        \textbf{Req. Id}& \textbf{Functional requirement}& \textbf{Non-functional requirement}\\
+        \textbf{Req. Id}& \textbf{Description}\\
         \hline
-        1&The FPGA is used as processing node for extracting stars from an optical image&Convert StreakDet star extraction software algorithm to a hardware design\\
         \hline
-        2&A communication channel is available for shared memory usage&FPGA implements memory controller interface and USB port controller\\
+        \textbf{1}&Client endpoint for FPGA module\\
         \hline
-        3&Allow configuration of processing pipeline parameters&Frontend software is used for pipeline configuration\\
+        1.1&Bitstream can be written to FPGA\\
+        1.2&Image processing pipeline parameters can be written to FPGA\\
+        1.3&Allows for debugging of system\\
+        1.4&Provides visual results with metadata\\
         \hline
-        4&Processed images and intermediate results can be verified&Pipeline stage results are written to storage\\
         \hline
-        5&Performance metrics of process and stages can be viewed&Pipeline captures and stores metrics along the stages\\
+        \textbf{2}&Validation and verification of star extraction\\
+        \hline
+        2.1&First stage validation and verification with software prototype\\
+        2.2&Second stage validation and verification on FPGA platform\\ 
+        \hline
+        \hline
+        \textbf{3}&Star extraction result and operation\\
+        \hline
+        3.1&Image coordinates of extracted stars are stored\\
+        3.2&Centroid of detected stars are calculated\\
+        3.3&Error handling to avoid false detection\\
         \hline
     \end{tabular}
-    \caption{Table of functional and non-functional system requirements}
+    \caption{System requirements specification}
     \label{table:1}
 \end{table}
 
@@ -276,7 +287,7 @@ Common computer hardware is the corner stone of any digital circuit that needs t
 The system requirements state a communication channel to be available for shared memory usage and controlling the FPGA. Machine to machine communication is enabled trough the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB C \citep{XEM7305Man}.
 \par
 The advantage of the USB is flexibility and ease of use. Transfer speed is not a high priority in this case because of the relatively small size of data, which is less than a megabyte. The USB module on the XEM7305 contains a USB C port and a Cypress FX3 peripheral controller, shown in figure \ref{fig:xemOverview}.
-The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module such as a image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided \citep{XEM7305Man} \citep{FX3Man}.
+The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module such as a image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided. \citep{XEM7305Man} \citep{FX3Man}.
 
 \begin{figure}
     \centering
@@ -383,9 +394,30 @@ The clock module on the XEM7305 provides a 200MHz frequency signal. An additiona
 \par
 In addition to using the clock signal to drive tasks, a common practice within system modeling with a HDL is to drive tasks using signals that occur more spontaneously. This could for example be a signal originating from a sensor on the FPGA module that has an interface to the FPGA design without a dependence to a clock. This enhances the suitability of using FPGAs for real-time requirements since the reaction to an input can be within clock cycles instead of milliseconds. Another reason to use FPGAs for real-time applications is predictability. For example, when using a clock divider to run a task at every 5ms, the task will run precisely at 5ms intervals as long as the clock oscillator itself is accurate. Software based real-time applications cannot guarantee the same level of confidence for the timing requirements due to possible scheduling and concurrency related overhead.
 
-\chapter{FPGA based data structures and algorithms}
+\chapter{Star tracker systems}
+A star tracker is a system that finds stars from optical images. The purpose of such systems varies from celestial navigation to spacecraft attitude determination. Star tracker systems depends on image processing and analysis that run on varying computing platforms. The platform and purpose of a star tracker in this case is a FPGA based star tracker for spacecraft attitude determination. The general idea of star tracker based attitude determination is explored in this chapter.
+\section{Image acquisition}
+\section{Image processing}
+\section{Star extraction}
+\section{Pattern detection}
 
 \chapter{Documentation}
+
+\begin{table}[h]
+    \begin{tabular}{|p{1cm}|p{6.15cm}|p{6.15cm}|}
+        \hline
+        \textbf{Req. Id}& \textbf{Description}\\
+        \hline
+        1&Identify hardware requirements from StreakDet software\\
+        \hline
+        2&Identify algorithmic requirements from StreakDet software\\ 
+        \hline
+        3&\\
+        \hline
+    \end{tabular}
+    \caption{Development process}
+    \label{table:dev_process}
+\end{table}
 
 \section{Pipeline algorithms}
 \subsection{Box Filter}

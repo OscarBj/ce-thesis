@@ -395,16 +395,70 @@ The clock module on the XEM7305 provides a 200MHz frequency signal. An additiona
 In addition to using the clock signal to drive tasks, a common practice within system modeling with a HDL is to drive tasks using signals that occur more spontaneously. This could for example be a signal originating from a sensor on the FPGA module that has an interface to the FPGA design without a dependence to a clock. This enhances the suitability of using FPGAs for real-time requirements since the reaction to an input can be within clock cycles instead of milliseconds. Another reason to use FPGAs for real-time applications is predictability. For example, when using a clock divider to run a task at every 5ms, the task will run precisely at 5ms intervals as long as the clock oscillator itself is accurate. Software based real-time applications cannot guarantee the same level of confidence for the timing requirements due to possible scheduling and concurrency related overhead.
 
 \chapter{Star tracker systems}
-A star tracker is a system that finds stars from optical images. The purpose of such systems varies from celestial navigation to spacecraft attitude determination. Star tracker systems depends on image processing and analysis that run on varying computing platforms. The platform and purpose of a star tracker in this case is a FPGA based star tracker for spacecraft attitude determination. The general idea of star tracker based attitude determination is explored in this chapter.
+A star tracker is an instrument that provides navigational data such as position and attitude by recognizing stars from optical images. The system consists of a camera and a computer. The system operates by capturing an image, extracting and comparing data to a star catalog. The star catalog contains columns of information about known stars \citep{SatDesgin}.
+\par
+Star tracker systems depends on image processing and analysis that run on varying computing platforms. The platform and purpose of a star tracker in focus is a FPGA based star tracker for spacecraft attitude determination. The general idea of star tracker based attitude determination is explored in this chapter to explain the context of a pre processing pipeline for such a system.
+
+\section{Argumentation}
+There are multiple ways to determine the position and attitude of a spacecraft, but when the accuracy needs to be better than $0.1{^\circ}$ a star tracker is to be used. When the high accuracy of a star tracker is not needed, other methods such as navigation satellite systems, such as GPS, or momentum wheels can be used for determining the attitude and position. Other than accuracy advantages, the star tracker is also more independent than navigation satellite systems and mechanically simpler than momentum wheels. On the other hand, star trackers require more complexity in a computational sense \citep{SatDesgin}.
+\par
+A unique feature of star trackers is the ability to find the attitude and position of a spacecraft without any previous knowledge, also known as Lost-In-Space attitude determination. Momentum wheel-based navigation for example, requires a reference to previous position to determine its current position. The Lost-In-Space feature is also available using navigation satellite systems, but with limited range \citep{SatDesgin}.
+
 \section{Image acquisition}
+Images are usually captured by a charged-coupled device, or CCD, sensor. In contrast to another common image sensor type, the CMOS sensor, CCD is more resistant to noise resulting in better quality images.
+\par
+The camera uses a short focal length lens with a fixed field of view (FOV) to maximize the number of stars captured in each image. To maximize visibility of the stars, a wide aperture in the lens is used to allow more light to enter the image sensor.
+
 \section{Image processing}
-\section{Star extraction}
-\section{Pattern detection}
+The image processor of a star tracker extracts data from the captured image to use for star detection. The extracted data and processing algorithms varies between implementations, but the general idea is that the extraction process enhances the image features, scans the image for targets, and stores information about the targets for the star detection.
+
+\section{Star detection}
+\section{Attitude determination}
+\section{Pre processing pipeline}
 
 \chapter{Documentation}
 
+The documentation of the pre processing pipeline explains the features and technical details of the implemented system. A client endpoint is needed to allow configuration and testing of the FPGA design, which implements the pre processing pipeline. The system is thus distributed as shown in figure  to allow user friendly testing and validation. Figure \ref{fig:overview}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.2]{figures/overview.png}
+    \caption{Diagram of star tracker pre processing pipeline and surrounding components.}
+    \label{fig:overview}
+\end{figure}
+
+\section{Functional overview}
+The pre processing pipeline works by powering on the FPGA, connecting it to the pre processing pipeline client. The client then programs the FPGA with the pre processing pipeline FPGA design. After successfully programming the FPGA, the pre processing pipeline is configured with a valid image and parameters. The FPGA executes the image processing and analysis after which the client reads the result, consisting of an image and metadata, for the user to evaluate.
+
+\section{FPGA design}
+
+\subsection{Supporting systems}
+The supporting systems included in the FPGA design consists of components that does not contribute to image processing and analysis directly but provides other necessary features such as storage and communication. 
+
+\subsubsection{Communication and host interface}
+The core supporting systems of the FPGA design consists of modules provided by Opal Kelly. These include communication, buffering and storage solutions that are specific to the FPGA and off-chip components. 
+\par
+The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints used for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations. 
+\par
+
+\subsubsection{Pre processing pipeline state indicator}
+
+\subsubsection{Image transfer}
+
+\subsubsection{Parameter configuration}
+
+\subsection{Image processing and analysis}
+\subsubsection{Box Filter}
+\subsubsection{Thresholding}
+\subsubsection{Connected component labeling and analysis}
+
+\section{Client endpoint}
+\subsection{Communication}
+\subsection{Pipeline configuration}
+
+\section{Development process}
 \begin{table}[h]
-    \begin{tabular}{|p{1cm}|p{6.15cm}|p{6.15cm}|}
+    \begin{tabular}{|p{1cm}|p{10cm}|}
         \hline
         \textbf{Req. Id}& \textbf{Description}\\
         \hline
@@ -419,18 +473,9 @@ A star tracker is a system that finds stars from optical images. The purpose of 
     \label{table:dev_process}
 \end{table}
 
-\section{Pipeline algorithms}
-\subsection{Box Filter}
-\subsection{Thresholding}
-\subsection{Connected component labeling and analysis}
-
-\chapter{Development process}
-
 \chapter{Review and reflection}
 
 \chapter{Discussion}
-
-%\section{Space grade hardware design}
 
 \addcontentsline{toc}{chapter}{Bibliography}
 

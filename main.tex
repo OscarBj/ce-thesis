@@ -11,6 +11,7 @@
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{multirow}
+\usepackage[hidelinks]{hyperref}
 
 \titleformat{\chapter}{\normalfont\huge\bfseries}{\thechapter.}{20pt}{\Huge}
 
@@ -246,23 +247,23 @@ The specification consists of development and system requirements as well as a d
         \hline
         \textbf{1}&Client endpoint for FPGA module\\
         \hline
-        1.1&Bitstream can be written to FPGA\\
-        1.2&Image processing pipeline parameters can be written to FPGA\\
-        1.3&Allows for debugging of system\\
-        1.4&Provides visual results with metadata\\
+        1.1\label{req1.1}&Bitstream can be written to FPGA\\
+        1.2\label{req1.2}&Image processing pipeline parameters can be written to FPGA\\
+        1.3\label{req1.3}&Allows for debugging of system\\
+        1.4\label{req1.4}&Provides visual results with metadata\\
         \hline
         \hline
         \textbf{2}&Validation and verification of star extraction\\
         \hline
-        2.1&First stage validation and verification with software prototype\\
-        2.2&Second stage validation and verification on FPGA platform\\ 
+        2.1\label{req2.1}&First stage validation and verification with software prototype\\
+        2.2\label{req2.2}&Second stage validation and verification on FPGA platform\\ 
         \hline
         \hline
         \textbf{3}&Star extraction result and operation\\
         \hline
-        3.1&Image coordinates of extracted stars are stored\\
-        3.2&Centroid of detected stars are calculated\\
-        3.3&Error handling to avoid false detection\\
+        3.1\label{req3.1}&Image coordinates of extracted stars are stored\\
+        3.2\label{req3.2}&Centroid of detected stars are calculated\\
+        3.3\label{req3.3}&Error handling to avoid false detection\\
         \hline
     \end{tabular}
     \caption{System requirements specification}
@@ -418,12 +419,12 @@ The image processor of a star tracker extracts data from the captured image to u
 
 \chapter{Documentation}
 
-The documentation of the pre processing pipeline explains the features and technical details of the implemented system. A client endpoint is needed to allow configuration and testing of the FPGA design, which implements the pre processing pipeline. The system is thus distributed as shown in figure  to allow user friendly testing and validation. Figure \ref{fig:overview}
+The documentation of the pre processing pipeline explains the features and technical details of the implemented system. Each feature contributes to filling requirements stated in the system specification. Figure \ref{fig:overview} shows an overview of the final product which includes the required components.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[scale=0.2]{figures/overview.png}
-    \caption{Diagram of star tracker pre processing pipeline and surrounding components.}
+    \includegraphics[scale=0.3]{figures/overview.png}
+    \caption{Diagram of star tracker pre processing pipeline. The FPGA, performing the image processing and analysis, on the right and the PC, being the user interface on the left.}
     \label{fig:overview}
 \end{figure}
 
@@ -434,18 +435,85 @@ The pre processing pipeline works by powering on the FPGA, connecting it to the 
 
 \subsection{Supporting systems}
 The supporting systems included in the FPGA design consists of components that does not contribute to image processing and analysis directly but provides other necessary features such as storage and communication. 
+\par
+The core supporting systems of the FPGA design consists of modules provided by Opal Kelly. These include communication, buffering and storage solutions that are specific to the FPGA and off-chip components. 
 
 \subsubsection{Communication and host interface}
-The core supporting systems of the FPGA design consists of modules provided by Opal Kelly. These include communication, buffering and storage solutions that are specific to the FPGA and off-chip components. 
-\par
 The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints used for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations. 
 \par
+Opal Kelly provides a set of IP core modules supporting data transfer from single bits to megabytes. Different synchronization and control methods are used for each module resulting in smaller scale data transfers being simpler than large scale transfers. Three Opal Kelly communication modules are used within the FPGA design which each fill their own purpose.
+\par
+The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to 32 addresses, with 32 bits of storage each to use synchronously. The register bridge is used trough the Opal Kelly API in the client software.  
+\par
+Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature and limited capacity good for state management and triggering events. The asynchronous data is still in many cases synchronized to a clock in the design.
+\par
+Pipe In and Pipe Out modules are used for multi byte synchronous data transfer. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer but unless the \verb|EP_READY| control signal is high, data is not sent. This is useful in cases where incoming data needs to be stored using buffers.
 
-\subsubsection{Pre processing pipeline state indicator}
+\subsubsection{FPGA state management and event triggers}
+The client uses the Wire In module to control  state of  is managed by Wire In/Out buses to allow a simple and reactive user experience. The Wire In uses only the first 4 bits of the 32-bit data. Table \ref{table:wireState} lists the function of each client controllable state. The wire values are set so that only one state can occur at a given moment. This maintains predictability in the system.
 
-\subsubsection{Image transfer}
+\begin{table}[h]
+    \begin{tabular}{|p{3cm}|p{10cm}|}
+        \hline
+        \textbf{Wire value}&\textbf{Description}\\
+        \hline
+        0x0001&Read storage to Pipe Out. Used when reading image back from FPGA to client\\
+        \hline
+        0x0002&Write to storage from Pipe In. Used when writing image from client to FPGA\\ 
+        \hline
+        0x0004&Resets FIFO buffers. Used between image reads and writes \\
+        \hline
+        0x0008&Triggers image processing and analysis. Used when FPGA is configured and ready to perform star extraction\\
+        \hline
+    \end{tabular}
+    \caption{Description of Wire In state control bits}
+    \label{table:wireState}
+\end{table}
 
-\subsubsection{Parameter configuration}
+The state management and event trigger system contributes to satisfying the system requirements. The features provided by the Wire In module are fundamental to the requirements \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4} and \hyperref[req2.2]{2.2}.
+
+\subsubsection{Parameter configuration and metrics}
+To allow data transfer for accessing register values on the FPGA, the Opal Kelly register bridge is used. The registers are addressed so that the first 15 contains writable data and second 15 contains readable data. This prevents any concurrency issues with register access. Pre assigned values to the writable addresses ensures that the pre processing pipeline parameters have default values to use in case none are assigned trough the register bridge.
+\par
+Table \ref{table:regs1} and \ref{table:regs2} contains explanation and address for each register in use.
+
+\begin{table}[h]
+    \begin{tabular}{|p{2cm}|p{2cm}|p{9cm}|}
+        \hline
+        \textbf{Address}&\textbf{Data}&\textbf{Description}\\
+        \hline
+        0x0000&32-bit int&Minimum brightness of an image feature. Used to filter out faint objects in the image.\\
+        \hline
+        0x0001&8-bit int&Binary transformation threshold. Used for filtering faint pixels out when preparing image for feature detection.\\ 
+        \hline
+    \end{tabular}
+    \caption{Description of writable values used by the FPGA.}
+    \label{table:regs1}
+\end{table}
+
+\begin{table}[h]
+    \begin{tabular}{|p{2cm}|p{2cm}|p{9cm}|}
+        \hline
+        \textbf{Address}&\textbf{Data}&\textbf{Description}\\
+        \hline
+        0x000F&32-bit int&Image processing and analysis timer. Used for evaluating performance. Stored in register as clock cycle count.\\
+        \hline
+        0x0010&32-bit int&Box filter timer. Used for evaluating box filter algorithm performance.\\ 
+        \hline
+        0x0011&32-bit int&CCL timer. Used for evaluating CCL algorithm performance.\\
+        \hline
+        0x0012&32-bit int&Feature rendering timer. Used for evaluating performance of feature rendering.\\
+        \hline
+    \end{tabular}
+    \caption{Description of readable registers on the FPGA.}
+    \label{table:regs2}
+\end{table}
+
+The features enabled by the register bridge for parameter configuration and metrics contribute to system requirements \hyperref[req1.2]{1.2}, \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, \hyperref[req2.2]{2.2} and \hyperref[req3.3]{3.3}.
+
+\subsubsection{Image transfer and storage}
+
+\subsubsection{Image column data buffer}
 
 \subsection{Image processing and analysis}
 \subsubsection{Box Filter}
@@ -458,7 +526,7 @@ The Opal Kelly host interface, called okHost, is a gateway for controlling and m
 
 \section{Development process}
 \begin{table}[h]
-    \begin{tabular}{|p{1cm}|p{10cm}|}
+    \begin{tabular}{|p{3cm}|p{10cm}|}
         \hline
         \textbf{Req. Id}& \textbf{Description}\\
         \hline

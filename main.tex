@@ -429,28 +429,49 @@ The documentation of the pre processing pipeline explains the features and techn
 \end{figure}
 
 \section{Functional overview}
-The pre processing pipeline works by powering on the FPGA, connecting it to the pre processing pipeline client. The client then programs the FPGA with the pre processing pipeline FPGA design. After successfully programming the FPGA, the pre processing pipeline is configured with a valid image and parameters. The FPGA executes the image processing and analysis after which the client reads the result, consisting of an image and metadata, for the user to evaluate.
+The star tracker pre processing pipeline is a system that uses an input image to extract features from. The features, in this case stars, can be used for further implementation of a star tracker.
+\par
+The system can be integrated to a completely embedded environment where it does not depend on a user interfacing client. 
+An integration to a star tracker can be independent and highly isolated, with minor adjustments made to the off-chip module interfaces. Only a few essential parameters, triggers and data is required.  
+\par
+From a user experience point of view, the pre processing pipeline works by powering on the FPGA, connecting it to the pre processing pipeline client. The client then programs the FPGA with the pre processing pipeline FPGA design. After successfully programming the FPGA, the pre processing pipeline is configured with a valid image and parameters. The FPGA executes the image processing and analysis after which the client reads the result, consisting of an image and metadata, for the user to evaluate.
+\par
+From an integrated system point of view, the pre processing pipeline is powered on and configured by an external system, a microprocessor with a program or embedded operating system supplying parameters, triggers and data. 
 
 \section{FPGA design}
 
-\subsection{Supporting systems}
+The star tracker pre processing pipeline FPGA design contributes to all system requirements in table \ref*{table:1}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.25]{figures/fpga_design.png}
+    \caption{Diagram showing FPGA design as functional blocks where top section is furthest from off-chip modules while bottom section is closest to off-chip modules. Boxes in the diagram are not in scale to the actual footprint of the components on the FPGA.}
+    \label{fig:fpga_design}
+\end{figure}
+
+\subsection{Support systems}
 The supporting systems included in the FPGA design consists of components that does not contribute to image processing and analysis directly but provides other necessary features such as storage and communication. 
 \par
 The core supporting systems of the FPGA design consists of modules provided by Opal Kelly. These include communication, buffering and storage solutions that are specific to the FPGA and off-chip components. 
+\par
+The bottom section of figure \ref*{fig:fpga_design} shows main functional components of the support systems in the FPGA design. The isolation of this section can be made in a functional and in some cases also in a technical sense.
 
 \subsubsection{Communication and host interface}
-The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints used for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations. 
+The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints used for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations.
 \par
 Opal Kelly provides a set of IP core modules supporting data transfer from single bits to megabytes. Different synchronization and control methods are used for each module resulting in smaller scale data transfers being simpler than large scale transfers. Three Opal Kelly communication modules are used within the FPGA design which each fill their own purpose.
 \par
-The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to 32 addresses, with 32 bits of storage each to use synchronously. The register bridge is used trough the Opal Kelly API in the client software.  
+The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to 32 addresses, with 32 bits of storage each to use synchronously. The register bridge is used through the Opal Kelly API in the client software. Figure \ref*{fig:fpga_design} shows the register bridge connected to the input/output pads, which acts as interface between the register bridge and the off-chip modules. The required off chip modules for the register bridge is clock and USB. 
 \par
-Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature and limited capacity good for state management and triggering events. The asynchronous data is still in many cases synchronized to a clock in the design.
+Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature and limited capacity good for state management and triggering events. The asynchronous data is still in many cases synchronized to a clock in the design. Figure \ref*{fig:fpga_design} shows the Wire In/Out connected to the input/output pads, giving it access to the USB off-chip module.
 \par
 Pipe In and Pipe Out modules are used for multi byte synchronous data transfer. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer but unless the \verb|EP_READY| control signal is high, data is not sent. This is useful in cases where incoming data needs to be stored using buffers.
+Figure \ref*{fig:fpga_design} shows the Pipe In/Out connected to the input/output pads, allowing it to interface with Clock and USB off-chip modules.
 
 \subsubsection{FPGA state management and event triggers}
-The client uses the Wire In module to control  state of  is managed by Wire In/Out buses to allow a simple and reactive user experience. The Wire In uses only the first 4 bits of the 32-bit data. Table \ref{table:wireState} lists the function of each client controllable state. The wire values are set so that only one state can occur at a given moment. This maintains predictability in the system.
+The Wire In module is used on the FPGA to enter states that needs to be externally managed. Table \ref{table:wireInState} shows a description and wire values of them. The Wire In uses only the first 4 bits of the 32-bit data and the values are set so that only one state can occur at a given moment which ensures predictability of the system. Each state in table \ref*{table:wireInState} is mapped to an index which is used to read the value corresponding to the state on the 32-bit Wire In data bus.
+\par
+The Wire Out module has the single purpose of providing verification of the setup of the FPGA. The signal is expected to be high after a small delay after the FPGA is powered on and the bitstream is programmed. Table \ref*{table:wireOutState} shows the description and wire value of the Wire Out state.
 
 \begin{table}[h]
     \begin{tabular}{|p{3cm}|p{10cm}|}
@@ -467,9 +488,21 @@ The client uses the Wire In module to control  state of  is managed by Wire In/O
         \hline
     \end{tabular}
     \caption{Description of Wire In state control bits}
-    \label{table:wireState}
+    \label{table:wireInState}
+\end{table}
+\begin{table}[h]
+    \begin{tabular}{|p{3cm}|p{10cm}|}
+        \hline
+        \textbf{Wire value}&\textbf{Description}\\
+        \hline
+        0x0001&Memory calibration signal. Used to verify successful initialization of SDRAM memory.\\
+        \hline
+    \end{tabular}
+    \caption{Description of Wire Out state bits}
+    \label{table:wireOutState}
 \end{table}
 
+The Wire In/Out modules are a good suit for the state triggers because of the reactive and simple user experience.
 The state management and event trigger system contributes to satisfying the system requirements. The features provided by the Wire In module are fundamental to the requirements \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4} and \hyperref[req2.2]{2.2}.
 
 \subsubsection{Parameter configuration and metrics}
@@ -511,9 +544,16 @@ Table \ref{table:regs1} and \ref{table:regs2} contains explanation and address f
 
 The features enabled by the register bridge for parameter configuration and metrics contribute to system requirements \hyperref[req1.2]{1.2}, \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, \hyperref[req2.2]{2.2} and \hyperref[req3.3]{3.3}.
 
-\subsubsection{Image transfer and storage}
+\subsubsection{Image transfer and SDRAM storage}
+The image processing 
+The pipeline is sequential and requires the image to be stored two times, with an optional third copy of the original. 
+The star tracker pre processing pipeline works with images of fixed size and format.  
 
-\subsubsection{Image column data buffer}
+\subsubsection{Line buffer and BRAM storage}
+
+\subsubsection{3x3 Kernel}
+
+\subsubsection{Rendering}
 
 \subsection{Image processing and analysis}
 \subsubsection{Box Filter}

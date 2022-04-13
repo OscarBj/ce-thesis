@@ -12,6 +12,8 @@
 \usepackage{wrapfig}
 \usepackage{multirow}
 \usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+\usepackage{listings}
 
 \titleformat{\chapter}{\normalfont\huge\bfseries}{\thechapter.}{20pt}{\Huge}
 
@@ -555,38 +557,65 @@ After image processing and analysis the output image is stored to SDRAM. The out
 The image transfer and storage systems contribute to system requirements \hyperref[req1.4]{1.4} and \hyperref[req2.2]{2.2}.
 
 \subsubsection{Line buffer and BRAM storage}
-The image data is accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. in BRAM.
+The image data is accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. Figure \ref*{fig:mem_overview} shows the line buffer in the middle, as the intermediate storage mechanism.
 \par
-The dual port BRAM has two data buses and two address ports to allow simultaneous read and write operations. The interface also includes a 270-bit data mask to select which pixels to write to BRAM. This adds complexity to the line buffer system but reduces the number of registers needed.  
+The dual port BRAM has two data buses and two address ports to allow simultaneous read and write operations. The interface also includes a 270-bit data mask to select which pixels to write to BRAM. This adds complexity to the line buffer system but reduces the number of registers needed.
+\par
+The line buffer system is the intermediate storage between the image storage and image processing. The read and write operations are triggered by counters that are updated during the image processing. 
+% read write operations, tasks
+% system requirements reference
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.3]{figures/mem_overview.png}
+    \caption{Diagram of different levels of memory used for storing image pixels of the star tracker pre processing pipeline.}
+    \label{fig:mem_overview}
+\end{figure}
+
 \subsubsection{3x3 Kernel}
+The lowest level storage mechanism where image pixels are kept is 3 small line buffers, forming a 3 x 3 pixel sliding window, or image processing kernel. It is implemented in distributed memory, within the FPGA fabric. The kernel consists of three pixels from each column in the line buffer, creating the 3 x 3 pixel geometry shown in figure \ref*{fig:mem_overview}. Data from the line buffer is fed into the kernel data structure which is then used for image processing and analysis. The results of these operations are written directly to a higher level storage. Thus the the data flow is directional within this storage mechanism.
+% read write operations, tasks
+% system requirements reference
 
 \subsubsection{Rendering}
+The image is rendered in the original 270 x 480 single channel 8-bit format to SDRAM in between image processing steps and for final output.
 
 \subsection{Image processing and analysis}
+To extract stars from an image, a number of image processing algorithms are implemented. The general idea is that an image containing bright stars in the foreground and faint objects or empty space in the background is used as input. The first algorithm smoothens the image to create larger and more detectable foreground features. The second process separates the foreground from the background with a threshold. This is to enable connected component labeling (CCL) in the next step, which requires a fully separate foreground and background. Connected component labeling algorithm traverse trough the image pixels and assigns them to features. Metrics of the features are stored for calculating the centroid in the final step.
+
 \subsubsection{Box Filter}
+A box filter is applied on the image to prepare the image for CCL. The principle of the box filter is to blur the image by replacing a pixel with the average of the surrounding pixels. The 3 x 3 kernel is used for this filter, where the center pixel is the target. This filter is commonly described with the expression 
+ 
+$\frac{1}{9}
+\begin{bmatrix}
+1 & 1 & 1\\
+1 & 1 & 1\\
+1 & 1 & 1
+\end{bmatrix}
+$,
+where the matrix represents the kernel with pixel values. This gives a uniformly applied average of the image where high value pixel areas are expanded without too much loss of detail.
+\par
+A problem with the box filter is the need for integer division. A division operation is problematic when implemented in hardware and is often dedicated a separate IP core module. This increased complexity can however be avoided in the case of the box filter because it lacks the need for high accuracy output of the operation, as the pixel values are 8-bit integers. The alternative operation to replace the division takes advantage of the constants in the box filter, which is the output bit width and the denominator. The lack of accuracy is compensated by the performance which is reduced from a multi clock cycle operation into a single clock cycle operation. The division is approximated with the expression
+$
+(\sum x_{ij} \cdot 28) \gg 8 
+$, where $x$ is the 3 x 3 kernel.
+\par
+Image edges are handled by ignoring the pixel value and setting them to 0. This assigns the edges of the image as part of the background feature. The possible loss of edge features is also acceptable because of the difficulty to approximate the complete geometry and center of an edge feature. 
+
 \subsubsection{Thresholding}
+Thresholding is done to separate the background from the foreground in the image. The foreground needs to contain enough pixels to enable successful star extraction. The box filter allows foreground feature edges to be brighter, which otherwise might be categorized as background in this step. If the threshold is too low, background and noise blends together with foreground features, making the choice of optimal threshold a complex problem. This is out of scope of this project and the threshold is manually set. 
+\par
+An example solution for setting the threshold could be to use a feedback loop to adjust the parameter. The loop would use previous output of the pipeline to use as input, providing the number of stars, brightness and distance to determine a threshold setting and acceptable result.    
+\par
+The thresholding process transforms each pixel value to either 0, being background, or 255 as foreground. As it is a process with no dependency to neighboring pixels, it can be conveniently placed in the output phase of the box filter. The output phase is where the result of the box filter operation is written to SDRAM memory. The register containing the output of the box filter is piped to the SDRAM write bus through the threshold. This makes the thresholding highly efficient because of no additional clock cycles required.
+
 \subsubsection{Connected component labeling and analysis}
+
+\subsubsection{Feature detection and centroiding}
 
 \section{Client endpoint}
 \subsection{Communication}
 \subsection{Pipeline configuration}
-
-\section{Development process}
-\begin{table}[h]
-    \begin{tabular}{|p{3cm}|p{10cm}|}
-        \hline
-        \textbf{Req. Id}& \textbf{Description}\\
-        \hline
-        1&Identify hardware requirements from StreakDet software\\
-        \hline
-        2&Identify algorithmic requirements from StreakDet software\\ 
-        \hline
-        3&\\
-        \hline
-    \end{tabular}
-    \caption{Development process}
-    \label{table:dev_process}
-\end{table}
 
 \chapter{Review and reflection}
 

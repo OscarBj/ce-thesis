@@ -24,11 +24,11 @@
         \vspace*{5cm}
         
         \LARGE
-        \textbf{Implementation of FPGA based star tracker pre processing pipeline}
+        \textbf{Implementation of FPGA-based star tracker pre processing pipeline}
         \\
         \vspace{0.5cm}
         
-        Oscar Björkgren
+        Oscar Björkgren 38655
         
 \end{center}
 \vspace{8cm}
@@ -40,11 +40,11 @@
 %\includegraphics[scale=0.4]{figures/asro-logo.png}
 } &
 
-Supervisors, Åbo Akademi: Annamari Soini, Johan Lilius\\ &
+Supervisors, Åbo Akademi University: Annamari Soini, Johan Lilius\\ &
 Supervisors, Aboa Space Research Oy: Tero Säntti, Tuomo Komulainen\\ & 
 Master's thesis in Computer Engineering\\ &
-Åbo Akademi\\ &
-2021
+Åbo Akademi University\\ &
+2022
 
 \end{tabular}
 
@@ -70,8 +70,8 @@ Master's thesis in Computer Engineering\\ &
 \pagenumbering{arabic}
 
     % \section{Background}
-A hardware based solution for a software algorithm is sometimes needed within application areas where performance matters the most. One example of this is the aerospace industry where the most optimized solution is sometimes the only choice. In this thesis I work together with Aboa Space Research Oy to create a hardware implementation of a pre-processor module for a star tracker system using a software component as a basis. A star tracker is commonly used as part of a larger system where the role of the tracker is to provide orientational data to other components. This information might be used for navigation and control or in combination with scientific instruments to help with further analysis.
-Hardware design can be inspired by software algorithms when designed for a specific purpose as in this case. The software defines the functional part of the system, which leaves a big part of the supporting architecture to be designed. In this thesis I will explain the process of implementing functionality to a digital circuit, by example.
+A hardware-based solution for a software algorithm is sometimes needed within application areas where performance matters the most. One example of this is the aerospace industry where the most optimized solution is sometimes the only choice. In this thesis, I work together with Aboa Space Research Oy to create a hardware implementation of a pre-processor module for a star tracker system using a software component as a basis. A star tracker is commonly used as part of a larger system where the role of the tracker is to provide orientational data to other components. This information might be used for navigation and control or in combination with scientific instruments to help with further analysis.
+Hardware design can be inspired by software algorithms when designed for a specific purpose, as in this case. The software defines the functional part of the system, which leaves a big part of the supporting architecture to be designed. In this thesis, I will explain the process of implementing functionality to a digital circuit, by example.
 
 %This thesis will follow the steps that leads the software to be broken down into  can function as a roadmap of thesis process.
 
@@ -81,7 +81,7 @@ Hardware design can be inspired by software algorithms when designed for a speci
 
     % \section{Purpose}
 % implementation purpose: Deliver attitude data to scientific instruments, purpose of the thesis
-To complete a set of tasks in any environment, a scientific project needs well defined tools to reach its goals. In technologically restricted environments such as space, tools often need to be multipurpose for optimal use. An image sensor is in this case used for providing reference data for a star tracker. This image sensor can provide data to multiple systems by reuse of data or capturing new images with other settings. The purpose of the system in this project is to refine data from predefined sensors to provide additional and reinforcing information about the environment for the use of other scientific instruments. The goal of this thesis is to create a roadmap of the system design process and include theory of relevant areas.
+To complete a set of tasks in any environment, a scientific project needs well-defined tools to reach its goals. In technologically restricted environments such as space, tools often need to be multipurpose for optimal use. An image sensor is in this case used to provide reference data for a star tracker. This image sensor can provide data to multiple systems by reusing data or capturing new images with other settings. The purpose of the system in this project is to refine data from predefined sensors to provide additional and reinforcing information about the environment for the use of other scientific instruments. The goal of this thesis is to create a roadmap of the system design process and include theory of relevant areas.
 
     %\section{Limitations}
 % Mission technical details. System verification/ space hardening
@@ -98,15 +98,15 @@ To complete a set of tasks in any environment, a scientific project needs well d
 
 \chapter{Custom hardware design in general}
 \section{Single and general purpose processors}
-A general purpose processor refers to a hardware computing platform which is designed for universal use with broad benefits across different problem solving domains. Computing platforms such as microprocessors and CPUs are examples of this type of processor, their hardware logic is implemented in such a way that it enables a large variety of computations to be performed. 
-The characteristics of a processor for general problem solving are well suited to common tasks where there might be many hard- and software abstractions between the application interface and hardware logic. This is a necessity in for example PCs.
+A general purpose processor refers to a hardware computing platform which is designed for universal use with broad benefits across different problem-solving domains. Computing platforms such as microprocessors and CPUs are examples of this type of processor, their hardware logic is implemented in such a way that it enables a large variety of computations to be performed. 
+The characteristics of a processor for general problem solving are well suited to common tasks where there might be many hard- and software abstractions between the application interface and hardware logic. This is a necessity in, for example, PCs.
 \par
-When hardware is required for a single purpose with a finite set of tasks to be performed there will be drawbacks with using hardware designed with flexibility in mind. This could be compared to the use of a multitool for driving a screw into a piece of wood when in fact only a screwdriver is needed. It is not a wrong way to do it but there is a more optimized way of achieving the result. Any CPU could be used for computer graphics calculations but since GPUs are designed for the single purpose of this type of processing they are a better tool for the job.
+When hardware is required for a single purpose with a finite set of tasks to be performed, there will be drawbacks with using hardware designed with flexibility in mind. This could be compared to the use of a multitool for driving a screw into a piece of wood when, in fact, only a screwdriver is needed. It is not the wrong way to do it, but there is a more optimized way of achieving the result. Any CPU could be used for computer graphics calculations but since GPUs are designed for the single purpose of this type of processing, they are a better tool for the job.
 \par
-Single purpose processors have a rich history with roots in the early ages of computers. Vector processors were for example used in supercomputers.
+Single purpose processors have a rich history with roots in the early ages of computers. Vector processors were, for example, used in supercomputers.
 This was before computers were seen as general purpose technology and high performance computing was about as common as ordinary PCs are now.
-Since recent years the utilization of specialized hardware has been rising, with new application areas evolving. Single purpose processors such as GPUs and field programmable gate arrays (FPGAs) have found themselves into areas such as machine learning, cryptocurrency mining, and other high performance computing applications.
-As the hardware used in aerospace applications generally is specialized due to strict requirements, single purpose computing platforms are heavily used. For example, the NASA perseverance Mars rover relies heavily on Xilinx manufactured FPGAs for different tasks, such as image processing pipelines \citep{XilPerservance}.
+In recent years, the utilization of specialized hardware has been rising, with new application areas evolving. Single purpose processors such as GPUs and field programmable gate arrays (FPGAs) have found themselves into areas such as machine learning, cryptocurrency mining, and other high performance computing applications.
+As the hardware used in aerospace applications generally is specialized according to strict requirements, single purpose computing platforms are heavily used. For example, the NASA perseverance Mars rover relies heavily on Xilinx manufactured FPGAs for different tasks, such as image processing pipelines \citep{XilPerservance}.
 
 \begin{figure}
     \centering
@@ -117,12 +117,12 @@ specialized hardware in high performance computing \citep{GenPurpTech}}
 \end{figure}
 
 \section{FPGA Overview}
-A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and high a level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles \citep{XilFPGAIntro}. The pipeline principle is demonstrated in figure \ref{fig:pipeline} by comparing it to a non pipelined solution. The pipeline transformation enables the inactive parts of the calculation to be utilized when they normally would idle, waiting for all parts to finish.
+A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design to a solution that is developed using software, the FPGA stands out with process pipelining and a high level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register, because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles \citep{XilFPGAIntro}. The pipeline principle is demonstrated in figure \ref{fig:pipeline} by comparing it to a non-pipelined solution. The pipeline transformation enables the inactive parts of the calculation to be utilized when they would normally be idle, waiting for all parts to finish.
 
 \begin{figure}
     \centering
     \includegraphics[scale=0.7]{figures/structure_fpga_imp_compute_function.png}
-    \caption{Figure showing two execution paths for the expression $y=(a \times x) +  b + c$. The operations in the first path depends on the output from previous operations whereas the operations in the second path depends on a separate input registers. The second path is a pipeline transformation of the first path \citep{XilFPGAIntro}}.
+    \caption{Figure showing two execution paths for the expression $y=(a \times x) +  b + c$. The operations in the first path depend on the output from previous operations, whereas the operations in the second path depend on a separate input register. The second path is a pipeline transformation of the first path \citep{XilFPGAIntro}}.
     \label{fig:pipeline}
 \end{figure}
 
@@ -136,9 +136,9 @@ A field programmable gate array, or FPGA, is a digital integrated circuit that c
 % https://www.analog.com/en/analog-dialogue/articles/care-and-feeding-of-fpga-power-supplies-a-how-and-why-guide-to-success.html
 
 \par
-Xilinx is one of the key companies involved in FPGA production both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
+Xilinx is one of the key companies involved in FPGA production, both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry, with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\% \citep{XilHist}\citep{XilShare}.
 \par 
-Due to the significance of Xilinx, and relevancy in this project, FPGA technology discussed in this work is Xilinx based. Differences between manufacturers includes technological and architectural nuances. For example, Xilinx exclusively manufactures static random access memory (SRAM) based FGPAs. This refers to the technology of the programmable parts of the FPGA. Other available tehcnologies are flash and anti-fuse, which are less common than SRAM \citep{FPGAarch1}.
+Due to the significance of Xilinx, and relevancy in this project, FPGA technology discussed in this work is Xilinx based. Differences between manufacturers include technological and architectural nuances. For example, Xilinx exclusively manufactures static random access memory (SRAM)-based FGPAs. This refers to the technology of the programmable parts of the FPGA. Other available technologies are flash and anti-fuse, which are less common than SRAM \citep{FPGAarch1}.
 \par
 The basic internal elements of an FPGA consist of circuits such as look-up tables, flip-flops, wires, and input/output pads. Using these elements the FPGA design is implemented in the hardware.
 The architecture is explained by Figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with the interconnect, consisting of wires and switch matrices. The wires also run to the input/output pads, which enables interfacing with off-chip components such as synchronous dynamic random access memory (SDRAM) or sensors \citep{XilFPGAIntro}. Configurable logic blocks (CLBs) contain the look-up tables and flip flops. An overview of a CLB is shown in Figure \ref{fig:3}.
@@ -146,7 +146,7 @@ The architecture is explained by Figure \ref{fig:2} which shows a matrix arrange
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.55]{figures/basic_fpga.png}
-    \caption{FPGA architecture. An FPGA consist of configurable logic blocks, interconnect, and input/output pads \citep{XilFPGAIntro}.}
+    \caption{FPGA architecture. An FPGA consists of configurable logic blocks, interconnect, and input/output pads \citep{XilFPGAIntro}.}
     \label{fig:2}
 \end{figure}
 
@@ -157,7 +157,7 @@ The architecture is explained by Figure \ref{fig:2} which shows a matrix arrange
     \label{fig:3}
 \end{figure}
 
-The slices in Figure \ref{fig:3} represent core elements of an FPGA. Slices consist of look-up tables, storage elements, multiplexers, and carry logic. Depending on the FPGA there are different numbers of slices per CLB. The slices are collectively responsible for implementing a significant portion of the FPGA design \citep{XilClbMan}.
+The slices in Figure \ref{fig:3} represent core elements of an FPGA. Slices consist of look-up tables, storage elements, multiplexers, and carry logic. Depending on the FPGA, there are different numbers of slices per CLB. The slices are collectively responsible for implementing a significant portion of the FPGA design \citep{XilClbMan}.
 \par
 Look-up tables, or LUTs, are mainly used as logic elements in FPGAs. They can implement any boolean logic operation by combining memory cells with multiplexers. The look-up table is essentially a truth table that can be used for reading the result of boolean operations. Memory cells and multiplexer routings are initialized by the FPGA design, which is what makes the look-up table element configurable \citep{XilFPGAIntro}. An example of a 4 memory cell wide LUT is shown in Figure \ref{fig:4}.
 
@@ -223,7 +223,7 @@ In addition to FPGA products, Xilinx also provides design tools and IP cores to 
 
 \chapter{System requirements}
 
-A hardware implementation of an image analysis software component is to be developed to be used on an FPGA. The software in question is a product of a European space agency funded research project regarding detection and analysis of space debris in low earth orbit. Using computer vision among other analysis, space debris is identified from image data. With the help of a star catalog the image is mapped to a position in space to provide positional data of the detected debris. A diagram of the system is shown in Figure \ref{fig:0}. The software component relevant to this project is the Pre-processing \& Segmentation part of the diagram, which is in the input phase of the complete system \citep{StreakDet} \citep{Starmatch}.
+A hardware implementation of an image analysis software component is to be developed to be used on an FPGA. The software in question is a product of a research project regarding detection and analysis of space debris in low earth orbit. Using computer vision among other analysis, space debris is identified from image data. With the help of a star catalog, the image is mapped to a position in space to provide positional data of the detected debris. A diagram of the system is shown in Figure \ref{fig:0}. The software component relevant to this project is the Pre-processing \& Segmentation part of the diagram, which is in the input phase of the complete system \citep{StreakDet} \citep{Starmatch}.
 
 \begin{figure}[h]
     \centering
@@ -233,7 +233,7 @@ A hardware implementation of an image analysis software component is to be devel
 \end{figure}
 
 %\section{Scope}
-The star extraction process in StreakDet passes the input image through a series of algorithms to identify stars. The algorithms are well known image filters and analysis methods that in combination with each other produce a way to pick out objects from an image. The main task in this project is to identify these algorithms and fit them into a hardware design using a hardware description language.
+The star extraction process in StreakDet passes the input image through a series of algorithms to identify stars. The algorithms are well-known image filters and analysis methods, that in combination with each other, produce a way to extract objects from an image. The main task in this project is to identify these algorithms and fit them into a hardware design using a hardware description language.
 \par
 Star extraction is a key stage of a star tracker system which uses a star catalog to match the extracted stars against. Using the star matches and catalog information the position and orientation of the captured image can be determined. The goal of this project is to create a pre-processing pipeline to be used in a star tracker.
 
@@ -264,7 +264,7 @@ The specification consists of development and system requirements as well as a d
         \textbf{3}&Star extraction result and operation\\
         \hline
         3.1\label{req3.1}&Image coordinates of extracted stars are stored\\
-        3.2\label{req3.2}&Centroid of detected stars are calculated\\
+        3.2\label{req3.2}&Centroid of detected stars is calculated\\
         3.3\label{req3.3}&Error handling to avoid false detection\\
         \hline
     \end{tabular}
@@ -283,14 +283,14 @@ The system consists of two nodes, the host machine and the target FPGA. Because 
 The FPGA module Opal Kelly XEM7305 chip with a Xilinx Spartan-7 FPGA will function as a testbed for development. The module contains a part from the FPGA external SDRAM memory and communication interfaces such as USB 3. These features allow for host machine communication and data storage of features such as images, star catalog, and output. These data could be stored on the FPGA itself but using the SDRAM is a sustainable solution because it allows for shared memory usage in production and more flexible image and star catalog sizes.
 
 
-\chapter{FPGA based computer hardware}
-Common computer hardware is the corner stone of any digital circuit that needs to perform common tasks such as storing and transmitting data. With the help of the basic elements of an FPGA discussed in Chapter 2, circuits of this nature can be created. Although an 8-bit adder circuit can be regarded as common computer hardware, the focus of this chapter is on larger circuits used as hardware modules such as memory and communication interfaces. The components discussed are essential building blocks for the image processing pipeline. Figure \ref{fig:xemOverview} shows an overview of these components on the XEM7305 FPGA module.
+\chapter{FPGA-based computer hardware}
+Common computer hardware is the corner stone of any digital circuit that needs to perform common tasks, such as storing and transmitting data. With the help of the basic elements of an FPGA discussed in Chapter 2, circuits of this nature can be created. Although an 8-bit adder circuit can be regarded as common computer hardware, the focus of this chapter is on larger circuits used as hardware modules, such as memory and communication interfaces. The components discussed are essential building blocks for the image processing pipeline. Figure \ref{fig:xemOverview} shows an overview of these components on the XEM7305 FPGA module.
 
 \section{Communication}
-The system requirements state a communication channel to be available for shared memory usage and controlling the FPGA. Machine to machine communication is enabled through the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB C \citep{XEM7305Man}.
+The system requirements state a communication channel to be available for shared memory usage and controlling the FPGA. Machine-to-machine communication is enabled through the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB C \citep{XEM7305Man}.
 \par
 The advantage of the USB is flexibility and ease of use. Transfer speed is not a high priority in this case because of the relatively small size of data, which is less than a megabyte. The USB module on the XEM7305 contains a USB C port and a Cypress FX3 peripheral controller, shown in figure \ref{fig:xemOverview}.
-The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module such as a image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided. \citep{XEM7305Man} \citep{FX3Man}.
+The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module, such as an image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided. \citep{XEM7305Man} \citep{FX3Man}.
 
 \begin{figure}
     \centering
@@ -299,14 +299,14 @@ The peripheral controller operates the data bus by implementing a communication 
     \label{fig:xemOverview}
 \end{figure}
 
-Both the USB 3 standard and the FX3 peripheral controller supports serial and parallel communication but the hard IP core connecting to the FX3 interface supports only serial communication. This simplifies the use of the IP core, requiring less FPGA fabric, but also reduces the throughput \citep{XEM7305Man} \citep{FX3Man}.
+Both the USB 3 standard and the FX3 peripheral controller support serial and parallel communication, but the hard IP core connecting to the FX3 interface supports only serial communication. This simplifies the use of the IP core, requiring less FPGA fabric, but also reduces the throughput \citep{XEM7305Man} \citep{FX3Man}.
 
 \par
-The internal communication mechanism of an FPGA consists the FPGA interconnect. The interconnect is the physical layer of the communication protocol stack leaving the rest of the stack to be implemented in the FPGA design with HDL or IP cores. 
+The internal communication mechanism of an FPGA consists of the FPGA interconnect. The interconnect is the physical layer of the communication protocol stack, leaving the rest of the stack to be implemented in the FPGA design with HDL or IP cores. 
 \par
-The limiting factor and bottleneck of the system is often some off-chip hardware module that places certain requirements on the communication, for example the USB or memory controller. When working outside these types of requirements, the throughput of the FPGA based system can be optimized by increasing the bit width between modules. When applying this to the image processing pipeline context, this might be practical within communication of image data. The implementation of this requires more memory cells and wires, which in turn increases the footprint of the FPGA design.
+The limiting factor and bottleneck of the system is often some off-chip hardware module that places certain requirements on the communication, for example, the USB or memory controller. When working outside these types of requirements, the throughput of the FPGA-based system can be optimized by increasing the bit width between modules. When applying this to the image processing pipeline context, this might be practical within communication of image data. The implementation of this requires more memory cells and wires which, in turn, increases the footprint of the FPGA design.
 \par
-When comparing to a software program, the same optimization method of maximizing bit width might be considered. This, however, does not inherently result in a gain in throughput because conventional CPUs have a fixed bit width for their operations. When this limit is exceeded the operation needs to be performed across multiple clock cycles which counteracts the wanted result. The bit width of an operation on an FPGA during a clock cycle is consistent with the HDL design. 
+When compared to a software program, the same optimization method of maximizing bit width might be considered. This, however, does not inherently result in a gain in throughput because conventional CPUs have a fixed bit width for their operations. When this limit is exceeded, the operation needs to be performed across multiple clock cycles which counteracts the wanted result. The bit width of an operation on an FPGA during a clock cycle is consistent with the HDL design. 
 \par
 % Image of low vs high bit width circuit/ footprint
 % More in depth on USB3, images
@@ -318,14 +318,14 @@ When comparing to a software program, the same optimization method of maximizing
 \section{Memory}
 To enable processing of image data, a set of storage mechanisms is necessary. The use of a certain memory type is mostly dependent on the size of the data and how it will be used. As in conventional CPU architectures, different levels of memory are used to satisfy these dependencies.
 \par
-FPGAs are generally not well suited for storing a large quantity of data as it is considered inefficient use of available CLBs. Since customization is a key feature, the most standardized parts, such as memory, are often placed outside the FPGA. Off-chip memory allows storage of large data, such as images, freeing up CLBs to other usage such as computation and logic. The downside with off chip components is them often being a bottleneck in the system. This is due to a number of factors such as restrictions in clock speed, concurrency, and bus width. A larger FPGA with an increased number of CLBs could offset the need for off chip memory avoiding the bottleneck, with consequences being greater power consumption and physical size, potentially invalidating the solution.
+FPGAs are generally not well suited for storing a large quantity of data, as it is considered inefficient use of available CLBs. Since customization is a key feature, the most standardized parts, such as memory, are often placed outside the FPGA. Off-chip memory allows storage of large data, such as images, freeing up CLBs to other usage such as computation and logic. The drawback with off-chip components is they are often a bottleneck in the system. This is due to a number of factors such as restrictions in clock speed, concurrency, and bus width. A larger FPGA with an increased number of CLBs could offset the need for off-chip memory avoiding the bottleneck, with consequences being greater power consumption and physical size, potentially invalidating the solution.
 \par
 An overview of the XEM7305 module and the memory types can be seen in figure \ref{fig:xemOverview} where the off-chip SDRAM memory is on the top right and the lower level memories inside the Xilinx Spartan 7 FPGA in the center.
 
 \subsection{SDRAM}
-One of the most common storage mechanisms is SDRAM which is useful to store data that is frequently used and ranges from kilobytes to megabytes in size. Key features include random access, meaning same access time for any part of the memory, and high bandwidth. It is often paired with FPGAs because it is next in the memory hierarchy after on chip storage mechanisms.
+One of the most common storage mechanisms is SDRAM which is useful for storing data that is frequently used and ranges from kilobytes to megabytes in size. Key features include random access, i.e. same access time for any part of the memory, and high bandwidth. It is often paired with FPGAs, because it is next in the memory hierarchy after on-chip storage mechanisms.
 \par
-At the core of SDRAM lie capacitors trapping the charge representing a bit. An overview of a typical SDRAM circuit is shown in Figure \ref{fig:7}. The capacitors are refreshed periodically to retain the stored data. This makes SDRAM a volatile memory, requiring power to keep its state. The advantage over closely related memory types such as flash memory, is that it does not degrade at the same rate of read/write cycles and it is truly random access, giving the advantage to SDRAM as a volatile working memory in most FPGA applications \citep{SDRAMFLASH} \citep{NANDNORFlash}.
+At the core of SDRAM lie capacitors trapping the charge representing a bit. An overview of a typical SDRAM circuit is shown in Figure \ref{fig:7}. The capacitors are refreshed periodically to retain the stored data. This makes SDRAM a volatile memory, requiring power to keep its state. The advantage over closely related memory types, such as flash memory, is that it does not degrade at the same rate of read/write cycles and it is truly random access, giving the advantage to SDRAM as a volatile working memory in most FPGA applications \citep{SDRAMFLASH} \citep{NANDNORFlash}.
 
 \begin{figure}[h]
     \centering
@@ -334,12 +334,12 @@ At the core of SDRAM lie capacitors trapping the charge representing a bit. An o
     \label{fig:7}
 \end{figure}
 
-The memory cells in SDRAM are ordered in rows and columns, forming an array. A collection of these arrays are referred to as memory banks. 
+The memory cells in SDRAM are ordered in rows and columns, forming an array. A collection of these arrays is referred to as memory banks. 
 %\begin{wrapfigure}{r}{0.5\textwidth}
 %\end{wrapfigure}
-The number of rows, columns, arrays, and banks varies depending on the type of SDRAM, but is usually a power of 2. Figure \ref{fig:8} shows the geometry of an SDRAM with 4 banks with 4 arrays each. The data width of a memory is the number of arrays that are stacked inside each memory bank. When accessing a specific row and column, the number of affected bits is the same as the data width of the memory.
+The number of rows, columns, arrays, and banks varies depending on the type of SDRAM but is usually a power of 2. Figure \ref{fig:8} shows the geometry of an SDRAM with 4 banks with 4 arrays each. The data width of a memory is the number of arrays that are stacked inside each memory bank. When accessing a specific row and column, the number of affected bits is the same as the data width of the memory.
 \par
-To increase SDRAM performance, double data rate (DDR) is used to access data at double the clock rate. DDR enables accessing a memory bank on both the rising and falling edge of the clock cycle. A prefetch mechanism enables the transfer of multiple bits concurrently per bank access, increasing the throughput even more. This mechanism enables efficient use of the internal SDRAM bus width by also transferring data from neighboring addresses. The gain comes from the fact that the time to access a single address is the same as accessing the neighboring ones as well. The prefetch mechanism gives an advantage to data which is structured in a way where each access is in adjacent addresses. The width of the prefetch data depends on the DDR version. Other variations between DDR versions are the supported clock frequency and burst length, which is a feature related to the prefetch mechanism. The burst length specifies the number of SDRAM words contained in each read or write operation \citep{MicronSDRAMGeneral}.
+To increase SDRAM performance, double data rate (DDR) is used to access data at double the clock rate. DDR enables accessing a memory bank on both the rising and falling edge of the clock cycle. A prefetch mechanism enables the transfer of multiple bits concurrently per bank access, increasing the throughput even more. This mechanism enables efficient use of the internal SDRAM bus width by also transferring data from neighboring addresses. The gain comes from the fact that the time to access a single address is the same as accessing the neighboring ones as well. The prefetch mechanism gives an advantage to data which is structured in a way where each access is in adjacent addresses. The width of the prefetch data depends on the DDR version. Other variations between DDR versions are the supported clock frequency and burst length, which are features related to the prefetch mechanism. The burst length specifies the number of SDRAM words contained in each read or write operation \citep{MicronSDRAMGeneral}.
 
 \begin{figure}[h]
     \centering
@@ -400,7 +400,7 @@ In addition to using the clock signal to drive tasks, a common practice within s
 \chapter{Star tracker systems}
 A star tracker is an instrument that provides navigational data such as position and attitude by recognizing stars from optical images. The system consists of a camera and a computer. The system operates by capturing an image, extracting and comparing data to a star catalog. The star catalog contains columns of information about known stars \citep{SatDesgin}.
 \par
-Star tracker systems depends on image processing and analysis that run on varying computing platforms. The platform and purpose of a star tracker in focus is a FPGA based star tracker for spacecraft attitude determination. The general idea of star tracker based attitude determination is explored in this chapter to explain the context of a pre processing pipeline for such a system.
+Star tracker systems depends on image processing and analysis that run on varying computing platforms. The platform and purpose of a star tracker in focus is a FPGA-based star tracker for spacecraft attitude determination. The general idea of star tracker based attitude determination is explored in this chapter to explain the context of a pre processing pipeline for such a system.
 
 \section{Argumentation}
 There are multiple ways to determine the position and attitude of a spacecraft, but when the accuracy needs to be better than $0.1{^\circ}$ a star tracker is to be used. When the high accuracy of a star tracker is not needed, other methods such as navigation satellite systems, such as GPS, or momentum wheels can be used for determining the attitude and position. Other than accuracy advantages, the star tracker is also more independent than navigation satellite systems and mechanically simpler than momentum wheels. On the other hand, star trackers require more complexity in a computational sense \citep{SatDesgin}.
@@ -552,7 +552,7 @@ The 32-bit wide data bus of the Pipe In module is connected to the input of the 
 \par
 Beyond the input image, the SDRAM is used to store intermediate image processing results. The sequential process writes an image to storage after each step. Since each output is only needed as the input to the next step, the stored images can be overwritten. The process requires a storage capacity of 3 times the image size, one of which being the original. The original image is kept incase the process is re executed. In an integrated environment, the storage capacity could be scaled down to two times the image size, since the original image would be useless.
 \par
-After image processing and analysis the output image is stored to SDRAM. The output image is transferred from SDRAM to an external endpoint using the Pipe Out module trough another FIFO buffer. The image output transfer uses a similar FIFO buffer as the input image transfer, except with reversed port widths and other control signals.   
+After image processing and analysis the output image is stored to SDRAM. The output image is transferred from SDRAM to an external endpoint using the Pipe Out module through another FIFO buffer. The image output transfer uses a similar FIFO buffer as the input image transfer, except with reversed port widths and other control signals.   
 \par
 The image transfer and storage systems contribute to system requirements \hyperref[req1.4]{1.4} and \hyperref[req2.2]{2.2}.
 
@@ -581,7 +581,7 @@ The lowest level storage mechanism where image pixels are kept is 3 small line b
 The image is rendered in the original 270 x 480 single channel 8-bit format to SDRAM in between image processing steps and for final output.
 
 \subsection{Image processing and analysis}
-To extract stars from an image, a number of image processing algorithms are implemented. The general idea is that an image containing bright stars in the foreground and faint objects or empty space in the background is used as input. The first algorithm smoothens the image to create larger and more detectable foreground features. The second process separates the foreground from the background with a threshold. This is to enable connected component labeling (CCL) in the next step, which requires a fully separate foreground and background. Connected component labeling algorithm traverse trough the image pixels and assigns them to features. Metrics of the features are stored for calculating the centroid in the final step.
+To extract stars from an image, a number of image processing algorithms are implemented. The general idea is that an image containing bright stars in the foreground and faint objects or empty space in the background is used as input. The first algorithm smoothens the image to create larger and more detectable foreground features. The second process separates the foreground from the background with a threshold. This is to enable connected component labeling (CCL) in the next step, which requires a fully separate foreground and background. Connected component labeling algorithm traverse through the image pixels and assigns them to features. Metrics of the features are stored for calculating the centroid in the final step.
 
 \subsubsection{Box Filter}
 A box filter is applied on the image to prepare the image for CCL. The principle of the box filter is to blur the image by replacing a pixel with the average of the surrounding pixels. The 3 x 3 kernel is used for this filter, where the center pixel is the target. This filter is commonly described with the expression 

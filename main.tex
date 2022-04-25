@@ -300,7 +300,7 @@ The peripheral controller operates the data bus by implementing a communication 
     \label{fig:xemOverview}
 \end{figure}
 
-Both the USB 3 standard and the FX3 peripheral controller supports serial and parallel communication, but the hard IP core connecting to the FX3 interface supports only serial communication. This simplifies the use of the IP core, requiring less FPGA fabric, but also reduces the throughput. \citep{XEM7305Man} \citep{FX3Man}
+Both the USB 3 standard and the FX3 peripheral controller support serial and parallel communication, but the hard IP core connecting to the FX3 interface supports only serial communication. This simplifies the use of the IP core, requiring less FPGA fabric, but also reduces the throughput. \citep{XEM7305Man} \citep{FX3Man}
 
 \par
 The internal communication mechanism of an FPGA consists of the FPGA interconnect. The interconnect is the physical layer of the communication protocol stack, leaving the rest of the stack to be implemented in the FPGA design with HDL or IP cores. 
@@ -319,7 +319,7 @@ When compared with a software program, the same optimization method of maximizin
 \section{Memory}
 To enable processing of image data, a set of storage mechanisms is necessary. The use of a certain memory type is mostly dependent on the size of the data and how it will be used. As in conventional CPU architectures, different levels of memory are used to satisfy these dependencies.
 \par
-FPGAs are generally not well suited for storing a large quantity of data, as it is considered inefficient use of available CLBs. Since customization is a key feature, the most standardized parts, such as memory, are often placed outside the FPGA. Off-chip memory allows storage of large data, such as images, freeing up CLBs to other usage such as computation and logic. The drawback with off-chip components is they are often a bottleneck in the system. This is due to a number of factors such as restrictions in clock speed, concurrency, and bus width. A larger FPGA with an increased number of CLBs could offset the need for off-chip memory avoiding the bottleneck, with consequences being greater power consumption and physical size, potentially invalidating the solution.
+FPGAs are generally not well suited for storing a large quantity of data, as it is considered inefficient use of available CLBs. Since customization is a key feature, the most standardized parts, such as memory, are often placed outside the FPGA. Off-chip memory allows storage of large data, such as images, freeing up CLBs to other usage such as computation and logic. The drawback with off-chip components is that they are often a bottleneck in the system. This is due to a number of factors such as restrictions in clock speed, concurrency, and bus width. A larger FPGA with an increased number of CLBs could offset the need for off-chip memory avoiding the bottleneck, with consequences being greater power consumption and physical size, potentially invalidating the solution.
 \par
 An overview of the XEM7305 module and the memory types can be seen in Figure \ref{fig:xemOverview} where the off-chip SDRAM memory is on the top right and the lower level memories inside the Xilinx Spartan 7 FPGA in the center.
 
@@ -399,14 +399,14 @@ The clock module on the XEM7305 provides a 200 MHz frequency signal. An addition
 In addition to using the clock signal to drive tasks, a common practice within system modeling with an HDL is to drive tasks using signals that occur more spontaneously. This could, for example, be a signal originating from a sensor on the FPGA module that has an interface to the FPGA design without a dependence to a clock. This enhances the suitability of using FPGAs for real-time requirements since the reaction to an input can be within clock cycles instead of milliseconds. Another reason to use FPGAs for real-time applications is predictability. For example, when using a clock divider to run a task at every 5 ms, the task will run precisely at 5 ms intervals as long as the clock oscillator itself is accurate. Software based real-time applications cannot guarantee the same level of confidence for the timing requirements due to possible scheduling and concurrency related overhead.
 
 \chapter{Star tracker systems}
-A star tracker is an instrument that provides navigational data such as position and attitude by recognizing stars from optical images. The system consists of a camera and a computer. The system operates by capturing an image, extracting and comparing data to a star catalog. The star catalog contains columns of information about known stars. \citep{SatDesgin}
+A star tracker is an instrument that provides navigational data, such as position and attitude, by recognizing stars from optical images. The system consists of a camera and a computer. The system operates by capturing an image, processing it, and then comparing the extracted data to a star catalog. The star catalog contains columns of information about known stars. \citep{SatDesgin}
 \par
 Star tracker systems depend on image processing and analysis that run on varying computing platforms. The platform and purpose of the star tracker in focus is an FPGA-based star tracker for spacecraft attitude determination. The general idea of star tracker based attitude determination is explored in this chapter to explain the context of a pre-processing pipeline for such a system.
 
 \section{Argumentation}
-There are multiple ways to determine the position and attitude of a spacecraft, but when the accuracy needs to be better than $0.1{^\circ}$ a star tracker is to be used. When the high accuracy of a star tracker is not needed, other methods such as navigation satellite systems, such as GPS, or momentum wheels can be used for determining the attitude and position. Other than accuracy advantages, the star tracker is also more independent than navigation satellite systems and mechanically simpler than momentum wheels. On the other hand, star trackers require more complexity in a computational sense. \citep{SatDesgin}
+There are multiple ways to determine the position and attitude of a spacecraft. When the accuracy needs to be better than $0.1{^\circ}$, a star tracker is to be used. When the high accuracy of a star tracker is not needed, other methods, such as navigation satellite systems or momentum wheels, can be used for determining the attitude and position. Other than accuracy advantages, the star tracker is also more independent than navigation satellite systems and mechanically simpler than momentum wheels. On the other hand, star trackers require more complexity in a computational sense. \citep{SatDesgin}
 \par
-A unique feature of star trackers is the ability to find the attitude and position of a spacecraft without any previous knowledge, also known as Lost-In-Space attitude determination. Momentum wheel-based navigation, for example, requires a reference to a previous position to determine its current position. The Lost-In-Space feature is also available using navigation satellite systems, but with limited range. \citep{SatDesgin}
+A unique feature of star trackers is the ability to find the attitude and position of a spacecraft without any previous knowledge, also known as Lost-In-Space attitude determination. Momentum wheel-based navigation, for example, requires a reference to a previous position to determine its current position. The Lost-In-Space feature is also available using navigation satellite systems, although with limited range. \citep{SatDesgin}
 
 \section{Image acquisition}
 Images are usually captured by a charged-coupled device, or CCD, sensor. In contrast to another common image sensor type, the CMOS sensor, CCD is more resistant to noise, resulting in better quality images.
@@ -435,16 +435,16 @@ The goal of the documentation of the pre-processing pipeline is to explain the f
 \section{Functional overview}
 The star tracker pre-processing pipeline is a system that uses an input image to extract features from. The features, in this case stars, can be used for further implementation of a star tracker. % how?
 \par
-The system can be integrated to a completely embedded environment where it does not depend on a user interfacing client. 
+The system can be integrated to a completely embedded environment, where it does not depend on a user interfacing client. 
 An integration to a star tracker can be independent and highly isolated, with minor adjustments made to the off-chip module interfaces. Only a few essential parameters, triggers, and data are required.  
 \par
-From a user experience point of view, the pre-processing pipeline works by powering on the FPGA, connecting it to the pre-processing pipeline client. The client then programs the FPGA with the pre-processing pipeline FPGA design. After successfully programming the FPGA, the pre-processing pipeline is configured with a valid image and parameters. The FPGA executes the image processing and analysis after which the client reads the result, consisting of an image and metadata, for the user to evaluate.
+From a user experience point of view, the pre-processing pipeline works by powering on the FPGA, then connecting it to the pre-processing pipeline client. The client then programs the FPGA with the pre-processing pipeline FPGA design. After successfully programming the FPGA, the pre-processing pipeline is configured with a valid image and parameters. The FPGA executes the image processing and analysis after which the client reads the result, consisting of an image and metadata, for the user to evaluate.
 \par
-From an integrated system point of view, the pre-processing pipeline is powered on and configured by an external system, a microprocessor with a program or embedded operating system supplying parameters, triggers, and data. 
+From an integrated system point of view, the pre-processing pipeline is powered on and configured by an external system, for example, a program on a microprocessor. The external system has the same control and responsibility as the client software. To make the integrated system autonomous, a more sophisticated parameter tuning is needed for the pre-processing pipeline to be effective. This is desirable when integrating a system to a spacecraft, since it often requires a high degree of autonomy.
 
 \section{FPGA design}
 
-The star tracker pre-processing pipeline FPGA design contributes to all system requirements in Table \ref*{table:1}.
+The star tracker pre-processing pipeline FPGA design contributes to all system requirements in Table \ref*{table:1}. The requirements are satisfied by combining a set of components. Some components contribute to several requirements, while others are less multipurpose. Figure \ref*{fig:fpga_design} shows an overview of the components in the design.
 
 \begin{figure}[h]
     \centering
@@ -454,27 +454,27 @@ The star tracker pre-processing pipeline FPGA design contributes to all system r
 \end{figure}
 
 \subsection{Support systems}
-The supporting systems included in the FPGA design consist of components that do not contribute to image processing and analysis directly but provide other necessary features such as storage and communication. 
+The supporting systems included in the FPGA design consist of components that do not contribute to image processing and analysis directly, but provide other necessary features, such as storage and communication. 
 \par
 The core supporting systems of the FPGA design consist of modules provided by Opal Kelly. These include communication, buffering, and storage solutions that are specific to the FPGA and off-chip components. 
 \par
-The bottom section of Figure \ref*{fig:fpga_design} shows the main functional components of the support systems in the FPGA design. The isolation of this section can be made in a functional and in some cases also in a technical sense.
+The bottom section of Figure \ref*{fig:fpga_design} shows the main functional components of the support systems in the FPGA design. The isolation of this section can be made in a functional, and in some cases, technical sense.
 
 \subsubsection{Communication and host interface}
-The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints used for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8 MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations.
+The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8 MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations.
 \par
-Opal Kelly provides a set of IP core modules supporting data transfer from single bits to megabytes. Different synchronization and control methods are used for each module resulting in smaller scale data transfers being simpler than large scale transfers. Three Opal Kelly communication modules are used within the FPGA design which each fill their own purpose.
+Opal Kelly provides a set of IP core modules supporting data transfer from single bits to megabytes. Different synchronization and control methods are used for each module, resulting in small scale data transfers being simpler than large scale transfers. Three Opal Kelly communication modules are used within the FPGA design, each with its own purpose.
 \par
-The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to a 32-bit wide address bus, with 32 bits of storage for each address to use synchronously. The register bridge interface contains separate 32-bit data buses for input and output, and a register address bus. This adds complexity to the FPGA design because a mapping mechanism, for example a multiplexer, is needed to make all 32 addresses usable. The register bridge is used through the Opal Kelly API in the client software. Figure \ref*{fig:fpga_design} shows the register bridge connected to the input/output pads, which act as interface between the register bridge and the off-chip modules. The required off-chip modules for the register bridge are clock and USB.
+The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to a 32-bit wide address bus, with 32 bits of storage for each address to use synchronously. The register bridge interface contains separate 32-bit data buses for input and output, and a register address bus. This adds complexity to the FPGA design, because a mapping mechanism, for example a multiplexer, is needed to make all 32 addresses usable. The register bridge is used through the Opal Kelly API, in the client software. Figure \ref*{fig:fpga_design} shows the register bridge connected to the input/output pads, which act as interface between the register bridge and the off-chip modules. The required off-chip modules for the register bridge are clock and USB.
 \par
-Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature and limited capacity good for state management and triggering events. The asynchronous data is still in many cases synchronized to a clock in the design. Figure \ref*{fig:fpga_design} shows the Wire In/Out connected to the input/output pads, giving it access to the USB off-chip module.
+Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature, and limited capacity, good for state management and triggering events. The asynchronous data is nevertheless, in many cases, synchronized to a clock in the design. Figure \ref*{fig:fpga_design} shows the Wire In/Out connected to the input/output pads, giving them access to the USB off-chip module.
 \par
-Pipe In and Pipe Out modules are used for multibyte synchronous data transfer. The data buses on both modules are 32 bit wide. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer but unless the \verb|EP_READY| control signal is high, data is not sent. This is useful in cases where incoming data needs to be stored using buffers. Figure \ref*{fig:fpga_design} shows the Pipe In/Out connected to the input/output pads, allowing it to interface with Clock and USB off-chip modules.
+Pipe In and Pipe Out modules are used for multibyte synchronous data transfer. The data buses on both modules are 32 bit wide. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer, but unless the \verb|EP_READY| control signal is high, data is not sent. This is useful in cases where incoming data needs to be stored using buffers. Figure \ref*{fig:fpga_design} shows the Pipe In/Out connected to the input/output pads, allowing it to interface with clock and USB off-chip modules.
 % define block throttled variant
 % define high signal
 % define states and events, example
 \subsubsection{FPGA state management and event triggers}
-The Wire In module is used on the FPGA to enter states that need to be externally managed. Table \ref{table:wireInState} shows a description and wire values of them. The Wire In uses only the first four bits of the 32-bit data and the values are set so that only one state can occur at a given moment, which ensures predictability of the system. Each state in Table \ref*{table:wireInState} is mapped to an index which is used to read the value corresponding to the state on the 32-bit Wire In data bus.
+The Wire In module is used on the FPGA to enter states that need to be externally managed. Table \ref{table:wireInState} shows a description and wire values of them. The Wire In uses only the first four bits of the 32-bit data and the values are set so that only one state can occur at a given moment, which ensures predictability of the system. Each state in Table \ref*{table:wireInState} is mapped to an index, which is used to read the value corresponding to the state on the 32-bit Wire In data bus.
 \par
 The Wire Out module has the single purpose of providing verification of the setup of the FPGA. The signal is expected to be high after a small delay after the FPGA is powered on and the bitstream is programmed. Table \ref*{table:wireOutState} shows the description and wire value of the Wire Out state.
 
@@ -483,16 +483,16 @@ The Wire Out module has the single purpose of providing verification of the setu
         \hline
         \textbf{Wire value}&\textbf{Description}\\
         \hline
-        0x0001&Read storage to Pipe Out. Used when reading image back from FPGA to client\\
+        0x0001&Read storage to Pipe Out. Used when reading image back from the FPGA to the client.\\
         \hline
-        0x0002&Write to storage from Pipe In. Used when writing image from client to FPGA\\ 
+        0x0002&Write to storage from Pipe In. Used when writing an image from the client to the FPGA.\\ 
         \hline
-        0x0004&Resets FIFO buffers. Used between image reads and writes \\
+        0x0004&Resets FIFO buffers. Used between image reads and writes. \\
         \hline
-        0x0008&Triggers image processing and analysis. Used when FPGA is configured and ready to perform star extraction\\
+        0x0008&Triggers image processing and analysis. Used when the FPGA is configured and ready to perform star extraction.\\
         \hline
     \end{tabular}
-    \caption{Description of Wire In state control bits}
+    \caption{Description of Wire In state control bits.}
     \label{table:wireInState}
 \end{table}
 \begin{table}[h]
@@ -500,10 +500,10 @@ The Wire Out module has the single purpose of providing verification of the setu
         \hline
         \textbf{Wire value}&\textbf{Description}\\
         \hline
-        0x0001&Memory calibration signal. Used to verify successful initialization of SDRAM memory.\\
+        0x0001&Memory calibration signal. Used to verify successful initialization of the SDRAM memory.\\
         \hline
     \end{tabular}
-    \caption{Description of Wire Out state bits}
+    \caption{Description of Wire Out state bits.}
     \label{table:wireOutState}
 \end{table}
 
@@ -511,7 +511,7 @@ The Wire In/Out modules are a good suit for the state triggers because of the re
 The state management and event trigger system contribute to satisfying the system requirements. The features provided by the Wire In module are fundamental to the requirements \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, \hyperref[req2.2]{2.2}, and \hyperref[req3.3]{3.3}.
 
 \subsubsection{Parameter configuration and metrics}
-To allow data transfer for accessing register values on the FPGA, the Opal Kelly register bridge is used. The registers are addressed so that the first 15 contain writable data and the second 15 contain readable data. This prevents any concurrency issues with register access. Pre-assigned values to the writable addresses ensure that the pre-processing pipeline parameters have default values to use in case none are assigned through the register bridge. Tables \ref{table:regs1} and \ref{table:regs2} explains the use of the register bridge. 
+To allow data transfer for accessing register values on the FPGA, the Opal Kelly register bridge is used. The registers are addressed so that the first 15 contain writable data, and the second 15 contain readable data. This prevents any concurrency issues with register access. Pre-assigned values to the writable addresses ensure that the pre-processing pipeline parameters have default values to use in case none are assigned through the register bridge. Tables \ref{table:regs1} and \ref{table:regs2} explains the use of the register bridge. 
 \par
 The features enabled by the register bridge for parameter configuration and metrics contribute to system requirements \hyperref[req1.2]{1.2}, \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, \hyperref[req2.2]{2.2} and \hyperref[req3.3]{3.3}.
 
@@ -548,11 +548,11 @@ The features enabled by the register bridge for parameter configuration and metr
 \end{table}
 
 \subsubsection{Image transfer and SDRAM storage}
-To transfer and store the image data used as input to the star tracker pre-processing pipeline, a few mechanisms need to be implemented due to the nature of the image data. The image is fixed as to size and format, namely 270 x 480 pixels, single channel eight bits per pixel. The image is not compressed to decrease image processing complexity, making the total image size 129.6 kb.
+The size and format of the pre-processing pipeline input image requires some mechanisms to be implemented to allow transfer and storage of the image data. The image is fixed as to size and format, namely 270 x 480 pixels, single channel, and eight bits per pixel. The image is not compressed to decrease image processing complexity, making the total image size 129.6 kb.
 \par
 The Pipe In module is used to receive the image data on the FPGA. The module is connected to, and partly managed, by a FIFO buffer. The buffer is also connected to the SDRAM interface, which pulls data from the buffer to storage. The entire data flow is thus controlled by the SDRAM, which is the bottleneck of the image transfer system.
 \par
-The 32-bit wide data bus of the Pipe In module is connected to the input of the FIFO buffer. The buffer capacity is 128 bits to suit the input data bus width of the SDRAM interface. Both Pipe In and FIFO modules are synchronized to the host interface clock. The SDRAM interface is synchronized to its own 87 MHz clock, also derived from the 200 MHz system clock. The modules are synchronized together with control signals to manage the data flow and mitigate any issue with clock speed differences.
+The 32-bit wide data bus of the Pipe In module is connected to the input of the FIFO buffer. The buffer capacity is 128 bits to suit the input data bus width of the SDRAM interface. Both Pipe In and FIFO modules are synchronized to the host interface clock. The SDRAM interface is synchronized to its own 87 MHz clock, also derived from the 200 MHz system clock. The modules are synchronized together with control signals to manage the data flow and to mitigate any issue with clock speed differences.
 \par
 Beyond the input image, the SDRAM is used to store intermediate image processing results. The sequential process writes an image to storage after each step. Since each output is only needed as the input to the next step, the stored images can be overwritten. The process requires a storage capacity of three times the image size, one of the images being the original. The original image is kept in case the process is to be re-executed. In an integrated environment, the storage capacity could be scaled down to two times the image size, since the original image would be useless. % why?
 \par
@@ -561,7 +561,7 @@ After image processing and analysis the output image is stored to SDRAM. The out
 The image transfer and storage systems contribute to system requirements \hyperref[req1.4]{1.4} and \hyperref[req2.2]{2.2}.
 
 \subsubsection{Line buffer and BRAM storage}
-The image data is accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. Figure \ref*{fig:mem_overview} shows the line buffer in the middle, as the intermediate storage mechanism.
+The image data is accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels, and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. Figure \ref*{fig:mem_overview} shows the line buffer in the middle, as the intermediate storage mechanism.
 \par
 The dual port BRAM has two data buses and two address ports to allow simultaneous read and write operations. The interface also includes a 270-bit data mask to select which pixels to write to BRAM. This adds complexity to the line buffer system but reduces the number of registers needed.
 \par

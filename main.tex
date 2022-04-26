@@ -240,7 +240,7 @@ Star extraction is a key stage of a star tracker system which uses a star catalo
 
 \section{System specification}
 
-The specification consists of development and system requirements as well as a description of tools and components. System requirements are created based on meetings and discussions with Aboa Space Research Oy. Some requirements are derived from higher level requirements to suit the development process. Table \ref{table:1} presents an overview of the system.
+The specification consists of development and system requirements as well as a description of tools and components. System requirements are created based on meetings and discussions with Aboa Space Research Oy. Some requirements are derived from higher level requirements to suit the development process. Table \ref{table:sysreq} presents an overview of the system.
 
 \begin{table}[h]
     \begin{tabular}{|p{1.75cm}|p{10cm}|}
@@ -270,7 +270,7 @@ The specification consists of development and system requirements as well as a d
         \hline
     \end{tabular}
     \caption{System requirements specification}
-    \label{table:1}
+    \label{table:sysreq}
 \end{table}
 
 %The development requirements involves critical steps that are necessary when working towards the system requirements.
@@ -444,7 +444,7 @@ From an integrated system point of view, the pre-processing pipeline is powered 
 
 \section{FPGA design}
 
-The star tracker pre-processing pipeline FPGA design contributes to all system requirements in Table \ref*{table:1}. The requirements are satisfied by combining a set of components. Some components contribute to several requirements, while others are less multipurpose. Figure \ref*{fig:fpga_design} shows an overview of the components in the design.
+The star tracker pre-processing pipeline FPGA design contributes to all system requirements in Table \ref*{table:sysreq}. The requirements are satisfied by combining a set of components. Some components contribute to several requirements, while others are less multipurpose. Figure \ref*{fig:fpga_design} shows an overview of the components in the design.
 
 \begin{figure}[h]
     \centering
@@ -461,15 +461,15 @@ The core supporting systems of the FPGA design consist of modules provided by Op
 The bottom section of Figure \ref*{fig:fpga_design} shows the main functional components of the support systems in the FPGA design. The isolation of this section can be made in a functional, and in some cases, technical sense.
 
 \subsubsection{Communication and host interface}
-The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8 MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations.
+The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8 MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations. \citep{XEM7305Man} \citep{FrontPanelMan}
 \par
 Opal Kelly provides a set of IP core modules supporting data transfer from single bits to megabytes. Different synchronization and control methods are used for each module, resulting in small scale data transfers being simpler than large scale transfers. Three Opal Kelly communication modules are used within the FPGA design, each with its own purpose.
 \par
-The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to a 32-bit wide address bus, with 32 bits of storage for each address to use synchronously. The register bridge interface contains separate 32-bit data buses for input and output, and a register address bus. This adds complexity to the FPGA design, because a mapping mechanism, for example a multiplexer, is needed to make all 32 addresses usable. The register bridge is used through the Opal Kelly API, in the client software. Figure \ref*{fig:fpga_design} shows the register bridge connected to the input/output pads, which act as interface between the register bridge and the off-chip modules. The required off-chip modules for the register bridge are clock and USB.
+The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to a 32-bit wide address bus, with 32 bits of storage for each address to use synchronously. The register bridge interface contains separate 32-bit data buses for input and output, and a register address bus. This adds complexity to the FPGA design, because a mapping mechanism, for example a multiplexer, is needed to make all 32 addresses usable. The register bridge is used through the Opal Kelly API, in the client software. Figure \ref*{fig:fpga_design} shows the register bridge connected to the input/output pads, which act as interface between the register bridge and the off-chip modules. The required off-chip modules for the register bridge are clock and USB. \citep{FrontPanelMan}
 \par
-Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature, and limited capacity, good for state management and triggering events. The asynchronous data is nevertheless, in many cases, synchronized to a clock in the design. Figure \ref*{fig:fpga_design} shows the Wire In/Out connected to the input/output pads, giving them access to the USB off-chip module.
+Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature, and limited capacity, good for state management and triggering events. The asynchronous data are nevertheless, in many cases, synchronized to a clock in the design. Figure \ref*{fig:fpga_design} shows the Wire In/Out connected to the input/output pads, giving them access to the USB off-chip module. \citep{FrontPanelMan}
 \par
-Pipe In and Pipe Out modules are used for multibyte synchronous data transfer. The data buses on both modules are 32 bit wide. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer, but unless the \verb|EP_READY| control signal is high, data is not sent. This is useful in cases where incoming data needs to be stored using buffers. Figure \ref*{fig:fpga_design} shows the Pipe In/Out connected to the input/output pads, allowing it to interface with clock and USB off-chip modules.
+Pipe In and Pipe Out modules are used for multibyte synchronous data transfer. The data buses on both modules are 32 bit wide. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer, but unless the \verb|EP_READY| control signal is high, data are not sent. This is useful in cases where incoming data needs to be stored using buffers. Figure \ref*{fig:fpga_design} shows the Pipe In/Out connected to the input/output pads, allowing it to interface with clock and USB off-chip modules. \citep{FrontPanelMan}
 % define block throttled variant
 % define high signal
 % define states and events, example
@@ -561,13 +561,15 @@ After image processing and analysis the output image is stored to SDRAM. The out
 The image transfer and storage systems contribute to system requirements \hyperref[req1.4]{1.4} and \hyperref[req2.2]{2.2}.
 
 \subsubsection{Line buffer and BRAM storage}
-The image data is accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels, and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. Figure \ref*{fig:mem_overview} shows the line buffer in the middle, as the intermediate storage mechanism.
+The image data are accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels, and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. Figure \ref*{fig:mem_overview} shows the line buffer in the middle, as the intermediate storage mechanism.
 \par
 The dual port BRAM has two data buses and two address ports to allow simultaneous read and write operations. The interface also includes a 270-bit data mask to select which pixels to write to BRAM. This adds complexity to the line buffer system but reduces the number of registers needed.
 \par
-The line buffer system is the intermediate storage between the image storage and image processing. The read and write operations are triggered by counters that are updated during the image processing. 
-% read write operations, tasks
-% system requirements reference
+The line buffer system is the intermediate storage between the image storage and image processing. The read and write operations are triggered by counters that are updated during the image processing. The line buffer is filled by initiating a read operation to the SDRAM. After each burst read, 128 bits of data are pushed to the buffer and the SDRAM read address is updated. The read address is incremented by 8 between reads, since the burst mode of the SDRAM covers 8 addresses. The SDRAM read continues until the buffer is full.
+\par
+The line buffer can be seen as a sliding window on horizontal axis of the image. The buffer, and image process, is initialized by filling all three buffers. While processing the image, one line after another is read into the buffer. The image columns are mapped to BRAM using addresses and indices. The indices track which address points to which column, while the addresses are fixed variables to point to the start of an image column in BRAM. The addresses are rotated between the indices to predictably and efficiently use the BRAM address space.
+\par
+Image data are almost explicitly moved trough the line buffers within the pre-processing pipeline, making them a core part of the support systems, and storage mechanisms in the FPGA design. The line buffers contribute to system requirements \hyperref[req2.2]{2.2}, \hyperref[req3.1]{3.1}, and \hyperref[req3.2]{3.2}.
 
 \begin{figure}[h]
     \centering
@@ -578,14 +580,20 @@ The line buffer system is the intermediate storage between the image storage and
 
 \subsubsection{3x3 Kernel}
 The lowest level storage mechanism where image pixels are kept is 3 small line buffers, forming a 3 x 3 pixel sliding window, or image processing kernel. It is implemented in distributed memory, within the FPGA fabric. The kernel consists of three pixels from each column in the line buffer, creating the 3 x 3 pixel geometry shown in Figure \ref*{fig:mem_overview}. Data from the line buffer is fed into the kernel data structure which is then used for image processing and analysis. The results of these operations are written directly to a higher level storage. Thus the data flow is directional within this storage mechanism.
-% read write operations, tasks
-% system requirements reference
+\par
+Between each processed pixel, the kernel moves one step. This movement consists of three read-operations from BRAM to the kernel, each line buffer contributing with three pixels. The entire kernel is overwritten each time, since the data transfer is relatively low.
+\par
+The image processing kernel contributes to system requirements \hyperref[req2.2]{2.2}, \hyperref[req3.1]{3.1}, and \hyperref[req3.2]{3.2}.
 
 \subsubsection{Rendering}
-The image is rendered in the original 270 x 480 single channel 8-bit format to SDRAM in between image processing steps and for final output.
+The rendering process creates an image output from the data generated within image processing and analysis. The data generated from star extraction in the pre-processing pipeline is stored in tables and buffers for convenience. Rendering an image with this data, transforms them to give visual feedback of the process.
+\par
+Rendering relies on the kernel and line buffers to write the image data to SDRAM. The image is rendered in the original 270 x 480 single channel 8-bit format to SDRAM in between image processing steps and for final output. The rendering process contributes to system requirement \hyperref[req2.2]{2.2}
 
 \subsection{Image processing and analysis}
 To extract stars from an image, a number of image processing algorithms are implemented. The general idea is that an image containing bright stars in the foreground and faint objects or empty space in the background is used as input. The first algorithm smoothens the image to create larger and more detectable foreground features. The second process separates the foreground from the background with a threshold. This is to enable connected component labeling (CCL) in the next step, which requires a fully separate foreground and background. Connected component labeling algorithm traverse through the image pixels and assigns them to features. Metrics of the features are stored for calculating the centroid in the final step.
+\par
+As a core part of the pre-processing pipeline, the image processing and analysis contribute to all system requirements in Table \ref*{table:sysreq}.
 
 \subsubsection{Box Filter}
 A box filter is applied on the image to prepare the image for CCL. The principle of the box filter is to blur the image by replacing a pixel with the average of the surrounding pixels. The 3 x 3 kernel is used for this filter, where the center pixel is the target. This filter is commonly described with the expression 
@@ -614,17 +622,19 @@ An example solution for setting the threshold could be to use a feedback loop to
 The thresholding process transforms each pixel value to either 0, being background, or 255 as foreground. As it is a process with no dependency to neighboring pixels, it can be conveniently placed in the output phase of the box filter. The output phase is where the result of the box filter operation is written to SDRAM memory. The register containing the output of the box filter is piped to the SDRAM write bus through the threshold. This makes the thresholding highly efficient because of no additional clock cycles required.
 
 \subsubsection{Connected component labeling and analysis}
-The goal with CCL is to assign foreground pixels to features. The algorithm traverses the image using a kernel, updating the feature tables and pixels in the line buffer. Three feature tables keeps information about pixel values and the feature geometry. Every encountered foreground pixel is updated depending on its neighbors. If any neighboring pixel has a value with an entry in the feature table, the current pixel is updated and mapped to the same feature. The geometry of each feature is stored as minimum and maximum coordinates within the image. Also the brightness of each feature is stored. This is used together with the geometry for feature analysis.
+The goal with CCL is to assign foreground pixels to features. The algorithm traverses the image using a kernel, updating the feature tables and pixels in the line buffer. Three feature tables keeps information about pixel values and the feature geometry. Figure \ref*{fig:feature_tables} shows the three tables, populated with example data. 
+\par
+Every encountered foreground pixel is updated depending on its neighbors. The focus is on the center pixel in the kernel. It is updated depending on the neighboring pixels. If any neighboring pixel has a value with an entry in the feature table, the current pixel is updated and mapped to the same feature. The geometry of each feature is stored as minimum and maximum coordinates within the image. Also the brightness of each feature is stored. This is used together with the geometry for feature analysis.
 \par
 The requirement for a component to be connected to a feature is that at least one side of the pixel touches the feature, making it a 4-connected feature. In contrast, 8-connected feature accepts diagonally connected components. Diagonally connected components are not detected in this CCL implementation because the previously performed box filtering already exaggerates the component connections, filling the gaps between pixels.
 \par
 The 4-connect comparison is done by comparing the top center and left center to the center pixel in the kernel. The movement of the kernel mitigates the need for comparing all 4 connections surrounding the center pixel in the kernel. This simplifies the design while keeping line buffer mechanism uniform with other parts of image processing.
 \par
-Conflicts in the feature table is encountered when connected components refer to multiple features. This happens when the shape of the feature is unfavorable in regards to kernel movement and component comparison process. A conflict is resolved by merging the connected features. This is done by merging brightness of the features involved, updating the feature coordinates, and reassigning the feature label. Depending on the number of mergers, a single feature might be mapped to a number of pixel values.
+Conflicts in the feature table is encountered when connected components refer to multiple features. This happens when the shape of the feature is unfavorable in regards to kernel movement and component comparison process. A conflict is resolved by merging the connected features. This is done by merging brightness of the features involved, updating the feature coordinates, and reassigning the feature label. Depending on the number of mergers, a single feature might be mapped to a number of pixel values. Figure \ref*{fig:feature_tables} shows an example of a resolved conflict, where pixel values \textbf{0x04} and \textbf{0x05} are mapped to the same feature, \textbf{0x03}.
 \par
-While traversing the image, CCL will enter one of three states for each foreground pixel, while background pixels are ignored. When encountering a foreground pixel in the left center it can be assumed to belong to a feature. The state where left center is foreground is prioritized because the feature it refers to has the earliest entry in the feature table. The feature with the earliest entry needs to be selected for the center pixel to avoid conflicts. The next priority is to compare the top center pixel. This state updates the center pixel with the value of the top pixel. A new feature is created when neither the left center or top center pixel is in the foreground. This state adds an entry to the feature tables.
+While traversing the image, CCL will enter one of three states for each foreground pixel, while background pixels are ignored. When encountering a foreground pixel in the left center, it can be assumed to belong to a feature. The state where left center is foreground is prioritized, because the feature it refers to has the earliest entry in the feature table. The feature with the earliest entry needs to be selected for the center pixel to avoid conflicts. The next priority is to compare the top center pixel. This state updates the center pixel with the value of the top pixel. A new feature is created when neither the left center or top center pixel is in the foreground. This state adds an entry to the feature tables.
 \par
-The implemented CCL algorithm streamlined and simple, but not without drawbacks. The most significant limitation is the number of features that can be stored. In case all foreground features in the image are square, the maximum number of features is 253. This is more than enough for what a star tracker needs, but depending on the number of conflicts the number of available features is significantly lower. This limitation originates from the 8-bit pixel values stored in the feature tables and the lack of re-renders of the CCL image. With re-rendering implemented, the maximum would be guaranteed to 253 features, instead of 253 as best case. The trade-off for choosing the re-render to allow more features is a performance loss and a larger memory and FPGA design footprint.
+The implemented CCL algorithm is streamlined and simple, but not without drawbacks. The most significant limitation is the number of features that can be stored. In case all foreground features in the image are square, the maximum number of features is 253. This is more than enough for what a star tracker needs, but depending on the number of conflicts the number of available features is significantly lower. This limitation originates from the 8-bit pixel values stored in the feature tables and the lack of re-renders of the CCL image. With re-rendering implemented, the maximum would be guaranteed to 253 features, instead of 253 as best case. The trade-off for choosing the re-render to allow more features is a performance loss and a larger memory and FPGA design footprint.
 
 \begin{figure}[h]
     \centering
@@ -634,6 +644,18 @@ The implemented CCL algorithm streamlined and simple, but not without drawbacks.
 \end{figure}
 
 \subsubsection{Feature detection and centroiding}
+Feature detection is the process of using the feature tables, shown in Figure \ref*{fig:feature_tables}, to create image data to indicate detected features. Centroiding gives a more accurate indicator of detected features by further analyzing them. Feature detection and centroiding is the final step of the pre-processing pipeline, resulting in a output image and centroid calculations.
+\par
+The feature detection process filters out features that are too faint or small. The threshold is specified by the parameter configuration system. Table \ref*{table:regs1} shows the register and format of the threshold. The threshold is compared to the brightness of each feature, which is calculated in the CCL process. An example of the feature brightness table is shown in Figure \ref*{fig:feature_tables} on the right. When the brightness of a feature is below the threshold, it is discarded. The process then moves on to validate the next feature in the feature table.
+\par
+Unlike other parts of the image processing and analysis, feature detection traverses the image one feature at a time. The sliding window favors processing that needs to scan the entire image, possibly applying calculations to every pixel. Feature detection is only interested in processing known coordinates of the image, making the sliding window unfavorable.
+\par
+A rectangle can be imagined around all features, given the maximum and minimum coordinates. The pixels within this rectangle is read directly from SDRAM to the feature detection process. This bypasses the commonly used sequential SDRAM read procedure. A more complex addressing scheme is required to obtain the correct pixels. Due to the SDRAM burst mode, the correct address needs to take into account both pixel location and burst read suitability. Then a offset value is calculated to access the correct value in the SDRAM read buffer.
+\par
+The commonly used SDRAM write procedure is also bypassed by the feature detection process. The addressing scheme used for reading the feature pixels, is also used for writing them back. The data mask in the SDRAM interface is used by this process to simplify data flow. It ensures that only a selected part of the write buffer is written into SDRAM. Since the number of pixels updated by this process is relatively low, the absence of a data mask would result in the need of copying the read buffer, only for most of it to be copied back to the write buffer. Creating the data mask is also a simple task since the pixel offset is already calculated by the addressing scheme.
+\par
+Depending on the size of a feature, the pixel values are stored in registers. Centroid calculation is performed on features of suitable size. Suitability comes from the number of registers required for storing all pixel data of the feature. The pixel values for centroid calculation could be stored in BRAM to allow larger features to obtain a centroid.
+\par 
 
 \section{Client endpoint}
 \subsection{Communication}
@@ -642,7 +664,7 @@ The implemented CCL algorithm streamlined and simple, but not without drawbacks.
 \chapter{Results and comparison}
 
 \chapter{Review and reflection}
-
+% Streamlined CCL, preparing for centroid & feature detection
 \addcontentsline{toc}{chapter}{Bibliography}
 
 \bibliographystyle{unsrt}

@@ -443,7 +443,8 @@ From a user experience point of view, the pre-processing pipeline works by power
 From an integrated system point of view, the pre-processing pipeline is powered on and configured by an external system, for example, a program on a microprocessor. The external system has the same control and responsibility as the client software. To make the integrated system autonomous, a more sophisticated parameter tuning is needed for the pre-processing pipeline to be effective. This is desirable when integrating a system to a spacecraft, since it often requires a high degree of autonomy.
 
 \section{FPGA design}
-
+The FPGA design is modeled with Verilog HDL. Xilinx Vivado design suite is used for generating bitstream files, that are programmed to the Opal Kelly XEM7305 FPGA module.
+\par
 The star tracker pre-processing pipeline FPGA design contributes to all system requirements in Table \ref*{table:sysreq}. The requirements are satisfied by combining a set of components. Some components contribute to several requirements, while others are less multipurpose. Figure \ref*{fig:fpga_design} shows an overview of the components in the design.
 
 \begin{figure}[h]
@@ -596,33 +597,49 @@ To extract stars from an image, a number of image processing algorithms are impl
 As a core part of the pre-processing pipeline, the image processing and analysis contribute to all system requirements in Table \ref*{table:sysreq}.
 
 \subsubsection{Box Filter}
-A box filter is applied on the image to prepare the image for CCL. The principle of the box filter is to blur the image by replacing a pixel with the average of the surrounding pixels. The 3 x 3 kernel is used for this filter, where the center pixel is the target. This filter is commonly described with the expression 
+A box filter is applied on the image to prepare the image for CCL. The principle of the box filter is to expand and blur features in the image by replacing a pixel with the average of the surrounding pixels. The 3 x 3 kernel is used for this filter, where the center pixel is the target. This filter is commonly described with the expression 
  
-$\frac{1}{9}
+$x_{ij}=\frac{1}{9}
 \begin{bmatrix}
 1 & 1 & 1\\
 1 & 1 & 1\\
 1 & 1 & 1
 \end{bmatrix}
 $,
-where the matrix represents the kernel with pixel values. This gives a uniformly applied average of the image where high value pixel areas are expanded without too much loss of detail.
+where $x$ is the currently updated, center pixel in the kernel. The matrix represents the kernel with pixel values. This gives a uniformly applied average of the image where high value pixel areas are expanded without too much loss of detail. Figure \ref*{fig:box_filter} shows an example of a feature passing through the box filter. The blurring and expansion of the feature is apparent.
 \par
 A problem with the box filter is the need for integer division. A division operation is problematic when implemented in hardware and is often dedicated a separate IP core module. This increased complexity can however be avoided in the case of the box filter because it lacks the need for high accuracy output of the operation, as the pixel values are 8-bit integers. The alternative operation to replace the division takes advantage of the constants in the box filter, which is the output bit width and the denominator. The lack of accuracy is compensated by the performance which is reduced from a multi clock cycle operation into a single clock cycle operation. The division is approximated with the expression
 $
 (\sum x_{ij} \cdot 28) \gg 8 
 $, where $x$ is the 3 x 3 kernel.
 \par
-Image edges are handled by ignoring the pixel value and setting them to 0. This assigns the edges of the image as part of the background feature. The possible loss of edge features is also acceptable because of the difficulty to approximate the complete geometry and center of an edge feature. 
+Image edges are handled by ignoring the pixel value and setting them to 0. This assigns the edges of the image as part of the background feature. The possible loss of edge features is also acceptable because of the difficulty to approximate the complete geometry and center of an edge feature.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.25]{figures/box_filter.png}
+    \caption{Illustration of box filter. The original feature is on the left, while the processed feature is on the right. Box filter averages every pixel within a 3 x 3 image processing kernel.}
+    \label{fig:box_filter}
+\end{figure}
 
 \subsubsection{Thresholding}
-Thresholding is done to separate the background from the foreground in the image. The foreground needs to contain enough pixels to enable successful star extraction. The box filter allows foreground feature edges to be brighter, which otherwise might be categorized as background in this step. If the threshold is too low, background and noise blends together with foreground features, making the choice of optimal threshold a complex problem. This is out of scope of this project and the threshold is manually set. 
+Thresholding is done to separate the background from the foreground in the image. The foreground needs to contain enough pixels to enable successful star extraction. The box filter allows foreground feature edges to be brighter, which otherwise might be categorized as background in this step. If the threshold is too low, background and noise blends together with foreground features, making the choice of optimal threshold a complex problem. This is out of scope of this project and the threshold is manually set.
 \par
-An example solution for setting the threshold could be to use a feedback loop to adjust the parameter. The loop would use previous output of the pipeline to use as input, providing the number of stars, brightness and distance to determine a threshold setting and acceptable result.    
+An example solution for setting the threshold could be to use a feedback loop to adjust the parameter. The loop would use previous output of the pipeline to use as input, providing the number of stars, brightness and distance to determine a threshold setting and acceptable result.
 \par
-The thresholding process transforms each pixel value to either 0, being background, or 255 as foreground. As it is a process with no dependency to neighboring pixels, it can be conveniently placed in the output phase of the box filter. The output phase is where the result of the box filter operation is written to SDRAM memory. The register containing the output of the box filter is piped to the SDRAM write bus through the threshold. This makes the thresholding highly efficient because of no additional clock cycles required.
+The thresholding process transforms each pixel value to either 0, being background, or 255 as foreground. Figure \ref*{fig:thresholding} shows an example of the thresholding process. The example shows most of the original pixels passing the threshold. These are assigned to foreground, with the value 255. Some pixels around the edges are too faint to pass the threshold. These pixels are assigned to background with the value 0.
+\par
+ As it is a process with no dependency to neighboring pixels, it can be conveniently placed in the output phase of the box filter. The output phase is where the result of the box filter operation is written to SDRAM memory. The register containing the output of the box filter is piped to the SDRAM write bus through the threshold. This makes the thresholding highly efficient because of no additional clock cycles required.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.25]{figures/thresholding.png}
+    \caption{Illustration of thresholding process. The feature on the left is the product of box filter, and the feature on the left is the feature after passing the threshold.}
+    \label{fig:thresholding}
+\end{figure}
 
 \subsubsection{Connected component labeling and analysis}
-The goal with CCL is to assign foreground pixels to features. The algorithm traverses the image using a kernel, updating the feature tables and pixels in the line buffer. Three feature tables keeps information about pixel values and the feature geometry. Figure \ref*{fig:feature_tables} shows the three tables, populated with example data. 
+The goal with CCL is to assign foreground pixels to features. The algorithm traverses the image using a kernel, updating the feature tables and pixels in the line buffer. Three feature tables keeps information about pixel values and the feature geometry. Figure \ref*{fig:feature_tables} shows the three tables, populated with example data.
 \par
 Every encountered foreground pixel is updated depending on its neighbors. The focus is on the center pixel in the kernel. It is updated depending on the neighboring pixels. If any neighboring pixel has a value with an entry in the feature table, the current pixel is updated and mapped to the same feature. The geometry of each feature is stored as minimum and maximum coordinates within the image. Also the brightness of each feature is stored. This is used together with the geometry for feature analysis.
 \par
@@ -644,22 +661,64 @@ The implemented CCL algorithm is streamlined and simple, but not without drawbac
 \end{figure}
 
 \subsubsection{Feature detection and centroiding}
-Feature detection is the process of using the feature tables, shown in Figure \ref*{fig:feature_tables}, to create image data to indicate detected features. Centroiding gives a more accurate indicator of detected features by further analyzing them. Feature detection and centroiding is the final step of the pre-processing pipeline, resulting in a output image and centroid calculations.
+Feature detection is the process of using the feature tables, shown in Figure \ref*{fig:feature_tables}, to create image data to indicate detected features. Centroiding gives a more accurate indicator of detected features by further analyzing them. Feature detection and centroiding is the final step of the pre-processing pipeline, resulting in a output image and data points for extracted stars. 
 \par
-The feature detection process filters out features that are too faint or small. The threshold is specified by the parameter configuration system. Table \ref*{table:regs1} shows the register and format of the threshold. The threshold is compared to the brightness of each feature, which is calculated in the CCL process. An example of the feature brightness table is shown in Figure \ref*{fig:feature_tables} on the right. When the brightness of a feature is below the threshold, it is discarded. The process then moves on to validate the next feature in the feature table.
+The feature detection process filters out features that are too faint or small. The threshold is specified by the parameter configuration system. Table \ref*{table:regs1} shows the register and format of the threshold. The threshold is compared with the brightness of each feature, which is calculated in the CCL process. An example of the feature brightness table is shown in Figure \ref*{fig:feature_tables} on the right. When the brightness of a feature is below the threshold, it is discarded. The process then moves on to validate the next feature in the feature table.
 \par
 Unlike other parts of the image processing and analysis, feature detection traverses the image one feature at a time. The sliding window favors processing that needs to scan the entire image, possibly applying calculations to every pixel. Feature detection is only interested in processing known coordinates of the image, making the sliding window unfavorable.
 \par
-A rectangle can be imagined around all features, given the maximum and minimum coordinates. The pixels within this rectangle is read directly from SDRAM to the feature detection process. This bypasses the commonly used sequential SDRAM read procedure. A more complex addressing scheme is required to obtain the correct pixels. Due to the SDRAM burst mode, the correct address needs to take into account both pixel location and burst read suitability. Then a offset value is calculated to access the correct value in the SDRAM read buffer.
+A rectangle can be imagined around a feature, given the maximum and minimum coordinates of it. The pixels within this rectangle is read directly from SDRAM to the feature detection process. This bypasses the commonly used sequential SDRAM read procedure. A more complex addressing scheme is required to obtain the correct pixels. Due to the SDRAM burst mode, the correct address needs to take into account both pixel location and burst read suitability. Then a offset value is calculated to access the correct value in the SDRAM read buffer.
 \par
-The commonly used SDRAM write procedure is also bypassed by the feature detection process. The addressing scheme used for reading the feature pixels, is also used for writing them back. The data mask in the SDRAM interface is used by this process to simplify data flow. It ensures that only a selected part of the write buffer is written into SDRAM. Since the number of pixels updated by this process is relatively low, the absence of a data mask would result in the need of copying the read buffer, only for most of it to be copied back to the write buffer. Creating the data mask is also a simple task since the pixel offset is already calculated by the addressing scheme.
+The commonly used SDRAM write procedure is also bypassed by the feature detection process. The addressing scheme used for reading the feature pixels, is also used for writing them back. The data mask in the SDRAM interface is used by this process to simplify data flow. It ensures that only a selected part of the write buffer is written into SDRAM. Since the number of pixels updated by this process is relatively low, the absence of a data mask would result in the need of copying the read buffer, only for most of it to be copied back to the write buffer. Configuration of the data mask is relatively simple since the pixel offset is already calculated by the addressing scheme.
 \par
-Depending on the size of a feature, the pixel values are stored in registers. Centroid calculation is performed on features of suitable size. Suitability comes from the number of registers required for storing all pixel data of the feature. The pixel values for centroid calculation could be stored in BRAM to allow larger features to obtain a centroid.
+Depending on the size of a feature, the pixel values are stored in registers. Centroid calculation is performed on features of suitable size. Suitability comes from the number of registers required for storing all pixel data of the feature. The pixel values for centroid calculation could be stored in BRAM to allow larger features to obtain a weighted centroid.
+\par
+A position estimate for every feature is calculated to achieve system requirement \hyperref[req3.1]{3.1} and \hyperref[req3.2]{3.2}. The centroid is calculated in one of two ways, the weighted and non-weighted version.
 \par 
+The weighted centroid of a feature estimates the true center of it. The process takes into account pixel brightness values and distance from the average coordinate. An average coordinate is the value between the minimum and maximum coordinate, stored in the feature table. The process creates an integer value for every row and column of the feature using these calculations. Each pixel in the feature contributes with its brightness, while the column, or row number contributes with the weight. The calculation can be described with the following expression $C_{i} = C_{i} + \texttt{0xffff} - F_{jk}|i-c|$, where $C_{i}$ is the feature column register, \texttt{0xffff} is a constant for the weight, $F_{jk}$ is a pixel value, and $|i-c|$ is the distance from the average coordinate.
+\par
+A detail to notice in the weighted centroid calculation is the requirement of pixel brightness values. The image processing and analysis has until this point used the output of the previous step as input to the next step. The brightness data used for weighted centroid calculation comes from the output of box filter. This image is used because the pixels have the same geometry as they have in the feature table, and contain pixel brightness information.
+\par
+The weighted centroid calculation results in column and row registers which are used to determine, and render the estimated center of the feature. The coordinate of the center, relative to the feature, is the indices of the column and row registers with the highest values.
+\par
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.25]{figures/centroid.png}
+    \caption{Illustration of the two centroid variants. Non-weighted centroid is rendered on the feature on the left. Weighted centroid is rendered on the feature on the right.}
+    \label{fig:centroids}
+\end{figure}
+
+The non-weighted centroid calculation uses the minimum and maximum coordinates of each feature to calculate the average coordinate as the center. This estimation of a feature center is not as accurate as the weighted, but acts as fallback in case the weighted option is not suitable.
+\par
+Figure \ref*{fig:centroids} shows an example of the result of feature detection and centroiding. Detected features are rendered with a rectangular frame around the edges, with a small offset from the coordinates of the feature table, for better visibility. Both centroid variants are rendered as a cross on the corresponding feature. The non-weighted variant has a cross extending from the feature frame, while the cross of the weighted variant is significantly smaller. This helps with distinguishing the variants, and visual analysis of the weighted centroid.
 
 \section{Client endpoint}
-\subsection{Communication}
-\subsection{Pipeline configuration}
+The client endpoint is the external operator of the pre-processing pipeline and responsible for controlling the FPGA module. The features provided by the client endpoint contribute to system requirements \hyperref[req1.1]{1.1}, \hyperref[req1.2]{1.2}, \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, and \hyperref[req2.2]{2.2}. The purpose of the client endpoint is to allow operation and development of the system. This is made easy by the use of Opal Kelly API, which makes controlling the FPGA module dynamic and simple. Optionally, the system could be more self-sustaining by handing over some client responsibilities to the FPGA module. A self-sustaining system might be ideal in an integrated system in production, but inconvenient for development and demonstration.
+\par
+The client endpoint is a Java-based PC application with a graphical user interface (GUI) that enables debugging, analysis, and parameter configuration. The application uses the JavaFx platform, making it lightweight and portable.
+\par
+
+\subsection{Connecting and initializing FPGA}
+The base class, called \texttt{okCFrontPanel}, is the entry point for operating the FPGA module. It provides methods for device interaction, device configuration, and FPGA communication. The FPGA-module is initialized by calling the API to open a connection. This enables the communication layers required for interacting with the FPGA module. \citep*{FrontPanelMan}
+\par
+Before programming the FPGA, the device is configured with a default configuration from on-chip flash memory, and checked for errors. When encountering errors, they are reported to the user, but no further action is taken.
+
+\subsection{Bitsream programming}
+The bitstream file, containing the FPGA-design, is programmed to the FGPA using the \texttt{okCFrontPanel} class. To program a bitsream file to the FPGA, an open and initialized device is required. When encountering errors in the programming stage, it is reported to the user, and a reset signal is sent to the FPGA. The memory calibration is initiated on the FPGA as it is programmed. The test result is verified by reading the Wire Out value from the FPGA, shown in Table \ref*{table:wireOutState}. Errors encountered in this stage are simply reported to the user.
+
+\subsection{Pre-processing pipeline configuration and control}
+The configurable parameters and triggers are listed in Tables \ref*{table:wireInState} and \ref*{table:regs1}. To enable these features, a programmed device is required.
+\par
+The binary transformation threshold and feature brightness threshold are read from user input. The values are validated and written to the register bridge on the FPGA using the \texttt{okCFrontPanel} class. Any errors are reported to the user.
+\par
+To select an image for the pre-processing pipeline, it is loaded to the application. The 270 x 480 resolution, 8-bit single channel bitmap file format is used. The image is prepared by converting it to a byte array of integers. This is the format required by the Pipe In module. The image transfer is initialized on the FPGA by configuring its state with Wire In values listed in Table \ref*{table:wireInState}, which resets the FIFO buffers and sets the SDRAM to read mode.
+The write is the performed using the Block Pipe in module, by calling the \texttt{okCFrontPanel} class.
+\par
+
+\subsection{Results and analysis}
+
+\subsection{Debugging}
 
 \chapter{Results and comparison}
 

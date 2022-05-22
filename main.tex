@@ -399,12 +399,22 @@ The clock module on the XEM7305 provides a 200 MHz frequency signal. An addition
 In addition to using the clock signal to drive tasks, a common practice within system modeling with an HDL is to drive tasks using signals that occur more spontaneously. This could, for example, be a signal originating from a sensor on the FPGA module that has an interface to the FPGA design without a dependence to a clock. This enhances the suitability of using FPGAs for real-time requirements since the reaction to an input can be within clock cycles instead of milliseconds. Another reason to use FPGAs for real-time applications is predictability. For example, when using a clock divider to run a task at every 5 ms, the task will run precisely at 5 ms intervals as long as the clock oscillator itself is accurate. Software based real-time applications cannot guarantee the same level of confidence for the timing requirements due to possible scheduling and concurrency related overhead.
 
 \chapter{Star tracker systems}
-Determining the position of an object in space is a task where multiple observations and instruments are used to produce an understanding of the orbit or trajectory. The position can be described by different means. Astronomical coordinate systems and reference frames are used depending on the type of object and orbit. Objects in earth orbit are commonly described using the equatorial coordinate system. The equatorial coordinate system is geocentric and uses right ascension and declination as spherical coordinates, comparable to the geographical coordinates longitude and latitude.
+Determining the position of an object in space is a task where multiple observations and instruments are used to produce an understanding of the orbit or trajectory. The position can be described by different means. Astronomical coordinate systems and reference frames are used depending on the type of object and orbit. Objects in earth orbit are commonly described using the equatorial coordinate system. The equatorial coordinate system is geocentric and uses right ascension and declination as spherical coordinates, comparable to the geographical coordinates longitude and latitude. Figure \ref*{fig:orbit} illustrates the spherical coordinates in the context of a satellite orbit. \citep{SatDesgin}
 \par
-To determine the position of a spacecraft in earth orbit, estimations on can be done remotely by the use of orbital mechanics. The position of a satellite with a known orbit can be determined by its six Keplerian orbital elements. Five of the elements contribute to size, shape, and orientation of the orbit. The sixth element allows for calculation of the satellite position at a given moment in time. As time passes, the elements used for position estimation need to be adjusted to maintain an accurate model of the orbit. Remote observations and onboard measurements are used for making this possible. 
+To determine the position of a spacecraft in earth orbit, estimations on can be done remotely by the use of orbital mechanics. The position of a satellite with a known orbit can be determined by its six Keplerian orbital elements. Five of the elements contribute to size, shape, and orientation of the orbit. The sixth element allows for calculation of the satellite position at a given moment in time. As time passes, the elements used for position estimation need to be adjusted to maintain an accurate model of the orbit. Remote observations and onboard measurements are used for making this possible. \citep{SatDesgin}
 \par
-Satellites are monitored and tracked remotely by ground stations across the globe using radar and radio communication systems. The onboard systems of a satellite often include a number of instruments for determining the position and attitude. The attitude of a satellite is the orientation of the spacecraft relative to a frame of reference. The attitude matrix is a common way to express the attitude. The 3 x 3 matrix contains the angle of each axis, allowing accurate interpretation and calculation to be made.
+Satellites are monitored and tracked remotely by ground stations across the globe using radar and radio communication systems. The onboard systems of a satellite often include a number of instruments for determining the position and attitude. This information is often needed for managing the mission of the satellite. If the mission involves remote sensing tasks, such as multispectral imaging for example, maintaining the attitude of the spacecraft at a specific position in orbit might be mission critical.  
 \par
+The attitude of a satellite is the orientation of the spacecraft relative to a frame of reference. The attitude matrix is a common way to express the attitude. The 3 x 3 matrix contains angles of each axis, allowing accurate interpretation and calculation to be made. Figure \ref*{fig:orbit} shows the vectors of a satellite attitude. These vectors are used for calculating the reference frame angles, giving the attitude matrix of the satellite. \citep*{StRef}
+\par
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.4]{figures/st_ref.png}
+    \caption{Diagram of star tracker equipped satellite. Attitude and position elements are described by following symbols; \textbf{$\alpha$} being the right ascension, \textbf{$\delta$} declination and \textit{R} the attitude matrix. The star tracker camera system is visualized with four stars in the field of view (FOV).}
+    \label{fig:orbit}
+\end{figure}
+
 A star tracker is an instrument that provides navigational data, such as position and attitude, by recognizing stars from optical images. The system consists of a camera and a computer. The system operates by capturing an image, processing it, and then comparing the extracted data to a star catalog. The star catalog contains columns of information about known stars. \citep{SatDesgin}
 \par
 Star tracker systems depend on image processing and analysis that run on varying computing platforms. The platform and purpose of the star tracker in focus is an FPGA-based star tracker for spacecraft attitude determination. The general idea of star tracker based attitude determination is explored in this chapter to explain the context of a pre-processing pipeline for such a system.
@@ -433,7 +443,7 @@ A unique feature of star trackers is the ability to find the attitude and positi
 Images are usually captured by a charged-coupled device, or CCD, sensor. In contrast to another common image sensor type, the CMOS sensor, CCD is more resistant to noise, resulting in higher quality images.
 \citep*{SatDesgin}
 \par
-Star tracker cameras use a fixed focal length lens and a large field of view (FOV) to capture as many stars in the image as possible. A large FOV camera system consists of a large image sensor and a lens with small focal length. To maximize the brightness of the stars, the lens is equipped with a wide aperture for allowing more light to enter the image sensor. \citep*{SatDesgin}
+Star tracker cameras use a fixed focal length lens and a large field of view (FOV) to capture as many stars in the image as possible. A large FOV camera system consists of a large image sensor and a lens with small focal length. To maximize the brightness of the stars, the lens is equipped with a wide aperture for allowing more light to enter the image sensor. The camera system FOV is visualized in figure \ref*{fig:orbit}. \citep*{SatDesgin}
 \par
 Star tracker camera sensors generally use the visible light spectrum to capture images. The images are stored in single channel, or black and white, format. Any color information is useless in star trackers, which  benefits from high contrast and brightness of image features. This makes the image features more likely to be extracted and used for star detection. \citep*{SatDesgin}
 \par
@@ -447,24 +457,18 @@ At the image processing stage, issues such as overexposed images and false star 
 The ideal output of the image processing is to have at least four bright stars extracted from the background. Using the relative position of each extracted star, the star tracker system is able to proceed to star detection. The image data is only used up to this stage, making it unnecessary from this point forward.
 
 \section{Star detection}
-The identification of stars is generally carried out by comparing identifiers, consisting of multiple stars. The identifiers are created by calculating the angular separation between bright stars found in the image. The angular separation can be determined relatively easy with a fixed FOV camera. \citep*{SatDesgin}
+The identification of stars is generally carried out by comparing identifiers, consisting of multiple stars. The identifiers are created by calculating the angular separation between bright stars found in the image. The angular separation can be determined relatively easily with a fixed FOV camera. \citep*{SatDesgin}
 \par
 The angular separation between any two stars is generally a unique identifier. This makes the process of star detection essentially a look up operation, where known angular separations are compared against the identifiers created from the captured image. \citep*{SatDesgin}
 \par
 Four stars are used for creating the identifiers. The first two can be used as unit vector, while the third is required to resolve ambiguity. A 4th star is required for positive identification. \citep*{SatDesgin} \citep*{StreakDet}
+\par
+Given a set of recognized stars, or identifiers, the attitude and position can be calculated. The error detection and correction in this step is crucial, but somewhat easier than up to this point. False positives, as in stars that are mistakenly recognized can be voted out when multiple stars has been matched. False positives are recognized by verifying their position in relation to other recognized stars. False negatives are more difficult to detect, and not a problem as long as there are enough recognized stars.
 
 \section{Attitude and position}
-
-% Insert example coordinates
-
-% GPS
-
-% Insert example attitude
-% Attitude Matrix - Singular value decomposition (SVD)
-
-\section{Pre-processing pipeline}
-
-% Insert example images, system output
+The attitude and position are determined based on the recognized stars. With the known coordinates of the stars, the position and attitude of the satellite are calculated with the help of linear algebra. Finding the attitude can be generalized to solving to the Wahba problem, where a rotation matrix between two coordinate systems are sought. By solving this problem, for example with singular value decomposition, the attitude matrix of the satellite can be obtained. To maximize the accuracy of the attitude estimation, the stars in the largest identifiers in the image are used for the matrix calculations.\citep*{StRef} \citep*{StreakDet}
+\par
+The position of the satellite can be estimated using trigonometric calculations using the recognized stars. The known positions and separation angles of the stars, together with the camera system FOV parameters, enables the satellite position to be calculated in relation to the stars. The position estimation is also reinforced with the help of multiple results. \citep*{StDev}
 
 \chapter{Pre-processing pipeline documentation}
 

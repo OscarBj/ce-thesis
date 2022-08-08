@@ -1,0 +1,61 @@
+Test data set
+
+
+T0.
+Bit Threshold: 50
+Feature threshold: 300
+Timer: 81250000
+Metrics = Pipeline total: 59,06ms | Box filter: 18,84 | CCL: 39,39ms | Framing: 0,00ms
+
+T1.
+Bit Threshold: 100
+Feature threshold: 300
+Timer: 81250000
+Metrics = Pipeline total: 58,96ms | Box filter: 18,84 | CCL: 39,39ms | Framing: 0,00ms
+
+
+
+
+Star data set
+
+
+S0
+1.
+Bit Threshold: 50
+Feature threshold: 800
+Timer: 81250000
+Metrics = Pipeline total: 58,41ms | Box filter: 18,84 | CCL: 39,38ms | Framing: 0,00ms
+
+2.
+Bit Threshold: 50
+Feature threshold: 400
+Timer: 81250000
+Metrics = Pipeline total: 58,53ms | Box filter: 18,84 | CCL: 39,38ms | Framing: 0,00ms
+
+
+S1
+1.
+Bit Threshold: 40
+Feature threshold: 800
+Timer: 81250000
+Metrics = Pipeline total: 58,35ms | Box filter: 18,84 | CCL: 39,39ms | Framing: 0,00ms
+
+2.
+Bit Threshold: 30
+Feature threshold: 800
+Timer: 81250000
+Metrics = Pipeline total: 58,43ms | Box filter: 18,84 | CCL: 39,39ms | Framing: 0,00ms
+
+
+S2
+1.
+Bit Threshold: 15
+Feature threshold: 50
+Timer: 81250000
+Metrics = Pipeline total: 58,53ms | Box filter: 18,84 | CCL: 39,39ms | Framing: 0,00ms
+
+2.
+Bit Threshold: 15
+Feature threshold: 100
+Timer: 81250000
+Metrics = Pipeline total: 58,33ms | Box filter: 18,84 | CCL: 39,39ms | Framing: 0,00ms

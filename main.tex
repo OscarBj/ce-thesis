@@ -59,7 +59,25 @@ Master's thesis in Computer Engineering\\ &
 }
 \pagenumbering{gobble}
 \section*{Abstract}
-\section*{Keywords}
+The processing pipeline for a star tracker requires computation within various problem domains. The first stage of star detection and tracking, is to extract star features from image data.
+The image processing, described as the pre-processing pipeline, is implemented and documented in this thesis. The goal is to provide a theoretical basis of
+hardware aspects, image processing, and star tracker systems, to support the design choices made for the pre-processing pipeline.
+
+The hardware design is built for a Xlinix 7-series FPGA, functioning as a testbed for the pre-processing pipeline.
+The Opal Kelly XEM7305 module provides the components, such as power, clock, SDRAM, and a communication channel to the FPGA.
+
+The system requirements forms the high level goals of the pre-processing pipeline. The requirements create a framework for the FPGA design to be developed with robust and user-firendly engineering principles.
+The requirements are implemented in a design consisting of a computation unit, communication unit, memory controll unit, and a client-PC software.
+
+Extracted stars are rendered on top of image provided to the pre-processing pipeline. The successfull extraction of stars can be verified through the client software. The processing time of an image is satisfactory, with a very low variation.
+This is a precondition for integration with other star tracker components, when following the principle of predictability. The performance of the most complex part of the compuation unit, the CCL process, is compared with high performance
+software implementations. A satisfactory result is conlcuded when the software execution is put to scale with the lower clock speed of the hardware implementation.
+
+The resource use of the FPGA is provided by the Xilinx Vivado design suite, with the conclusion being that the FPGA part fits the design well, with a high utilization rate of LUT's and BRAM. Paralellization could be increased to utilize more DSP blocks for faster results.
+
+\subsubsection*{Keywords}
+Star tracker, image processing, CCL, box filter, FPGA design
+
 \section*{Abbreviations}
 
 \tableofcontents

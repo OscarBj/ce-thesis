@@ -977,21 +977,23 @@ A notable aspect of the results is that the rendering of the centroid of a few s
 \end{table}
 
 \subsection{Conclusion}
-To summarize the results, the star tracker pre-processing pipeline works as intended, extracting stars from the input images. The procedure of the image processing system is clearly seen, when comparing input images to the output. The box filter, for example, is clearly visualized in by the output of the test run, seen in Figure \ref{res:t0}. The sample images, such as sample 3 shown in Figure \ref{res:s2_in}, benefits more clearly from this step of the pre-processing pipeline by expanding the faint and small stars captured by the camera system as they are noticeably larger, and clearly extracted in the output seen in Figure \ref{res:s2_1}.
+To summarize the results, the star tracker pre-processing pipeline works as intended, extracting stars from the input images. The procedure of the image processing system is clearly seen, when comparing input images to the output. 
+\par
+The box filter, for example, is visualized in the output of the test run seen in Figure \ref{res:t0}. The feature edges fade into the background more smoothly when compared to the input image, shown in Figure \ref{res:t_in}. The sample images, such as sample 3 shown in Figure \ref{res:s2_in}, benefit more clearly from this step of the pre-processing pipeline by expanding faint and small stars captured by the camera system as they are noticeably larger, and clearly extracted in the output, as seen in Figure \ref{res:s2_1}.
 \par
 The more complex CCL procedure is visualized by the frame around the stars, which is enabled by the algorithm successfully identifying the connected pixels. As the most critical part of the pre-processing pipeline, the lack of issues within the procedure is a priority. In addition to confirming the CCL results visually, the output metrics also indicates reliable results, with consistent performance.
 \par  
-Weighted centroiding is also proved to work according the specification, shown by the results such as in Figure \ref{res:t1}. The dimension limitation of the stars enabling weighted centroiding is a drawback of the procedure. All input images, however, contain stars with dimensions fitting to the limits, making the procedure acceptable for star detection.
+Weighted centroiding is also proven to work according to specification, shown by the results, such as Figure \ref{res:t1}. The dimension limitation of the stars enabling weighted centroiding is a drawback of the procedure. All input images, however, contain stars with dimensions fitting to the limits, making the procedure acceptable for star detection.
 \par
 The effect of the input parameter tuning is observable by the output images and metrics. An increase in foreground threshold decreases the number of pixels included in a feature. This helped with features gaining a weighted centroid. This effect is shown in Figures \ref{res:t0} and \ref{res:t1}.
 \par
 A decrease in foreground threshold is observed to increase the number of extracted stars, as shown in Figures \ref{res:s1_1} and \ref{res:s1_2}.
 \par
-The feature threshold shows a similar effect, without the loss of pixels in the features. This effect is shown in Figures \ref{res:s2_1} and \ref{res:s2_2}.
+The feature threshold shows a similar effect without any change in the number of pixels in each extracted feature. This effect is shown in Figures \ref{res:s2_1} and \ref{res:s2_2}.
 \par
-Improvements based on these results can be made towards anomaly detection and centroid rendering. The results also reinforces the justification for a autonomous parameter tuning, with small adjustments leading to significant changes, as seen in Table \ref{table:s1_res} and Figures \ref{res:s1_1} and \ref{res:s1_2}.
+Based on these results, improvements could be made towards anomaly detection and centroid rendering. The results reinforces the justification for a autonomous parameter tuning, by observing that small adjustments leads to significant changes, as seen in Table \ref{table:s1_res} and Figures \ref{res:s1_1} and \ref{res:s1_2}.
 \par
-Regardless of minor drawbacks and improvement points, the pre-processing pipeline is proven by the results to perform the intended task with a stable performance. 
+Regardless of minor drawbacks and improvement points, the pre-processing pipeline is proven by the results to perform the intended task with a stable performance.
 
 % anomaly detection vs star detection
 % suitability for star detection, eg S2.2 not too many, not too few
@@ -1004,12 +1006,14 @@ Regardless of minor drawbacks and improvement points, the pre-processing pipelin
 % What is a result
 % Insert input/ output images & metrics from client
 \section{Pre-processing pipeline performance}
-The performance of the pre-processing pipeline can be measured in the same way as any algorithm. The implemented performance measurement metric is execution time. Compared to a software based approach, it can be expected that the variation in execution times is smaller in a hardware based approach since there is no abstraction such as an operating system between the task and computation element. Otherwise, a software based approach executed on a up-to-date CPU with multi-gigahertz clock speed is expected to perform the task in less time. A software based equivalent of this FPGA-based approach would be a aerospace-grade embedded processor. An embedded processor would also be less performant than modern PC CPUs, in terms of execution time.
+The performance of the pre-processing pipeline can be measured in the same way as any algorithm. The implemented performance measurement metric is execution time. Compared to a software based approach, it can be expected that the variation in execution times is smaller in a hardware based approach since there is no abstraction such as an operating system between the task and computation element. Otherwise, a software based approach executed on a up-to-date CPU with multi-gigahertz clock speed is expected to perform the task in less time than a FPGA with a clock speed counted in megahertz. A software based equivalent of this FPGA-based approach would be a aerospace-grade embedded processor. An embedded processor would also be less performant than modern PC CPUs, in terms of execution time.
 \par
 The execution time comparison between the FPGA and software based approach is executed on a 10th generation intel i5 CPU. 
 
 \subsection{Software based approach}
-To allow direct comparison between the FPGA-design and a software based counterpart, a test bench in C++ was developed. The software test bench contains same features, regarding image and parameter input, as well as output metrics, as the FPGA-design \citep{cppImgProc}.
+To enable direct comparison between the FPGA-design and a software based counterpart, a test bench in C++ was developed. The software test bench contains the same features, regarding image and parameter input and output metrics, as the FPGA-design \citep{cppImgProc}. Table \ref{table:res_sw} shows a summary of runs performed with the software based test bench using the same input images and parameters as used with the FPGA-based pre-processing pipeline. The results show noticeable differences in all output metrics. The complex hardware implementation of CCL is proven to be approximately 3 times slower than its software counterpart. On the other hand, the box filter is approximately 3 times faster when performed on the FPGA. The variation of difference in centroiding is larger since the test input runs T1 and T2 show an approximately 5 times faster centroiding performance by the software. The sample runs show a difference between 1 to 3 times faster performance by the software.
+\par
+The general conclusion when comparing the results of the software based approach in Table \ref{table:res_sw} to the results given by the FPGA is that the software is faster. When comparing the systems, the difference in CPU clock speed is significant. Thus another comparison can be made where the clock frequencies are normalized. Since most of the image processing related computation is performed using the 87MHz clock on the FPGA, it is used for scaling the results. For each clock cycle on the FPGA, the Intel CPU performs approximately 23. Table \ref{table:res_sw_norm} shows the result using this ratio for normalizing the output metrics of the software based pre-processing pipeline.
 
 \begin{table}[!h]
     \centering
@@ -1017,25 +1021,52 @@ To allow direct comparison between the FPGA-design and a software based counterp
         \hline
         \textbf{Run ID}&\textbf{Foreground threshold$^{1}$}&\textbf{Feature threshold$^{1}$}&\textbf{CCL$^{2}$}&\textbf{Box filter$^{2}$}&\textbf{Centroid$^{3}$}\\
         \hline
-        T1&50&300&55,3&12,1&149,1\\
+        T1&50&300&12,1&55,3&149,1\\
         \hline
-        T2&100&300&55,4&12,6&129,6\\
+        T2&100&300&12,6&55,4&129,6\\
         \hline
-        S1.1&50&800&53,4&12,6&76,1\\
+        S1.1&50&800&12,6&53,4&76,1\\
         \hline
-        S1.2&50&400&52,4&13,2&71,8\\
+        S1.2&50&400&13,2&52,4&71,8\\
         \hline
-        S2.1&40&800&55,7&12,5&78,7\\
+        S2.1&40&800&12,5&55,7&78,7\\
         \hline
-        S2.2&30&800&55,2&11,7&69,2\\
+        S2.2&30&800&11,7&55,2&69,2\\
         \hline
-        S3.1&15&50&53,6&12,2&83,1\\
+        S3.1&15&50&12,2&53,6&83,1\\
         \hline
-        S3.2&15&100&53,5&12,5&73,6\\
+        S3.2&15&100&12,5&53,5&73,6\\
         \hline
     \end{tabular}
-    \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. $^{3}$Performance metric of the pre-processing pipeline, measured in microseconds.}
+    \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. $^{3}$Performance metric of the pre-processing pipeline, measured in microseconds. \newline Results of the software based approach, produced by averaging the outputs of 10 runs. An Intel i5 CPU, running at 2GHz is used as the underlying hardware and Clang 11 as the compiler.}
     \label{table:res_sw}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+    \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
+        \hline
+        \textbf{Run ID}&\textbf{Foreground threshold$^{1}$}&\textbf{Feature threshold$^{1}$}&\textbf{CCL$^{2}$}&\textbf{Box filter$^{2}$}&\textbf{Centroid$^{2}$}\\
+        \hline
+        T1&50&300&278,3&1271,9&3,4\\
+        \hline
+        T2&100&300&289,8&1274,2&3\\
+        \hline
+        S1.1&50&800&289,8&1228,2&1,8\\
+        \hline
+        S1.2&50&400&303,6&1205,2&1,7\\
+        \hline
+        S2.1&40&800&287,5&1281,1&1,8\\
+        \hline
+        S2.2&30&800&269,1&1269,6&1,6\\
+        \hline
+        S3.1&15&50&280,6&1232,8&1,9\\
+        \hline
+        S3.2&15&100&287,5&1230,5&1,7\\
+        \hline
+    \end{tabular}
+    \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. $^{3}$Performance metric of the pre-processing pipeline, measured in microseconds. \newline Results of the software based approach, produced by averaging the outputs of 10 runs and normalizing the clock speed.}
+    \label{table:res_sw_norm}
 \end{table}
 
 \subsection{CCL algorithm comparison}

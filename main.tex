@@ -78,7 +78,38 @@ The resource use of the FPGA, provided by the Xilinx Vivado design suite, is rev
 Star tracker, image processing, CCL, box filter, FPGA design
 
 \section*{Abbreviations}
-
+\begin{table}[h]
+    \begin{tabular}{ll}
+        CPU&Central Processing Unit\\
+        PC&Personal Computer\\
+        GPU&Graphics Processing Unit\\
+        FPGA&Field Programmable Gate Array\\
+        CPU&Central Processing Unit\\
+        SRAM&Static Random Access Memory\\
+        CLB&Configurable Logic Block\\
+        LUT&Look-Up Table\\
+        SIMD&Single Input Multiple Data\\
+        DSP&Digital Signal Processor\\
+        SDRAM&Synchronous Dynamic Random Access Memory\\
+        I/O&Input/Output\\
+        HDL&Hardware Description Language\\
+        IP&Intellectual Property\\
+        SoC&System On a Chip\\
+        RISC&Reduces Instruction Set Computer\\
+        ARM&Advanced RISC Machines\\
+        IC&Integrated Circuit\\
+        USB&Universal Serial Bus\\
+        DDR&Double Data Rate\\
+        BRAM&Block Random Access Memory\\
+        FOV&Field Of View\\
+        CCD&Charged-Coupled Device\\
+        CMOS&Complementary Metal Oxide Semiconductor\\
+        FIFO&First In First Out\\
+        CCL&Connected component labeling\\
+        API&Application Programming Interface\\
+        GUI&Graphical User Interface\\
+    \end{tabular}
+\end{table}
 \tableofcontents
 \listoffigures
 \listoftables
@@ -524,27 +555,27 @@ The star tracker pre-processing pipeline FPGA design contributes to all system r
 \subsection{Support systems}
 The supporting systems included in the FPGA design consist of components that do not contribute to image processing and analysis directly, but provide other necessary features, such as storage and communication. 
 \par
-The core supporting systems of the FPGA design consist of modules provided by Opal Kelly. These include communication, buffering, and storage solutions that are specific to the FPGA and off-chip components. 
+The core supporting systems of the FPGA design consist of modules provided by Opal Kelly. These include communication, buffering, and storage solutions that are specific to the FPGA and off-chip components. \citep{stpp}
 \par
 The bottom section of Figure \ref*{fig:fpga_design} shows the main functional components of the support systems in the FPGA design. The isolation of this section can be made in a functional, and in some cases, technical sense.
 
 \subsubsection{Communication and host interface}
-The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8 MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations. \citep{XEM7305Man} \citep{FrontPanelMan}
+The Opal Kelly host interface, called okHost, is a gateway for controlling and monitoring the FPGA. It contains the logic for communication with the FX3 USB microcontroller, exposing signal endpoints for controlling USB communication. The host interface also contains a clock signal derived from the external clock module on the XEM7305 board. The 100.8 MHz clock signal synchronizes the logic in the FPGA design with the USB microcontroller operations. \citep{XEM7305Man} \citep{FrontPanelMan} \citep{stpp}
 \par
 Opal Kelly provides a set of IP core modules supporting data transfer from single bits to megabytes. Different synchronization and control methods are used for each module, resulting in small scale data transfers being simpler than large scale transfers. Three Opal Kelly communication modules are used within the FPGA design, each with its own purpose.
 \par
-The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to a 32-bit wide address bus, with 32 bits of storage for each address to use synchronously. The register bridge interface contains separate 32-bit data buses for input and output, and a register address bus. This adds complexity to the FPGA design, because a mapping mechanism, for example a multiplexer, is needed to make all 32 addresses usable. The register bridge is used through the Opal Kelly API, in the client software. Figure \ref*{fig:fpga_design} shows the register bridge connected to the input/output pads, which act as interface between the register bridge and the off-chip modules. The required off-chip modules for the register bridge are clock and USB. \citep{FrontPanelMan}
+The Opal Kelly register bridge connects the host interface directly to a dedicated address space on the FPGA. The register bridge is connected to a 32-bit wide address bus, with 32 bits of storage for each address to use synchronously. The register bridge interface contains separate 32-bit data buses for input and output, and a register address bus. This adds complexity to the FPGA design, because a mapping mechanism, for example a multiplexer, is needed to make all 32 addresses usable. The register bridge is used through the Opal Kelly API, in the client software. Figure \ref*{fig:fpga_design} shows the register bridge connected to the input/output pads, which act as interface between the register bridge and the off-chip modules. The required off-chip modules for the register bridge are clock and USB. \citep{FrontPanelMan} \citep{stpp}
 \par
-Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature, and limited capacity, good for state management and triggering events. The asynchronous data are nevertheless, in many cases, synchronized to a clock in the design. Figure \ref*{fig:fpga_design} shows the Wire In/Out connected to the input/output pads, giving them access to the USB off-chip module. \citep{FrontPanelMan}
+Wire In and Wire Out modules are directional 32-bit buses that transfer data asynchronously. The Wire In/Out modules are by their asynchronous nature, and limited capacity, good for state management and triggering events. The asynchronous data are nevertheless, in many cases, synchronized to a clock in the design. Figure \ref*{fig:fpga_design} shows the Wire In/Out connected to the input/output pads, giving them access to the USB off-chip module. \citep{FrontPanelMan} \citep{stpp}
 \par
-Pipe In and Pipe Out modules are used for multibyte synchronous data transfer. The data buses on both modules are 32 bit wide. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer, but unless the \verb|EP_READY| control signal is high, data are not sent. This is useful in cases where incoming data needs to be stored using buffers. Figure \ref*{fig:fpga_design} shows the Pipe In/Out connected to the input/output pads, allowing it to interface with clock and USB off-chip modules. \citep{FrontPanelMan}
+Pipe In and Pipe Out modules are used for multibyte synchronous data transfer. The data buses on both modules are 32 bit wide. The block throttled variant of the modules adds negotiation signals to the communication system, which allows the FPGA to control the flow of data. The PC can initiate the data transfer, but unless the \verb|EP_READY| control signal is high, data are not sent. This is useful in cases where incoming data needs to be stored using buffers. Figure \ref*{fig:fpga_design} shows the Pipe In/Out connected to the input/output pads, allowing it to interface with clock and USB off-chip modules. \citep{FrontPanelMan} \citep{stpp}
 % define block throttled variant
 % define high signal
 % define states and events, example
 \subsubsection{FPGA state management and event triggers}
-The Wire In module is used on the FPGA to enter states that need to be externally managed. Table \ref{table:wireInState} shows a description and wire values of them. The Wire In uses only the first four bits of the 32-bit data and the values are set so that only one state can occur at a given moment, which ensures the predictability of the system. Each state in Table \ref*{table:wireInState} is mapped to an index, which is used to read the value corresponding to the state on the 32-bit Wire In data bus.
+The Wire In module is used on the FPGA to enter states that need to be externally managed. Table \ref{table:wireInState} shows a description and wire values of them. The Wire In uses only the first four bits of the 32-bit data and the values are set so that only one state can occur at a given moment, which ensures the predictability of the system. Each state in Table \ref*{table:wireInState} is mapped to an index, which is used to read the value corresponding to the state on the 32-bit Wire In data bus. \citep{stpp}
 \par
-The Wire Out module has the single purpose of providing verification of the setup of the FPGA. The signal is expected to be high after a small delay after the FPGA is powered on and the bitstream is programmed. Table \ref*{table:wireOutState} shows the description and wire value of the Wire Out state.
+The Wire Out module has the single purpose of providing verification of the setup of the FPGA. The signal is expected to be high after a small delay after the FPGA is powered on and the bitstream is programmed. Table \ref*{table:wireOutState} shows the description and wire value of the Wire Out state. \citep{stpp}
 
 \begin{table}[h]
     \begin{tabular}{|p{3cm}|p{10cm}|}
@@ -579,7 +610,7 @@ The Wire In/Out modules are a good suit for the state triggers because of the re
 The state management and event trigger system contributes to satisfying the system requirements. The features provided by the Wire In module are fundamental to the requirements \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, \hyperref[req2.2]{2.2}, and \hyperref[req3.3]{3.3}.
 
 \subsubsection{Parameter configuration and metrics}
-To allow data transfer for accessing register values on the FPGA, the Opal Kelly register bridge is used. The registers are addressed so that the first 15 contain writable data, and the second 15 contain readable data. This prevents any concurrency issues with register access. Pre-assigned values to the writable addresses ensure that the pre-processing pipeline parameters have default values to use in case none are assigned through the register bridge. Tables \ref{table:regs1} and \ref{table:regs2} explain the use of the register bridge. 
+To allow data transfer for accessing register values on the FPGA, the Opal Kelly register bridge is used. The registers are addressed so that the first 15 contain writable data, and the second 15 contain readable data. This prevents any concurrency issues with register access. Pre-assigned values to the writable addresses ensure that the pre-processing pipeline parameters have default values to use in case none are assigned through the register bridge. Tables \ref{table:regs1} and \ref{table:regs2} explain the use of the register bridge. \citep{stpp}
 \par
 The features enabled by the register bridge for parameter configuration and metrics contribute to system requirements \hyperref[req1.2]{1.2}, \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, \hyperref[req2.2]{2.2}, and \hyperref[req3.3]{3.3}.
 
@@ -618,24 +649,24 @@ The features enabled by the register bridge for parameter configuration and metr
 \subsubsection{Image transfer and SDRAM storage}
 The size and format of the pre-processing pipeline input image require some mechanisms to be implemented to allow transfer and storage of the image data. The image is fixed as to size and format, namely 270 x 480 pixels, single channel, and eight bits per pixel. The image is not compressed to decrease image processing complexity, making the total image size 129.6 kb.
 \par
-The Pipe In module is used to receive the image data on the FPGA. The module is connected to, and partly managed, by a FIFO buffer. The buffer is also connected to the SDRAM interface, which pulls data from the buffer to storage. The entire data flow is thus controlled by the SDRAM, which is the bottleneck of the image transfer system.
+The Pipe In module is used to receive the image data on the FPGA. The module is connected to, and partly managed, by a FIFO buffer. The buffer is also connected to the SDRAM interface, which pulls data from the buffer to storage. The entire data flow is thus controlled by the SDRAM, which is the bottleneck of the image transfer system. \citep{stpp}
 \par
-The 32-bit wide data bus of the Pipe In module is connected to the input of the FIFO buffer. The buffer capacity is 128 bits to suit the input data bus width of the SDRAM interface. Both Pipe In and FIFO modules are synchronized to the host interface clock. The SDRAM interface is synchronized to its own 87 MHz clock, also derived from the 200 MHz system clock. The modules are synchronized together with control signals to manage the data flow and to mitigate any issue with clock speed differences.
+The 32-bit wide data bus of the Pipe In module is connected to the input of the FIFO buffer. The buffer capacity is 128 bits to suit the input data bus width of the SDRAM interface. Both Pipe In and FIFO modules are synchronized to the host interface clock. The SDRAM interface is synchronized to its own 87 MHz clock, also derived from the 200 MHz system clock. The modules are synchronized together with control signals to manage the data flow and to mitigate any issue with clock speed differences. \citep{stpp}
 \par
-Beyond the input image, the SDRAM is used to store intermediate image processing results. The sequential process writes an image to storage after each step. Since each output is only needed as the input to the next step, the stored images can be overwritten. The process requires a storage capacity of three times the image size, one of the images being the original. The original image is kept in case the process is to be re-executed. In an integrated environment, the storage capacity could be scaled down to two times the image size, since the original image would be useless. % why?
+Beyond the input image, the SDRAM is used to store intermediate image processing results. The sequential process writes an image to storage after each step. Since each output is only needed as the input to the next step, the stored images can be overwritten. The process requires a storage capacity of three times the image size, one of the images being the original. The original image is kept in case the process is to be re-executed. In an integrated environment, the storage capacity could be scaled down to two times the image size, since the original image would be useless. \citep{stpp} % why?
 \par
-After image processing and analysis the output image is stored to SDRAM. The output image is transferred from SDRAM to an external endpoint using the Pipe Out module through another FIFO buffer. The image output transfer uses a similar FIFO buffer as the input image transfer, except with reversed port widths and other control signals.   
+After image processing and analysis the output image is stored to SDRAM. The output image is transferred from SDRAM to an external endpoint using the Pipe Out module through another FIFO buffer. The image output transfer uses a similar FIFO buffer as the input image transfer, except with reversed port widths and other control signals. \citep{stpp}
 \par
 The image transfer and storage systems contribute to system requirements \hyperref[req1.4]{1.4} and \hyperref[req2.2]{2.2}.
 
 \subsubsection{Line buffer and BRAM storage}
-The image data are accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels, and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. Figure \ref*{fig:mem_overview} shows the line buffer in the middle, as the intermediate storage mechanism.
+The image data are accessed by the image processing and analysis components through line buffers implemented as BRAM. Each line consists of 270 8-bit pixels, and three lines are stored in the buffer. This geometry enables image processing on both the horizontal and vertical axis of the image. Figure \ref*{fig:mem_overview} shows the line buffer in the middle, as the intermediate storage mechanism. \citep{stpp}
 \par
-The dual port BRAM has two data buses and two address ports to allow simultaneous read and write operations. The interface also includes a 270-bit data mask to select which pixels to write to BRAM. This adds complexity to the line buffer system but reduces the number of registers needed.
+The dual port BRAM has two data buses and two address ports to allow simultaneous read and write operations. The interface also includes a 270-bit data mask to select which pixels to write to BRAM. This adds complexity to the line buffer system but reduces the number of registers needed. \citep{stpp}
 \par
-The line buffer system is the intermediate storage between the image storage and image processing. The read and write operations are triggered by counters that are updated during the image processing. The line buffer is filled by initiating a read operation to the SDRAM. After each burst read, 128 bits of data are pushed to the buffer and the SDRAM read address is updated. The read address is incremented by 8 between reads, since the burst mode of the SDRAM covers 8 addresses. The SDRAM read continues until the buffer is full.
+The line buffer system is the intermediate storage between the image storage and image processing. The read and write operations are triggered by counters that are updated during the image processing. The line buffer is filled by initiating a read operation to the SDRAM. After each burst read, 128 bits of data are pushed to the buffer and the SDRAM read address is updated. The read address is incremented by 8 between reads, since the burst mode of the SDRAM covers 8 addresses. The SDRAM read continues until the buffer is full. \citep{stpp}
 \par
-The line buffer can be seen as a sliding window on horizontal axis of the image. The buffer, and image processing, is initialized by filling all three buffers. While processing the image, one line after another is read into the buffer. The image columns are mapped to BRAM using addresses and indices. The indices track which address points to which column, while the addresses are fixed variables to point to the start of an image column in BRAM. The addresses are rotated between the indices to predictably and efficiently use the BRAM address space.
+The line buffer can be seen as a sliding window on horizontal axis of the image. The buffer, and image processing, is initialized by filling all three buffers. While processing the image, one line after another is read into the buffer. The image columns are mapped to BRAM using addresses and indices. The indices track which address points to which column, while the addresses are fixed variables to point to the start of an image column in BRAM. The addresses are rotated between the indices to predictably and efficiently use the BRAM address space. \citep{stpp}
 \par
 A big portion of the logic in the pre-processing pipeline is for moving around image data, making the line buffers a core part of the support systems, and storage mechanisms in the FPGA design. The line buffers contribute to system requirements \hyperref[req2.2]{2.2}, \hyperref[req3.1]{3.1}, and \hyperref[req3.2]{3.2}.
 
@@ -647,19 +678,19 @@ A big portion of the logic in the pre-processing pipeline is for moving around i
 \end{figure}
 
 \subsubsection{3x3 Kernel}
-The lowest level storage mechanism where image pixels are kept is 3 small line buffers, forming a 3 x 3 pixel sliding window, or image processing kernel. It is implemented in distributed memory, within the FPGA fabric. The kernel consists of three pixels from each column in the line buffer, creating the 3 x 3 pixel geometry shown in Figure \ref*{fig:mem_overview}. Data from the line buffer is fed into the kernel data structure which is then used for image processing and analysis. The results of these operations are written directly to a higher level storage. Thus the data flow is directional within this storage mechanism.
+The lowest level storage mechanism where image pixels are kept is 3 small line buffers, forming a 3 x 3 pixel sliding window, or image processing kernel. It is implemented in distributed memory, within the FPGA fabric. The kernel consists of three pixels from each column in the line buffer, creating the 3 x 3 pixel geometry shown in Figure \ref*{fig:mem_overview}. Data from the line buffer is fed into the kernel data structure which is then used for image processing and analysis. The results of these operations are written directly to a higher level storage. Thus the data flow is directional within this storage mechanism. \citep{stpp}
 \par
-Between each processed pixel, the kernel moves one step. This movement consists of three read-operations from BRAM to the kernel, each line buffer contributing with three pixels. The entire kernel is overwritten each time, since the data transfer is relatively low.
+Between each processed pixel, the kernel moves one step. This movement consists of three read-operations from BRAM to the kernel, each line buffer contributing with three pixels. The entire kernel is overwritten each time, since the data transfer is relatively low. \citep{stpp}
 \par
 The image processing kernel contributes to system requirements \hyperref[req2.2]{2.2}, \hyperref[req3.1]{3.1}, and \hyperref[req3.2]{3.2}.
 
 \subsubsection{Rendering}
 The rendering process creates an image output from the data generated within image processing and analysis. The data generated from star extraction in the pre-processing pipeline is stored in tables and buffers for convenience. Rendering an image with this data provides visual feedback of the process.
 \par
-Rendering relies on the kernel and line buffers to write the image data to SDRAM. The image is rendered in the original 270 x 480 single channel 8-bit format to SDRAM between the image processing steps, and for final output. The rendering process contributes to system requirement \hyperref[req2.2]{2.2}.
+Rendering relies on the kernel and line buffers to write the image data to SDRAM. The image is rendered in the original 270 x 480 single channel 8-bit format to SDRAM between the image processing steps, and for final output. The rendering process contributes to system requirement \hyperref[req2.2]{2.2}. \citep{stpp}
 
 \subsection{Image processing and analysis}
-To extract stars from an image, a number of image processing algorithms are implemented. The general idea is that an image containing bright stars in the foreground and faint objects or empty space in the background is used as input. The first algorithm smoothens the image to create larger and more detectable foreground features. The second process separates the foreground from the background with a threshold. This is to enable connected component labeling (CCL) in the next step, which requires a fully separate foreground and background. The connected component labeling algorithm traverses through the image pixels and assigns them to features. Metrics of the features are stored for calculating the centroid in the final step.
+To extract stars from an image, a number of image processing algorithms are implemented. The general idea is that an image containing bright stars in the foreground and faint objects or empty space in the background is used as input. The first algorithm smoothens the image to create larger and more detectable foreground features. The second process separates the foreground from the background with a threshold. This is to enable connected component labeling (CCL) in the next step, which requires a fully separate foreground and background. The connected component labeling algorithm traverses through the image pixels and assigns them to features. Metrics of the features are stored for calculating the centroid in the final step. \citep{stpp}
 \par
 As a core part of the pre-processing pipeline, the image processing and analysis contribute to all system requirements in Table \ref*{table:sysreq}.
 
@@ -673,15 +704,15 @@ $x_{ij}=\frac{1}{9}
 1 & 1 & 1
 \end{bmatrix}
 $,
-where $x$ is the currently updated, center pixel in the kernel. The matrix represents the kernel with pixel values. This gives a uniformly applied average of the image where high value pixel areas are expanded without too much loss of detail. Figure \ref*{fig:box_filter} shows an example of a feature passing through the box filter. The blurring and expansion of the feature are apparent.
+where $x$ is the currently updated, center pixel in the kernel. The matrix represents the kernel with pixel values. This gives a uniformly applied average of the image where high value pixel areas are expanded without too much loss of detail. Figure \ref*{fig:box_filter} shows an example of a feature passing through the box filter. The blurring and expansion of the feature are apparent. \citep{stpp}
 \par
 % https://en.wikipedia.org/wiki/Division_algorithm
 A problem with the box filter is the need for integer division. A division operation is problematic when implemented in hardware and is often dedicated a separate IP core module. This increased complexity can, however, be avoided in the case of the box filter because it lacks the need for high accuracy output of the operation, as the pixel values are 8-bit integers. The alternative operation to replace the division takes advantage of the constants in the box filter, which are the output bit width and the denominator. The lack of accuracy is compensated by the performance which is reduced from a multi clock cycle operation to a single clock cycle operation. The division is approximated with the expression
 $
 (\sum x_{ij} \cdot 28) \gg 8 
-$, where $x$ is the 3 x 3 kernel.
+$, where $x$ is the 3 x 3 kernel. \citep{stpp}
 \par
-Image edges are handled by ignoring the pixel value and setting them to 0. This assigns the edges of the image as part of the background feature. The possible loss of edge features is also acceptable because of the difficulty to approximate the complete geometry and center of an edge feature.
+Image edges are handled by ignoring the pixel value and setting them to 0. This assigns the edges of the image as part of the background feature. The possible loss of edge features is also acceptable because of the difficulty to approximate the complete geometry and center of an edge feature. \citep{stpp}
 
 \begin{figure}[h]
     \centering
@@ -695,9 +726,9 @@ Thresholding is done to separate the background from the foreground in the image
 \par
 An example solution for setting the threshold could be to use a feedback loop to adjust the parameter. The loop would use previous output of the pipeline to use as input, providing the number of stars, brightness and distance to determine a threshold setting and acceptable result.
 \par
-The thresholding process transforms each pixel value to either 0, being background, or 255 as foreground. Figure \ref*{fig:thresholding} shows an example of the thresholding process. The example shows most of the original pixels passing the threshold. These are assigned to foreground, with the value 255. Some pixels around the edges are too faint to pass the threshold. These pixels are assigned to background with the value 0.
+The thresholding process transforms each pixel value to either 0, being background, or 255 as foreground. Figure \ref*{fig:thresholding} shows an example of the thresholding process. The example shows most of the original pixels passing the threshold. These are assigned to foreground, with the value 255. Some pixels around the edges are too faint to pass the threshold. These pixels are assigned to background with the value 0. \citep{stpp}
 \par
- As this is a process with no dependency on neighboring pixels, it can be conveniently placed in the output phase of the box filter. The output phase is where the result of the box filter operation is written to SDRAM memory. The register containing the output of the box filter is piped to the SDRAM write bus through the threshold. This makes the thresholding highly efficient because of no additional clock cycles required.
+ As this is a process with no dependency on neighboring pixels, it can be conveniently placed in the output phase of the box filter. The output phase is where the result of the box filter operation is written to SDRAM memory. The register containing the output of the box filter is piped to the SDRAM write bus through the threshold. This makes the thresholding highly efficient because of no additional clock cycles required. \citep{stpp}
 
 \begin{figure}[h]
     \centering
@@ -709,17 +740,17 @@ The thresholding process transforms each pixel value to either 0, being backgrou
 \subsubsection{Connected component labeling and analysis}
 The goal with CCL is to assign foreground pixels to features. The algorithm traverses the image using a kernel, updating the feature tables and pixels in the line buffer. Three feature tables keep information about pixel values and the feature geometry. Figure \ref*{fig:feature_tables} shows the three tables, populated with example data.
 \par
-Every encountered foreground pixel is updated depending on its neighbors. The focus is on the center pixel in the kernel. It is updated depending on the neighboring pixels. If any neighboring pixel has a value with an entry in the feature table, the current pixel is updated and mapped to the same feature. The geometry of each feature is stored as minimum and maximum coordinates within the image. Also the brightness of each feature is stored. This is used together with the geometry for feature analysis.
+Every encountered foreground pixel is updated depending on its neighbors. The focus is on the center pixel in the kernel. It is updated depending on the neighboring pixels. If any neighboring pixel has a value with an entry in the feature table, the current pixel is updated and mapped to the same feature. The geometry of each feature is stored as minimum and maximum coordinates within the image. Also the brightness of each feature is stored. This is used together with the geometry for feature analysis. \citep{stpp}
 \par
-The requirement for a component to be connected to a feature is that at least one side of the pixel touches the feature, making it a 4-connected feature. In contrast, an 8-connected feature accepts diagonally connected components. Diagonally connected components are not detected in this CCL implementation because the previously performed box filtering already exaggerates the component connections, filling the gaps between pixels.
+The requirement for a component to be connected to a feature is that at least one side of the pixel touches the feature, making it a 4-connected feature. In contrast, an 8-connected feature accepts diagonally connected components. Diagonally connected components are not detected in this CCL implementation because the previously performed box filtering already exaggerates the component connections, filling the gaps between pixels. \citep{stpp}
 \par
-The 4-connect comparison is done by comparing the top center and left center to the center pixel in the kernel. The movement of the kernel mitigates the need for comparing all 4 connections surrounding the center pixel in the kernel. This simplifies the design while keeping the line buffer mechanism uniform with the other parts of image processing.
+The 4-connect comparison is done by comparing the top center and left center to the center pixel in the kernel. The movement of the kernel mitigates the need for comparing all 4 connections surrounding the center pixel in the kernel. This simplifies the design while keeping the line buffer mechanism uniform with the other parts of image processing. \citep{stpp}
 \par
-Conflicts in the feature table are encountered when connected components refer to multiple features. This happens when the shape of the feature is unfavorable in regard to kernel movement and the component comparison process. A conflict is resolved by merging the connected features. This is done by merging the brightness of the features involved, updating the feature coordinates, and reassigning the feature label. Depending on the number of mergers, a single feature might be mapped to a number of pixel values. Figure \ref*{fig:feature_tables} shows an example of a resolved conflict, where pixel values \textbf{0x04} and \textbf{0x05} are mapped to the same feature, \textbf{0x03}.
+Conflicts in the feature table are encountered when connected components refer to multiple features. This happens when the shape of the feature is unfavorable in regard to kernel movement and the component comparison process. A conflict is resolved by merging the connected features. This is done by merging the brightness of the features involved, updating the feature coordinates, and reassigning the feature label. Depending on the number of mergers, a single feature might be mapped to a number of pixel values. Figure \ref*{fig:feature_tables} shows an example of a resolved conflict, where pixel values \textbf{0x04} and \textbf{0x05} are mapped to the same feature, \textbf{0x03}. \citep{stpp}
 \par
-While traversing the image, CCL will enter one of three states for each foreground pixel, while background pixels are ignored. When encountering a foreground pixel in the left center, it can be assumed to belong to a feature. The state where left center is foreground is prioritized, because the feature it refers to has the earliest entry in the feature table. The feature with the earliest entry needs to be selected in order for the center pixel to avoid conflicts. The next priority is to compare the top center pixel. This state updates the center pixel with the value of the top pixel. A new feature is created when neither the left center or top center pixel is in the foreground. This state adds an entry to the feature tables.
+While traversing the image, CCL will enter one of three states for each foreground pixel, while background pixels are ignored. When encountering a foreground pixel in the left center, it can be assumed to belong to a feature. The state where left center is foreground is prioritized, because the feature it refers to has the earliest entry in the feature table. The feature with the earliest entry needs to be selected in order for the center pixel to avoid conflicts. The next priority is to compare the top center pixel. This state updates the center pixel with the value of the top pixel. A new feature is created when neither the left center or top center pixel is in the foreground. This state adds an entry to the feature tables. \citep{stpp}
 \par
-The implemented CCL algorithm is streamlined and simple, but not without drawbacks. The most significant limitation is the number of features that can be stored. In case all foreground features in the image are square, the maximum number of features is 253. This is more than enough for what a star tracker needs, but depending on the number of conflicts the number of available features is significantly lower. This limitation originates from the 8-bit pixel values stored in the feature tables and the lack of re-renders of the CCL image. With re-rendering implemented, the maximum would be guaranteed to be 253 features, instead of 253 as best case. The trade-off for choosing re-render to allow for more features would be a performance loss and a larger memory and FPGA design footprint.
+The implemented CCL algorithm is streamlined and simple, but not without drawbacks. The most significant limitation is the number of features that can be stored. In case all foreground features in the image are square, the maximum number of features is 253. This is more than enough for what a star tracker needs, but depending on the number of conflicts the number of available features is significantly lower. This limitation originates from the 8-bit pixel values stored in the feature tables and the lack of re-renders of the CCL image. With re-rendering implemented, the maximum would be guaranteed to be 253 features, instead of 253 as best case. The trade-off for choosing re-render to allow for more features would be a performance loss and a larger memory and FPGA design footprint. \citep{stpp}
 
 \begin{figure}[h]
     \centering
@@ -731,23 +762,23 @@ The implemented CCL algorithm is streamlined and simple, but not without drawbac
 \subsubsection{Feature detection and centroiding}
 Feature detection is the process of using the feature tables, shown in Figure \ref*{fig:feature_tables}, to create image data to indicate detected features. Centroiding gives a more accurate indicator of the detected features by further analyzing them. Feature detection and centroiding are the final step of the pre-processing pipeline, resulting in a output image and data points for the extracted stars. 
 \par
-The feature detection process filters out features that are too faint or small. The threshold is specified by the parameter configuration system. Table \ref*{table:regs1} shows the register and format of the threshold. The threshold is compared with the brightness of each feature, which is calculated in the CCL process. An example of the feature brightness table is shown in Figure \ref*{fig:feature_tables} on the right. When the brightness of a feature is below the threshold, it is discarded. The process then moves on to validate the next feature in the feature table.
+The feature detection process filters out features that are too faint or small. The threshold is specified by the parameter configuration system. Table \ref*{table:regs1} shows the register and format of the threshold. The threshold is compared with the brightness of each feature, which is calculated in the CCL process. An example of the feature brightness table is shown in Figure \ref*{fig:feature_tables} on the right. When the brightness of a feature is below the threshold, it is discarded. The process then moves on to validate the next feature in the feature table. \citep{stpp}
 \par
-Unlike other parts of the image processing and analysis, feature detection traverses the image one feature at a time. The sliding window favors processing that needs to scan the entire image, possibly applying calculations to every pixel. Feature detection is only interested in processing known coordinates of the image, making the sliding window unfavorable.
+Unlike other parts of the image processing and analysis, feature detection traverses the image one feature at a time. The sliding window favors processing that needs to scan the entire image, possibly applying calculations to every pixel. Feature detection is only interested in processing known coordinates of the image, making the sliding window unfavorable. \citep{stpp}
 \par
-A rectangle can be imagined around a feature, given the maximum and minimum coordinates of it. The pixels within this rectangle are read directly from SDRAM to the feature detection process. This bypasses the commonly used sequential SDRAM read procedure. A more complex addressing scheme is required to obtain the correct pixels. Due to the SDRAM burst mode, the correct address needs to take into account both pixel location and burst read suitability. Then an offset value is calculated to access the correct value in the SDRAM read buffer.
+A rectangle can be imagined around a feature, given the maximum and minimum coordinates of it. The pixels within this rectangle are read directly from SDRAM to the feature detection process. This bypasses the commonly used sequential SDRAM read procedure. A more complex addressing scheme is required to obtain the correct pixels. Due to the SDRAM burst mode, the correct address needs to take into account both pixel location and burst read suitability. Then an offset value is calculated to access the correct value in the SDRAM read buffer. \citep{stpp}
 \par
-The commonly used SDRAM write procedure is also bypassed by the feature detection process. The addressing scheme used for reading the feature pixels is also used for writing them back. The data mask in the SDRAM interface is used by this process to simplify the data flow. It ensures that only a selected part of the write buffer is written into SDRAM. Since the number of pixels updated by this process is relatively low, the absence of a data mask would result in the need of copying the read buffer, only for most of it to be copied back to the write buffer. The configuration of the data mask is relatively simple since the pixel offset is already calculated by the addressing scheme.
+The commonly used SDRAM write procedure is also bypassed by the feature detection process. The addressing scheme used for reading the feature pixels is also used for writing them back. The data mask in the SDRAM interface is used by this process to simplify the data flow. It ensures that only a selected part of the write buffer is written into SDRAM. Since the number of pixels updated by this process is relatively low, the absence of a data mask would result in the need of copying the read buffer, only for most of it to be copied back to the write buffer. The configuration of the data mask is relatively simple since the pixel offset is already calculated by the addressing scheme. \citep{stpp}
 \par
-Depending on the size of a feature, the pixel values are stored in registers. Centroid calculation is performed on features of suitable size. Suitability comes from the number of registers required for storing all pixel data of the feature. The pixel values for centroid calculation could be stored in BRAM to allow larger features to obtain a weighted centroid.
+Depending on the size of a feature, the pixel values are stored in registers. Centroid calculation is performed on features of suitable size. Suitability comes from the number of registers required for storing all pixel data of the feature. The pixel values for centroid calculation could be stored in BRAM to allow larger features to obtain a weighted centroid. \citep{stpp}
 \par
 A position estimate for every feature is calculated to achieve system requirements \hyperref[req3.1]{3.1} and \hyperref[req3.2]{3.2}. The centroid is calculated in one of two ways, a weighted and non-weighted version.
 \par 
-The weighted centroid of a feature estimates the true center of it. The process takes into account pixel brightness values and distance from the average coordinate. An average coordinate is the value between the minimum and maximum coordinates, stored in the feature table. The process creates an integer value for every row and column of the feature using these calculations. Each pixel in the feature contributes with its brightness, while the column or row number contributes with the weight. The calculation can be described with the following expression $C_{i} = C_{i} + \texttt{0xffff} - F_{jk}|i-c|$, where $C_{i}$ is the feature column register, \texttt{0xffff} is a constant for the weight, $F_{jk}$ is a pixel value, and $|i-c|$ is the distance from the average coordinate.
+The weighted centroid of a feature estimates the true center of it. The process takes into account pixel brightness values and distance from the average coordinate. An average coordinate is the value between the minimum and maximum coordinates, stored in the feature table. The process creates an integer value for every row and column of the feature using these calculations. Each pixel in the feature contributes with its brightness, while the column or row number contributes with the weight. The calculation can be described with the following expression $C_{i} = C_{i} + \texttt{0xffff} - F_{jk}|i-c|$, where $C_{i}$ is the feature column register, \texttt{0xffff} is a constant for the weight, $F_{jk}$ is a pixel value, and $|i-c|$ is the distance from the average coordinate. \citep{stpp}
 \par
-A detail to notice in the weighted centroid calculation is the requirement of pixel brightness values. The image processing and analysis have until this point used the output of the previous step as input to the next step. The brightness data used for weighted centroid calculation comes from the output of the box filter. This image is used because the pixels have the same geometry as they have in the feature table, and contain pixel brightness information.
+A detail to notice in the weighted centroid calculation is the requirement of pixel brightness values. The image processing and analysis have until this point used the output of the previous step as input to the next step. The brightness data used for weighted centroid calculation comes from the output of the box filter. This image is used because the pixels have the same geometry as they have in the feature table, and contain pixel brightness information. \citep{stpp}
 \par
-The weighted centroid calculation results in column and row registers which are used to determine and render the estimated center of the feature. The coordinate of the center, relative to the feature, is the indices of the column and row registers with the highest values.
+The weighted centroid calculation results in column and row registers which are used to determine and render the estimated center of the feature. The coordinate of the center, relative to the feature, is the indices of the column and row registers with the highest values. \citep{stpp}
 \par
 
 \begin{figure}[h]
@@ -757,39 +788,39 @@ The weighted centroid calculation results in column and row registers which are 
     \label{fig:centroids}
 \end{figure}
 
-The non-weighted centroid calculation uses the minimum and maximum coordinates of each feature to calculate the average coordinate as the center. This estimation of a feature center is not as accurate as the weighted, but acts as fallback in case the weighted option is not suitable.
+The non-weighted centroid calculation uses the minimum and maximum coordinates of each feature to calculate the average coordinate as the center. This estimation of a feature center is not as accurate as the weighted, but acts as fallback in case the weighted option is not suitable. \citep{stpp}
 \par
 Figure \ref*{fig:centroids} shows an example of the result of feature detection and centroiding. The detected features are rendered with a rectangular frame around the edges, with a small offset from the coordinates of the feature table, for better visibility. Both centroid variants are rendered as a cross on the corresponding feature. The non-weighted variant has a cross extending from the feature frame, while the cross of the weighted variant is significantly smaller. This helps with distinguishing the variants, and the visual analysis of the weighted centroid.
 
 \section{Client endpoint}
-The client endpoint is the external operator of the pre-processing pipeline and responsible for controlling the FPGA module. The features provided by the client endpoint contribute to system requirements \hyperref[req1.1]{1.1}, \hyperref[req1.2]{1.2}, \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, and \hyperref[req2.2]{2.2}. The purpose of the client endpoint is to allow operation and development of the system. This is made easy by the use of Opal Kelly API, which makes controlling the FPGA module dynamic and simple. Optionally, the system could be more self-sustaining by handing over some client responsibilities to the FPGA module. A self-sustaining system might be ideal in an integrated system in production, but inconvenient for development and demonstration.
+The client endpoint is the external operator of the pre-processing pipeline and responsible for controlling the FPGA module. The features provided by the client endpoint contribute to system requirements \hyperref[req1.1]{1.1}, \hyperref[req1.2]{1.2}, \hyperref[req1.3]{1.3}, \hyperref[req1.4]{1.4}, and \hyperref[req2.2]{2.2}. The purpose of the client endpoint is to allow operation and development of the system. This is made easy by the use of Opal Kelly API, which makes controlling the FPGA module dynamic and simple. Optionally, the system could be more self-sustaining by handing over some client responsibilities to the FPGA module. A self-sustaining system might be ideal in an integrated system in production, but inconvenient for development and demonstration. \citep{stpp}
 \par
-The client endpoint is a Java-based PC application with a graphical user interface (GUI) that enables debugging, analysis, and parameter configuration. The application uses the JavaFx platform, making it lightweight and portable.
+The client endpoint is a Java-based PC application with a graphical user interface (GUI) that enables debugging, analysis, and parameter configuration. The application uses the JavaFx platform, making it lightweight and portable. \citep{stpp}
 \par
 
 \subsection{Connecting and initializing FPGA}
-The base class, called \texttt{okCFrontPanel}, is the entry point for operating the FPGA module. It provides methods for device interaction, device configuration, and FPGA communication. The FPGA-module is initialized by calling the API to open a connection. This enables the communication layers required for interacting with the FPGA module. \citep*{FrontPanelMan}
+The base class, called \texttt{okCFrontPanel}, is the entry point for operating the FPGA module. It provides methods for device interaction, device configuration, and FPGA communication. The FPGA-module is initialized by calling the API to open a connection. This enables the communication layers required for interacting with the FPGA module. \citep*{FrontPanelMan} \citep{stpp}
 \par
-Before programming the FPGA, the device is configured with a default configuration from on-chip flash memory, and checked for errors. When encountering errors, they are reported to the user, but no further action is taken.
+Before programming the FPGA, the device is configured with a default configuration from on-chip flash memory, and checked for errors. When encountering errors, they are reported to the user, but no further action is taken. \citep{stpp}
 
 \subsection{Bitsream programming}
-The bitstream file, containing the FPGA-design, is programmed to the FGPA using the \texttt{okCFrontPanel} class. To program a bitsream file to the FPGA, an open and initialized device is required. When encountering errors in the programming stage, these are reported to the user, and a reset signal is sent to the FPGA. The memory calibration is initiated on the FPGA as it is programmed. The test result is verified by reading the Wire Out value from the FPGA, shown in Table \ref*{table:wireOutState}. Errors encountered in this stage are simply reported to the user.
+The bitstream file, containing the FPGA-design, is programmed to the FGPA using the \texttt{okCFrontPanel} class. To program a bitsream file to the FPGA, an open and initialized device is required. When encountering errors in the programming stage, these are reported to the user, and a reset signal is sent to the FPGA. The memory calibration is initiated on the FPGA as it is programmed. The test result is verified by reading the Wire Out value from the FPGA, shown in Table \ref*{table:wireOutState}. Errors encountered in this stage are simply reported to the user. \citep{stpp}
 
 \subsection{Pre-processing pipeline configuration and control}
-The configurable parameters and triggers are listed in Tables \ref*{table:wireInState} and \ref*{table:regs1}. To enable these features, a programmed device is required.
+The configurable parameters and triggers are listed in Tables \ref*{table:wireInState} and \ref*{table:regs1}. To enable these features, a programmed device is required. \citep{stpp}
 \par
-The binary transformation threshold and feature brightness threshold are read from user input. The values are validated and written to the register bridge on the FPGA using the \texttt{okCFrontPanel} class. Any errors are reported to the user.
+The binary transformation threshold and feature brightness threshold are read from user input. The values are validated and written to the register bridge on the FPGA using the \texttt{okCFrontPanel} class. Any errors are reported to the user. \citep{stpp}
 \par
 To select an image for the pre-processing pipeline, it is first loaded to the client application. The 270 x 480 resolution, 8-bit single channel bitmap file format is used. The selected image can be viewed in the GUI, but this feature is most useful for analysis after executing the pre-processing pipeline. The image is prepared by converting it to a byte array of integers. This is the format required by the Pipe In module. The FPGA is prepared for image transfer by configuring its state with the Wire In values listed in Table \ref*{table:wireInState}, which resets the FIFO buffers and sets the SDRAM to read mode.
-The write is then performed using the Block Pipe Out module, by calling the \texttt{okCFrontPanel} class.
+The write is then performed using the Block Pipe Out module, by calling the \texttt{okCFrontPanel} class. \citep{stpp}
 \par
 The pre-processing pipeline can be executed when the parameters and image are configured. The 
-process is started by setting the Wire In value, as seen in Table \ref{table:wireInState}. This triggers the pre-processing pipeline on the FPGA. Error detection in this stage is difficult, and only detectable when the output image is viewed.
+process is started by setting the Wire In value, as seen in Table \ref{table:wireInState}. This triggers the pre-processing pipeline on the FPGA. Error detection in this stage is difficult, and only detectable when the output image is viewed. \citep{stpp}
 
 \subsection{Results and analysis}
-The output image can be read from the FPGA when the pre-processing pipeline is completed. This is initiated in a similar manner as writing an image to the FPGA, except for the Wire In value. After the FIFO buffers and SDRAM are reset, the image is read to the client by the Block Pipe In module, provided by the \texttt{okCFrontPanel} class. The image is saved to disk, in the same format as the input image.
+The output image can be read from the FPGA when the pre-processing pipeline is completed. This is initiated in a similar manner as writing an image to the FPGA, except for the Wire In value. After the FIFO buffers and SDRAM are reset, the image is read to the client by the Block Pipe In module, provided by the \texttt{okCFrontPanel} class. The image is saved to disk, in the same format as the input image. \citep{stpp}
 \par
-The output image can be viewed after it is transferred from the FPGA-module to the client endpoint. Analysis of feature detection is made simple by having the input and output images side by side. The zoom and movement features enhance the user experience further. The detected stars are distinguished by the frame outline and centroid, as seen in Figure \ref*{fig:centroids}. 
+The output image can be viewed after it is transferred from the FPGA-module to the client endpoint. Analysis of feature detection is made simple by having the input and output images side by side. The zoom and movement features enhance the user experience further. The detected stars are distinguished by the frame outline and centroid, as seen in Figure \ref*{fig:centroids}. \citep{stpp}
 
 \chapter{Results and comparison}
 
@@ -798,7 +829,7 @@ The output image can be viewed after it is transferred from the FPGA-module to t
 % The output of the pre-processing pipeline is the data generated by the system processing an image. User-friendly validation and verification of the success of the process is done using the client endpoint. The raw data, generated by each process in the pipeline, is used to rendered an image, which leads to it containing more information than the raw data separately. The output image is thus used for result analysis.
 
 \section{Pre-processing pipeline results}
-The results of the pre-processing pipeline are presented as four use cases. The standard procedure of the pre-processing pipeline is to use an input file together with input parameters to produce an output. Each use-case contains of two runs, each consisting of input parameters, output image and metrics.  
+The results of the pre-processing pipeline are presented as four use cases. The standard procedure of the pre-processing pipeline is to use an input file together with input parameters to produce an output. Each use-case contains two runs, each consisting of input parameters, output image and metrics.  
 \par
 The data set consists of generated test data and image data from the StreakDet input dataset. The images from the Streakdet dataset are selected to highlight features of the pre-processing pipeline, such as thresholds and weighted centroiding.
 
@@ -808,25 +839,6 @@ A test input, shown in Figure \ref{res:t_in}, is used to visualize the standard 
 To showcase weighted centroiding, dimensions and pixel value gradient of the stars are taken into account. The gradient helps with visually verifying the process, since the centroid location becomes more obvious.
 \par
 Figure \ref{res:t0} shows the result when a foreground threshold of 50, and feature threshold of 300 is applied. All features are detected, and one gets a weighted centroid, seen in the top right corner. Feature \ref{res:t1} shows the result when increasing the foreground threshold to 100 and keeping the feature threshold at 300. Less pixels are assigned to foreground, making the features smaller. This enables more features to receive a weighted centroid. 
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=1.2]{results/t_in.png}
-    \caption{Synthesized star image used as test input.}
-    \label{res:t_in}
-\end{figure}
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=1.2]{results/t0.png}
-    \caption{Run T1 output image.}
-    \label{res:t0}
-\end{figure}
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=1.2]{results/t1.png}
-    \caption{Run T2 output image.}
-    \label{res:t1}
-\end{figure}
 
 \begin{table}[!h]
     \centering
@@ -854,26 +866,6 @@ The results show that all extracted stars are within limits for weighted centroi
 \par
 A 0,12ms difference in processing time between run S1.1 and S1.2, caused by the change in feature threshold, is observed in Table \ref{table:s0_res}. Compared to the test runs, shown in Table \ref{table:t_res}, no change can be seen in box filter processing time. The time difference in CCL is likely explained by the lower number of stars extracted, requiring less computation and rendering.
 
-
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=0.7]{results/s0_in.png}
-    \caption{Sample 1 input image.}
-    \label{res:s0_in}
-\end{figure}
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=1.2]{results/s0_1.png}
-    \caption{Run S1.1 output image.}
-    \label{res:s0_1}
-\end{figure}
-\begin{figure}[!h]
-    \centering
-    \includegraphics[scale=1.2]{results/s0_2.png}
-    \caption{Run S1.2 output image.}
-    \label{res:s0_2}
-\end{figure}
-
 \begin{table}[!h]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
@@ -881,9 +873,9 @@ A 0,12ms difference in processing time between run S1.1 and S1.2, caused by the 
         \textbf{Run ID}&\textbf{Foreground threshold$^{1}$}&\textbf{Feature threshold$^{1}$}&\textbf{CCL$^{2}$}&\textbf{Box filter$^{2}$}&\textbf{Centroid$^{2}$}&\textbf{Tot.$^{2}$}\\
         \hline
         \hline
-        S1.1&50&800&39,38&18,84&0.19&58,41\\
+        S1.1&50&800&39,38&18,84&0,19&58,41\\
         \hline
-        S1.2&50&400&39,38&18,84&0.31&58,53\\
+        S1.2&50&400&39,38&18,84&0,31&58,53\\
         \hline
     \end{tabular}
     \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. Data shows increase in centroid time when decreasing feature threshold.}
@@ -891,32 +883,13 @@ A 0,12ms difference in processing time between run S1.1 and S1.2, caused by the 
 \end{table}
 
 \subsection*{Sample 2}
-Sample 2 input image has a few stars that stands out with their brightness and dimensions, expected to be extracted. An anomaly caused by the camera system or an optical artifact, is seen in on the left side of the image, shown in Figure \ref{res:s1_in}. The pre-processing pipeline extracts the entire feature, including the anomaly, as seen in Figure \ref{res:s1_1} and \ref{res:s1_2}. In a star tracker this extraction is not valid since it gives a false representation of the celestial body in question.
+Sample 2 input image has a few stars that are expected to be extracted, standing out with their brightness and dimensions. An anomaly caused by the camera system or an optical artifact, is seen in on the left side of the image, shown in Figure \ref{res:s1_in}. The pre-processing pipeline extracts the entire feature, including the anomaly, as seen in Figure \ref{res:s1_1} and \ref{res:s1_2}. In a star tracker this extraction is not valid since it gives a false representation of the celestial body in question.
 \par
-Run S2.1, shown in Figure \ref{res:s1_1}, contains four extracted stars using a foreground threshold of 40 and feature threshold of 800. This would otherwise be sufficient for star detection but since one of the stars is a anomaly the result is not reliable.
+Run S2.1, shown in Figure \ref{res:s1_1}, contains four extracted stars using a foreground threshold of 40 and feature threshold of 800. This would otherwise be sufficient for star detection but since one of the stars is an anomaly the result is not reliable.
 \par
 Run S2.2, shown in Figure \ref{res:s1_2}, contains in addition to the four in S2.1, three additional stars. With a decrease of foreground threshold of 25\%, from 40 to 30, the number of extracted stars increased by 75\%.
 \par
 In the case of run S2.2 the 0,8ms longer processing time, shown in Table \ref{table:s1_res} compared to S2.1 is necessary to increase the quality of star extraction to an acceptable level.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s1_in.png}
-    \caption{Sample 2 input image.}
-    \label{res:s1_in}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s1_1.png}
-    \caption{Run S2.1 output image.}
-    \label{res:s1_1}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s1_2.png}
-    \caption{Run S2.2 output image.}
-    \label{res:s1_2}
-\end{figure}
 
 \begin{table}[!h]
     \centering
@@ -925,9 +898,9 @@ In the case of run S2.2 the 0,8ms longer processing time, shown in Table \ref{ta
         \textbf{Run ID}&\textbf{Foreground threshold$^{1}$}&\textbf{Feature threshold$^{1}$}&\textbf{CCL$^{2}$}&\textbf{Box filter$^{2}$}&\textbf{Centroid$^{2}$}&\textbf{Tot.$^{2}$}\\
         \hline
         \hline
-        S2.1&40&800&39,39&18,84&0.12&58,35\\
+        S2.1&40&800&39,39&18,84&0,12&58,35\\
         \hline
-        S2.2&30&800&39,39&18,84&0.2&58,43\\
+        S2.2&30&800&39,39&18,84&0,2&58,43\\
         \hline
     \end{tabular}
     \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. Data shows that decreasing foreground threshold increases the processing time.}
@@ -941,25 +914,6 @@ To extract the best selection of stars as detection candidates, the parameters c
 \par
 A notable aspect of the results is that the rendering of the centroid of a few stars are not visible. This is likely due to the small dimensions of the features, or rounding error of the weighted centroid calculation.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s2_in.png}
-    \caption{Sample 3 input image.}
-    \label{res:s2_in}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s2_1.png}
-    \caption{Run S3.1 output image.}
-    \label{res:s2_1}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s2_2.png}
-    \caption{Run S3.2 output image.}
-    \label{res:s2_2}
-\end{figure}
-
 \begin{table}[!h]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
@@ -967,9 +921,9 @@ A notable aspect of the results is that the rendering of the centroid of a few s
         \textbf{Run ID}&\textbf{Foreground threshold$^{1}$}&\textbf{Feature threshold$^{1}$}&\textbf{CCL$^{2}$}&\textbf{Box filter$^{2}$}&\textbf{Centroid$^{2}$}&\textbf{Tot.$^{2}$}\\
         \hline
         \hline
-        S3.1&15&50&39,39&18,84&0.3&58,53\\
+        S3.1&15&50&39,39&18,84&0,3&58,53\\
         \hline
-        S3.2&15&100&39,39&18,84&0.1&58,33\\
+        S3.2&15&100&39,39&18,84&0,1&58,33\\
         \hline
     \end{tabular}
     \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. Data shows that increasing feature threshold decreases processing time.}
@@ -991,7 +945,7 @@ A decrease in foreground threshold is observed to increase the number of extract
 \par
 The feature threshold shows a similar effect without any change in the number of pixels in each extracted feature. This effect is shown in Figures \ref{res:s2_1} and \ref{res:s2_2}.
 \par
-Based on these results, improvements could be made towards anomaly detection and centroid rendering. The results reinforces the justification for a autonomous parameter tuning, by observing that small adjustments leads to significant changes, as seen in Table \ref{table:s1_res} and Figures \ref{res:s1_1} and \ref{res:s1_2}.
+Based on these results, improvements could be made towards anomaly detection and centroid rendering. The results reinforces the justification for autonomous parameter tuning, by observing that small adjustments leads to significant changes, as seen in Table \ref{table:s1_res} and Figures \ref{res:s1_1} and \ref{res:s1_2}.
 \par
 Regardless of minor drawbacks and improvement points, the pre-processing pipeline is proven by the results to perform the intended task with a stable performance.
 
@@ -1006,14 +960,14 @@ Regardless of minor drawbacks and improvement points, the pre-processing pipelin
 % What is a result
 % Insert input/ output images & metrics from client
 \section{Pre-processing pipeline performance}
-The performance of the pre-processing pipeline can be measured in the same way as any algorithm. The implemented performance measurement metric is execution time. Compared to a software based approach, it can be expected that the variation in execution times is smaller in a hardware based approach since there is no abstraction such as an operating system between the task and computation element. Otherwise, a software based approach executed on a up-to-date CPU with multi-gigahertz clock speed is expected to perform the task in less time than a FPGA with a clock speed counted in megahertz. A software based equivalent of this FPGA-based approach would be a aerospace-grade embedded processor. An embedded processor would also be less performant than modern PC CPUs, in terms of execution time.
+The performance of the pre-processing pipeline can be measured in the same way as any algorithm. The implemented performance measurement metric is execution time. Compared to a software based approach, it can be expected that the variation in execution time is smaller in a hardware based approach since there is no abstraction such as an operating system between the task and computation element. Otherwise, a software based approach executed on a up-to-date CPU with multi-gigahertz clock speed is expected to perform the task in less time than a FPGA with a clock speed counted in megahertz. A software based equivalent of this FPGA-based approach would be a aerospace-grade embedded processor. An embedded processor would also be less performant than modern PC CPUs, in terms of execution time.
 \par
 The execution time comparison between the FPGA and software based approach is executed on a 10th generation intel i5 CPU. 
 
 \subsection{Software based approach}
-To enable direct comparison between the FPGA-design and a software based counterpart, a test bench in C++ was developed. The software test bench contains the same features, regarding image and parameter input and output metrics, as the FPGA-design \citep{cppImgProc}. Table \ref{table:res_sw} shows a summary of runs performed with the software based test bench using the same input images and parameters as used with the FPGA-based pre-processing pipeline. The results show noticeable differences in all output metrics. The complex hardware implementation of CCL is proven to be approximately 3 times slower than its software counterpart. On the other hand, the box filter is approximately 3 times faster when performed on the FPGA. The variation of difference in centroiding is larger since the test input runs T1 and T2 show an approximately 5 times faster centroiding performance by the software. The sample runs show a difference between 1 to 3 times faster performance by the software.
+To enable comparison between the FPGA-design and a software based counterpart, a test bench in C++ was developed. The software test bench contains the same features, regarding image and parameter input and output metrics, as the FPGA-design \citep{cppImgProc}. Table \ref{table:res_sw} shows a summary of runs performed with the software based test bench using the same input images and parameters as used with the FPGA-based pre-processing pipeline. The results show noticeable differences in all output metrics. The complex hardware implementation of CCL is proven to be approximately 3 times slower than its software counterpart. On the other hand, the box filter is approximately 3 times faster when performed on the FPGA. The variation of difference in centroiding is larger since the test input runs T1 and T2 show an approximately 5 times faster centroiding performance by the software. The sample runs show a difference between 1 to 3 times faster performance by the software.
 \par
-The general conclusion when comparing the results of the software based approach in Table \ref{table:res_sw} to the results given by the FPGA is that the software is faster. When comparing the systems, the difference in CPU clock speed is significant. Thus another comparison can be made where the clock frequencies are normalized. Since most of the image processing related computation is performed using the 87MHz clock on the FPGA, it is used for scaling the results. For each clock cycle on the FPGA, the Intel CPU performs approximately 23. Table \ref{table:res_sw_norm} shows the result using this ratio for normalizing the output metrics of the software based pre-processing pipeline.
+The general conclusion when comparing the results of the software based approach in Table \ref{table:res_sw} to the results given by the FPGA is that the software is faster. When comparing the systems, the difference in CPU clock speed is significant. Thus another comparison can be made where the clock frequencies are normalized. Since most of the image processing related computation is performed using the 87MHz clock on the FPGA, it is used for scaling the results. For each clock cycle on the FPGA, the Intel CPU performs approximately 23. Table \ref{table:res_sw_norm} shows the result using this ratio for normalizing the output metrics of the software based pre-processing pipeline. The performance of the Intel CPU with normalized clock speed shows CCL being approximately 7 times slower, while box filter is over 60 times slower than the FPGA. Centroiding is calculated to be approximately 5 times slower. This proves the FPGA to be more efficient, regarding number of operations on each clock cycle. It is notable that the two systems are not directly comparable despite normalizing the clock frequency due to differences in arithmetics of the processing elements, and implementation of the pre-processing pipeline.
 
 \begin{table}[!h]
     \centering
@@ -1069,14 +1023,87 @@ The general conclusion when comparing the results of the software based approach
     \label{table:res_sw_norm}
 \end{table}
 
-\subsection{CCL algorithm comparison}
-The CCL algorithm has many implementations, mostly within computer vision applications. There are thus many references that can be used for comparison.
-The implementa
-The most complex part of the image processing in the pre-processing pipeline is the CCL algorithm, making it a g
+% \subsection{CCL algorithm comparison}
+% The CCL algorithm has many implementations, mostly within computer vision applications. There are thus many references that can be used for comparison.
+% The implementa
+% The most complex part of the image processing in the pre-processing pipeline is the CCL algorithm, making it a g
 
 % Explain results
 % What can results be compared to  
 % Compare with CCL
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/t_in.png}
+    \caption{Synthesized star image used as test input.}
+    \label{res:t_in}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/t0.png}
+    \caption{Run T1 output image.}
+    \label{res:t0}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/t1.png}
+    \caption{Run T2 output image.}
+    \label{res:t1}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.7]{results/s0_in.png}
+    \caption{Sample 1 input image.}
+    \label{res:s0_in}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s0_1.png}
+    \caption{Run S1.1 output image.}
+    \label{res:s0_1}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s0_2.png}
+    \caption{Run S1.2 output image.}
+    \label{res:s0_2}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s1_in.png}
+    \caption{Sample 2 input image.}
+    \label{res:s1_in}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s1_1.png}
+    \caption{Run S2.1 output image.}
+    \label{res:s1_1}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s1_2.png}
+    \caption{Run S2.2 output image.}
+    \label{res:s1_2}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s2_in.png}
+    \caption{Sample 3 input image.}
+    \label{res:s2_in}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s2_1.png}
+    \caption{Run S3.1 output image.}
+    \label{res:s2_1}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.2]{results/s2_2.png}
+    \caption{Run S3.2 output image.}
+    \label{res:s2_2}
+\end{figure}
 
 \chapter{Review and reflection}
 

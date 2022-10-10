@@ -83,27 +83,26 @@ Star tracker, image processing, CCL, box filter, FPGA design
         CPU&Central Processing Unit\\
         PC&Personal Computer\\
         GPU&Graphics Processing Unit\\
-        FPGA&Field Programmable Gate Array\\
-        CPU&Central Processing Unit\\
-        SRAM&Static Random Access Memory\\
+        FPGA&Field-Programmable Gate Array\\
+        SRAM&Static Random-Access Memory\\
         CLB&Configurable Logic Block\\
         LUT&Look-Up Table\\
         SIMD&Single Input Multiple Data\\
         DSP&Digital Signal Processor\\
-        SDRAM&Synchronous Dynamic Random Access Memory\\
+        SDRAM&Synchronous Dynamic Random-Access Memory\\
         I/O&Input/Output\\
         HDL&Hardware Description Language\\
         IP&Intellectual Property\\
         SoC&System On a Chip\\
-        RISC&Reduces Instruction Set Computer\\
+        RISC&Reduced Instruction Set Computer\\
         ARM&Advanced RISC Machines\\
         IC&Integrated Circuit\\
         USB&Universal Serial Bus\\
         DDR&Double Data Rate\\
-        BRAM&Block Random Access Memory\\
+        BRAM&Block Random-Access Memory\\
         FOV&Field Of View\\
         CCD&Charged-Coupled Device\\
-        CMOS&Complementary Metal Oxide Semiconductor\\
+        CMOS&Complementary Metal-Oxide-Semiconductor\\
         FIFO&First In First Out\\
         CCL&Connected component labeling\\
         API&Application Programming Interface\\
@@ -153,7 +152,7 @@ When hardware is required for a single purpose with a finite set of tasks to be 
 \par
 Single purpose processors have a rich history with roots in the early ages of computers. Vector processors were, for example, used in supercomputers.
 This was before computers were seen as general purpose technology and high performance computing was about as common as ordinary PCs.
-In recent years, the utilization of specialized hardware has been rising, with new application areas evolving. Single purpose processors such as GPUs and field programmable gate arrays (FPGAs) have found themselves into areas such as machine learning, cryptocurrency mining, and other high performance computing applications.
+In recent years, the utilization of specialized hardware has been rising, with new application areas evolving. Single purpose processors such as GPUs and field-programmable gate arrays (FPGAs) have found themselves into areas such as machine learning, cryptocurrency mining, and other high performance computing applications.
 As the hardware used in aerospace applications generally is specialized according to strict requirements, single purpose computing platforms are heavily used. For example, the Nasa's Perseverance Mars rover relies heavily on Xilinx manufactured FPGAs for different tasks, such as image processing pipelines \
 {XilPerservance}.
 
@@ -166,7 +165,7 @@ specialized hardware in high performance computing \citep{GenPurpTech}.}
 \end{figure}
 
 \section{FPGA Overview}
-A field programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design with a solution that is developed using software, the FPGA stands out with process pipelining and a high level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register, because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles. The pipeline principle is demonstrated in Figure \ref{fig:pipeline} by comparing it with a non-pipelined solution. The pipeline transformation enables the inactive parts of the calculation to be utilized when they would normally be idle, waiting for all parts to finish. \citep{XilFPGAIntro}
+A field-programmable gate array, or FPGA, is a digital integrated circuit that consists of millions of logic blocks that can be configured to perform different operations. The process of configuring the logic blocks is called FPGA design and can be compared to the design of integrated circuits. Reconfigurability and ease of design are the main advantages when using an FPGA as a computing platform. When comparing an FPGA design with a solution that is developed using software, the FPGA stands out with process pipelining and a high level of parallel processing. The difference between executing a software program on a processor and executing the equivalent operation on an FPGA is that the compiled software instructs the processor to do operations in a generic way, as in loading a register and shifting a bit. An FPGA does not need to explicitly load a register, because the registers are by default connected to the input of the operation, which is defined by the FPGA design. A bit shift operation is typically an inexpensive operation regardless of the computing platform, but the FPGA can pipeline the result directly into another register or operation, which saves clock cycles. The pipeline principle is demonstrated in Figure \ref{fig:pipeline} by comparing it with a non-pipelined solution. The pipeline transformation enables the inactive parts of the calculation to be utilized when they would normally be idle, waiting for all parts to finish. \citep{XilFPGAIntro}
 
 \begin{figure}
     \centering
@@ -187,10 +186,10 @@ A field programmable gate array, or FPGA, is a digital integrated circuit that c
 \par
 Xilinx is one of the key companies involved in FPGA production, both currently and historically. They introduced the world to FPGAs in 1985 and have since then led the programmable logic technology industry, with a 51\% market share of programmable logic device suppliers in 2017. Major end market categories for Xilinx are aerospace, defense, and communications. The main competitor of Xilinx is Intel with a market share of 37\%. \citep{XilHist}\citep{XilShare}
 \par 
-Due to the significance of Xilinx, and relevancy in this project, FPGA technology discussed in this work is Xilinx based. Differences between manufacturers include technological and architectural nuances. For example, Xilinx exclusively manufactures static random access memory (SRAM)-based FGPAs. This refers to the technology of the programmable parts of the FPGA. Other available technologies are flash and anti-fuse, which are less common than SRAM. \citep{FPGAarch1}
+Due to the significance of Xilinx, and relevancy in this project, FPGA technology discussed in this work is Xilinx based. Differences between manufacturers include technological and architectural nuances. For example, Xilinx exclusively manufactures static random-access memory (SRAM)-based FGPAs. This refers to the technology of the programmable parts of the FPGA. Other available technologies are flash and anti-fuse, which are less common than SRAM. \citep{FPGAarch1}
 \par
 The basic internal elements of an FPGA consist of circuits such as look-up tables, flip-flops, wires, and input/output pads. Using these elements the FPGA design is implemented in the hardware.
-The architecture is illustrated in Figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with an interconnect, consisting of wires and switch matrices. The wires also run to the input/output pads, which enables interfacing with off-chip components such as synchronous dynamic random access memory (SDRAM) or sensors. Configurable logic blocks (CLBs) contain the look-up tables and flip flops. An overview of a CLB is shown in Figure \ref{fig:3}. \citep{XilFPGAIntro}
+The architecture is illustrated in Figure \ref{fig:2} which shows a matrix arrangement of configurable logic blocks which are connected to each other with an interconnect, consisting of wires and switch matrices. The wires also run to the input/output pads, which enables interfacing with off-chip components such as synchronous dynamic random-access memory (SDRAM) or sensors. Configurable logic blocks (CLBs) contain the look-up tables and flip flops. An overview of a CLB is shown in Figure \ref{fig:3}. \citep{XilFPGAIntro}
 
 \begin{figure}[h]
     \centering
@@ -417,7 +416,7 @@ The memory controller interface connects the FPGA to the SDRAM controller, which
 %https://www.design-reuse.com/articles/13805/the-love-hate-relationship-with-ddr-sdram-controllers.html
 
 \subsection{Block RAM}
-When data size is within a few megabytes or less, lower level storage mechanisms become suitable to use as memory. The block random access memory (BRAM) is a type of on-chip memory, which uses memory cells available on the FPGA. The specification of an FPGA chip often includes the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. In the case of SRAM based FPGAs, the memory cells of the BRAM are essentially SRAM cells, arranged in arrays. The BRAM is made available to the other CLBs by being attached to the FPGA interconnect.
+When data size is within a few megabytes or less, lower level storage mechanisms become suitable to use as memory. The block random-access memory (BRAM) is a type of on-chip memory, which uses memory cells available on the FPGA. The specification of an FPGA chip often includes the available BRAM capacity. Although BRAM is a type of on-chip memory, it is separate from the CLBs on the FPGA. In the case of SRAM based FPGAs, the memory cells of the BRAM are essentially SRAM cells, arranged in arrays. The BRAM is made available to the other CLBs by being attached to the FPGA interconnect.
 \par
 BRAM can be configured in size and functionality depending on the needs. Common BRAM arrays are 36Kb that can either be divided into smaller arrays, or combined with other arrays to form a larger memory resource. A useful feature often found regarding BRAM is multiport support. This enables concurrent usage of the memory resource. In case of concurrency issues, the configurable operation mode of the BRAM dictates how to resolve them. For example, in a dual port configuration, the read first operation mode will prioritize a read operation when the other port requests a write operation on the same address. \citep{XilMemMan}
 \par
@@ -488,7 +487,7 @@ Other than accuracy advantages, the star tracker is also more independent than n
 A unique feature of star trackers is the ability to find the attitude and position of a spacecraft without any previous knowledge, also known as Lost-In-Space attitude determination. Momentum wheel-based navigation, for example, requires a reference to a previous position to determine its current position. The Lost-In-Space feature is also available using navigation satellite systems, although with limited range. \citep{SatDesgin}
 
 \section{Image acquisition}
-Images are usually captured by a charged-coupled device, or CCD, sensor. In contrast to another common image sensor type, the CMOS sensor, CCD is more resistant to noise, resulting in higher quality images.
+Images are usually captured by a charged-coupled device, or CCD, sensor. In contrast to another common image sensor type, the complementary metal-oxide-semiconductor (CMOS) sensor, CCD is more resistant to noise, resulting in higher quality images.
 \citep*{SatDesgin}
 \par
 Star tracker cameras use a fixed focal length lens and a large field of view (FOV) to capture as many stars in the image as possible. A large FOV camera system consists of a large image sensor and a lens with small focal length. To maximize the brightness of the stars, the lens is equipped with a wide aperture for allowing more light to enter the image sensor. The camera system FOV is visualized in figure \ref*{fig:orbit}. \citep*{SatDesgin}

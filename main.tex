@@ -40,7 +40,7 @@
 %\includegraphics[scale=0.4]{figures/asro-logo.png}
 } &
 
-Supervisors, Åbo Akademi University: Annamari Soini, Johan Lilius\\ &
+Supervisor, Åbo Akademi University: Annamari Soini\\ &
 Advisors, Aboa Space Research Oy: Tero Säntti, Tuomo Komulainen\\ & 
 Master's thesis in Computer Engineering\\ &
 Åbo Akademi University\\ &
@@ -62,17 +62,17 @@ Master's thesis in Computer Engineering\\ &
 The processing pipeline for a star tracker requires computation within various problem domains. The first stage of star detection and tracking is to extract star features from image data.
 The image processing, described as the pre-processing pipeline, is implemented and documented in this thesis. The goal is to provide a theoretical basis of hardware aspects, image processing, and star tracker systems to support the design choices made for the pre-processing pipeline.
 
-The hardware design is built for a Xlinix 7-series FPGA, functioning as a testbed for the pre-processing pipeline.
+The hardware design is built for a Xilinx 7-series FPGA, functioning as a testbed for the pre-processing pipeline.
 The Opal Kelly XEM7305 module provides the components, such as power, clock, SDRAM, and a communication channel to the FPGA.
 
-The system requirements form the high level goals of the pre-processing pipeline. The requirements create a framework for the FPGA design to be developed with robust and user-firendly engineering principles.
-The requirements are implemented in a design consisting of a computation unit, communication unit, memory controll unit, and client-PC software.
+The system requirements form the high level goals of the pre-processing pipeline. The requirements create a framework for the FPGA design to be developed with robust and user-friendly engineering principles.
+The requirements are implemented in a design consisting of a computation unit, communication unit, memory control unit, and client-PC software.
 
-Extracted stars are rendered on top of images provided to the pre-processing pipeline. The successfull extraction of stars can be verified through the client software. The processing time of an image is satisfactory, with a very low variation.
+Extracted stars are rendered on top of images provided to the pre-processing pipeline. The successful extraction of stars can be verified through the client software. The processing time of an image is satisfactory, with a very low variation.
 This is a precondition for integration with other star tracker components, when following the principle of predictability. The performance of the most complex part of the computation unit, the CCL process, is compared to high performance
 software implementations. A satisfactory result is concluded when the software execution is put to scale with the lower clock speed of the hardware implementation.
 
-The resource use of the FPGA, provided by the Xilinx Vivado design suite, is reviewed with the conclusion being that the FPGA part fits the design well with a high utilization rate of LUT's and BRAM. Parallelization could be increased to utilize more DSP blocks for faster results.
+The resource use of the FPGA, provided by the Xilinx Vivado design suite, is reviewed with the conclusion being that the FPGA part fits the design well with a high utilization rate of LUTs and BRAM. Parallelization could be increased to utilize more DSP blocks for faster results.
 
 \subsubsection*{Keywords}
 Star tracker, image processing, CCL, box filter, FPGA design
@@ -153,7 +153,7 @@ When hardware is required for a single purpose with a finite set of tasks to be 
 Single purpose processors have a rich history with roots in the early ages of computers. Vector processors were, for example, used in supercomputers.
 This was before computers were seen as general purpose technology and high performance computing was about as common as ordinary PCs.
 In recent years, the utilization of specialized hardware has been rising, with new application areas evolving. Single purpose processors such as GPUs and field-programmable gate arrays (FPGAs) have found themselves into areas such as machine learning, cryptocurrency mining, and other high performance computing applications.
-As the hardware used in aerospace applications generally is specialized according to strict requirements, single purpose computing platforms are heavily used. For example, the Nasa's Perseverance Mars rover relies heavily on Xilinx manufactured FPGAs for different tasks, such as image processing pipelines \
+As the hardware used in aerospace applications generally is specialized according to strict requirements, single purpose computing platforms are heavily used. For example, the Nasa Perseverance Mars rover relies heavily on Xilinx manufactured FPGAs for different tasks, such as image processing pipelines \
 {XilPerservance}.
 
 \begin{figure}
@@ -338,7 +338,7 @@ Common computer hardware is the corner stone of any digital circuit that needs t
 The system requirements state a communication channel to be available for shared memory usage and controlling the FPGA. Machine-to-machine communication is enabled through the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB C. \citep{XEM7305Man}
 \par
 The advantage of the USB is flexibility and ease of use. Transfer speed is not a high priority in this case because of the relatively small size of data, which is less than a megabyte. The USB module on the XEM7305 contains a USB C port and a Cypress FX3 peripheral controller, shown in Figure \ref{fig:xemOverview}.
-The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module, such as an image sensor or the FPGA itself. To allow the usage of the peripheral controller's programmable interface in the FPGA design, a hard IP core is provided. \citep{XEM7305Man} \citep{FX3Man}
+The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module, such as an image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided. \citep{XEM7305Man} \citep{FX3Man}
 
 \begin{figure}
     \centering
@@ -828,16 +828,16 @@ The output image can be viewed after it is transferred from the FPGA-module to t
 % The output of the pre-processing pipeline is the data generated by the system processing an image. User-friendly validation and verification of the success of the process is done using the client endpoint. The raw data, generated by each process in the pipeline, is used to rendered an image, which leads to it containing more information than the raw data separately. The output image is thus used for result analysis.
 
 \section{Pre-processing pipeline results}
-The results of the pre-processing pipeline are presented as four use cases. The standard procedure of the pre-processing pipeline is to use an input file together with input parameters to produce an output. Each use-case contains two runs, each consisting of input parameters, output image and metrics.  
+The results of the pre-processing pipeline are presented as four use cases. The standard procedure of the pre-processing pipeline is to use an input file together with input parameters to produce an output. Each use-case contains two runs, each consisting of input parameters, output image, and metrics.  
 \par
 The data set consists of generated test data and image data from the StreakDet input dataset. The images from the Streakdet dataset are selected to highlight features of the pre-processing pipeline, such as thresholds and weighted centroiding.
 
 \subsection*{Test input}
 A test input, shown in Figure \ref{res:t_in}, is used to visualize the standard procedure of the pre-processing pipeline. The data is synthesized by gathering an overview of the StreakDet dataset and creating a layout of pixels that resembles commonly seen stars.
 \par
-To showcase weighted centroiding, dimensions and pixel value gradient of the stars are taken into account. The gradient helps with visually verifying the process, since the centroid location becomes more obvious.
+To showcase weighted centroiding, the dimensions and pixel value gradient of the stars are taken into account. The gradient helps with visually verifying the process, since the centroid location becomes more obvious.
 \par
-Figure \ref{res:t0} shows the result when a foreground threshold of 50, and feature threshold of 300 is applied. All features are detected, and one gets a weighted centroid, seen in the top right corner. Feature \ref{res:t1} shows the result when increasing the foreground threshold to 100 and keeping the feature threshold at 300. Less pixels are assigned to foreground, making the features smaller. This enables more features to receive a weighted centroid. 
+Figure \ref{res:t0} shows the result when a foreground threshold of 50 and feature threshold of 300 are applied. All features are detected, and one gets a weighted centroid, seen in the top right corner. Feature \ref{res:t1} shows the result when increasing the foreground threshold to 100 and keeping the feature threshold at 300. Less pixels are assigned to foreground, making the features smaller. This enables more features to receive a weighted centroid. 
 
 \begin{table}[!h]
     \centering
@@ -855,15 +855,15 @@ Figure \ref{res:t0} shows the result when a foreground threshold of 50, and feat
     \label{table:t_res}
 \end{table}
 
-The processing time for the test input runs are 0,1ms apart, as seen in table \ref{table:t_res}. The time difference originates from centroiding while other parts of the pre-processing pipeline remains unaffected by the foreground threshold increase. Since less pixels are processed in run T2 faster processing is expected. The increased number of weighted centroid calculations did also not contribute to any performance loss.
+The processing time for the test input runs are 0,1 ms apart, as seen in Table \ref{table:t_res}. The time difference originates from centroiding while other parts of the pre-processing pipeline remain unaffected by the foreground threshold increase. Since less pixels are processed in run T2, faster processing is expected. The increased number of weighted centroid calculations did also not contribute to any performance loss.
 
 \subsection*{Sample 1}
 
 Figure \ref{res:s0_in} shows the input image containing a moderate number of stars with mixed brightness levels. In contrast to the previously reviewed test input, this image consists of a realistic scenario of what an onboard image sensor captures. Also notable is that this is a good sample for star extraction and detection since there are numerous stars that are easily separated from the background and surrounding stars.
 \par
-The results show that all extracted stars are within limits for weighted centroiding. After run S1.1 the feature threshold is decreased from 800 to 400 to extract more stars. This parameter change to increase star extraction is unsuccessful since Figure \ref{res:s0_2} shows the same number of extracted stars as Figure \ref{res:s0_1}.  
+The results show that all the extracted stars are within limits for weighted centroiding. After run S1.1 the feature threshold is decreased from 800 to 400 to extract more stars. This parameter change to increase star extraction is unsuccessful since Figure \ref{res:s0_2} shows the same number of extracted stars as Figure \ref{res:s0_1}.  
 \par
-A 0,12ms difference in processing time between run S1.1 and S1.2, caused by the change in feature threshold, is observed in Table \ref{table:s0_res}. Compared to the test runs, shown in Table \ref{table:t_res}, no change can be seen in box filter processing time. The time difference in CCL is likely explained by the lower number of stars extracted, requiring less computation and rendering.
+A 0,12 ms difference in processing time between run S1.1 and S1.2, caused by the change in feature threshold, is observed in Table \ref{table:s0_res}. Compared to the test runs, shown in Table \ref{table:t_res}, no change can be seen in box filter processing time. The time difference in CCL is likely explained by the lower number of stars extracted, requiring less computation and rendering.
 
 \begin{table}[!h]
     \centering
@@ -882,13 +882,13 @@ A 0,12ms difference in processing time between run S1.1 and S1.2, caused by the 
 \end{table}
 
 \subsection*{Sample 2}
-Sample 2 input image has a few stars that are expected to be extracted, standing out with their brightness and dimensions. An anomaly caused by the camera system or an optical artifact, is seen in on the left side of the image, shown in Figure \ref{res:s1_in}. The pre-processing pipeline extracts the entire feature, including the anomaly, as seen in Figure \ref{res:s1_1} and \ref{res:s1_2}. In a star tracker this extraction is not valid since it gives a false representation of the celestial body in question.
+Sample 2 input image has a few stars that are expected to be extracted, standing out with their brightness and dimensions. An anomaly, caused by the camera system or an optical artifact, is seen in on the left side of the image, shown in Figure \ref{res:s1_in}. The pre-processing pipeline extracts the entire feature, including the anomaly, as seen in Figure \ref{res:s1_1} and \ref{res:s1_2}. In a star tracker this extraction is not valid since it gives a false representation of the celestial body in question.
 \par
 Run S2.1, shown in Figure \ref{res:s1_1}, contains four extracted stars using a foreground threshold of 40 and feature threshold of 800. This would otherwise be sufficient for star detection but since one of the stars is an anomaly the result is not reliable.
 \par
 Run S2.2, shown in Figure \ref{res:s1_2}, contains in addition to the four in S2.1, three additional stars. With a decrease of foreground threshold of 25\%, from 40 to 30, the number of extracted stars increased by 75\%.
 \par
-In the case of run S2.2 the 0,8ms longer processing time, shown in Table \ref{table:s1_res} compared to S2.1 is necessary to increase the quality of star extraction to an acceptable level.
+In the case of run S2.2 the 0,8 ms longer processing time, shown in Table \ref{table:s1_res}, compared to S2.1 is necessary to increase the quality of star extraction to an acceptable level.
 
 \begin{table}[!h]
     \centering
@@ -909,9 +909,9 @@ In the case of run S2.2 the 0,8ms longer processing time, shown in Table \ref{ta
 \subsection*{Sample 3}
 The Sample 3 input image, shown in Figure \ref{res:s2_in}, contains a cloud of faint and small stars. By tuning the input parameters correctly, this proves not to be any obstacle for star extraction as the S3.1 output image shows in Figure \ref{res:s2_1}.
 \par
-To extract the best selection of stars as detection candidates, the parameters can be tuned further. Since the dimensions of the extracted stars are relatively small, an increase in foreground threshold is ruled out due to the effect seen in previous results, for example test input run T1. The feature threshold is thus increased to extract the brightest stars, keeping dimensions and centroid precision. The result of this parameter tuning for S3.2 is shown in Figure \ref{res:s2_2}. The increase in feature threshold in run S3.2, decreases the processing time by 0.2ms, as shown in Table \ref{table:s2_res}.
+To extract the best selection of stars as detection candidates, the parameters can be tuned further. Since the dimensions of the extracted stars are relatively small, an increase in the foreground threshold is ruled out due to the effect seen in previous results, for example test input run T1. The feature threshold is thus increased to extract the brightest stars, keeping the dimensions and centroid precision. The result of this parameter tuning for S3.2 is shown in Figure \ref{res:s2_2}. The increase in the feature threshold in run S3.2 decreases the processing time by 0.2 ms, as shown in Table \ref{table:s2_res}.
 \par
-A notable aspect of the results is that the rendering of the centroid of a few stars are not visible. This is likely due to the small dimensions of the features, or rounding error of the weighted centroid calculation.
+A notable aspect of the results is that the rendering of the centroid of a few stars is not visible. This is likely due to the small dimensions of the features, or a rounding error of the weighted centroid calculation.
 
 \begin{table}[!h]
     \centering
@@ -934,17 +934,17 @@ To summarize the results, the star tracker pre-processing pipeline works as inte
 \par
 The box filter, for example, is visualized in the output of the test run seen in Figure \ref{res:t0}. The feature edges fade into the background more smoothly when compared to the input image, shown in Figure \ref{res:t_in}. The sample images, such as sample 3 shown in Figure \ref{res:s2_in}, benefit more clearly from this step of the pre-processing pipeline by expanding faint and small stars captured by the camera system as they are noticeably larger, and clearly extracted in the output, as seen in Figure \ref{res:s2_1}.
 \par
-The more complex CCL procedure is visualized by the frame around the stars, which is enabled by the algorithm successfully identifying the connected pixels. As the most critical part of the pre-processing pipeline, the lack of issues within the procedure is a priority. In addition to confirming the CCL results visually, the output metrics also indicates reliable results, with consistent performance.
+The more complex CCL procedure is visualized by the frame around the stars, which is enabled by the algorithm successfully identifying the connected pixels. As the most critical part of the pre-processing pipeline, the lack of issues within the procedure is a priority. In addition to confirming the CCL results visually, the output metrics also indicate reliable results, with a consistent performance.
 \par  
 Weighted centroiding is also proven to work according to specification, shown by the results, such as Figure \ref{res:t1}. The dimension limitation of the stars enabling weighted centroiding is a drawback of the procedure. All input images, however, contain stars with dimensions fitting to the limits, making the procedure acceptable for star detection.
 \par
-The effect of the input parameter tuning is observable by the output images and metrics. An increase in foreground threshold decreases the number of pixels included in a feature. This helped with features gaining a weighted centroid. This effect is shown in Figures \ref{res:t0} and \ref{res:t1}.
+The effect of the input parameter tuning is observable by the output images and metrics. An increase in the foreground threshold decreases the number of pixels included in a feature. This helped with features gaining a weighted centroid. This effect is shown in Figures \ref{res:t0} and \ref{res:t1}.
 \par
-A decrease in foreground threshold is observed to increase the number of extracted stars, as shown in Figures \ref{res:s1_1} and \ref{res:s1_2}.
+A decrease in the foreground threshold is observed to increase the number of extracted stars, as shown in Figures \ref{res:s1_1} and \ref{res:s1_2}.
 \par
 The feature threshold shows a similar effect without any change in the number of pixels in each extracted feature. This effect is shown in Figures \ref{res:s2_1} and \ref{res:s2_2}.
 \par
-Based on these results, improvements could be made towards anomaly detection and centroid rendering. The results reinforces the justification for autonomous parameter tuning, by observing that small adjustments leads to significant changes, as seen in Table \ref{table:s1_res} and Figures \ref{res:s1_1} and \ref{res:s1_2}.
+Based on these results, improvements could be made towards anomaly detection and centroid rendering. The results reinforce the justification for autonomous parameter tuning, by observing that small adjustments lead to significant changes, as seen in Table \ref{table:s1_res} and Figures \ref{res:s1_1} and \ref{res:s1_2}.
 \par
 Regardless of minor drawbacks and improvement points, the pre-processing pipeline is proven by the results to perform the intended task with a stable performance.
 
@@ -959,14 +959,14 @@ Regardless of minor drawbacks and improvement points, the pre-processing pipelin
 % What is a result
 % Insert input/ output images & metrics from client
 \section{Pre-processing pipeline performance}
-The performance of the pre-processing pipeline can be measured in the same way as any algorithm. The implemented performance measurement metric is execution time. Compared to a software based approach, it can be expected that the variation in execution time is smaller in a hardware based approach since there is no abstraction such as an operating system between the task and computation element. Otherwise, a software based approach executed on a up-to-date CPU with multi-gigahertz clock speed is expected to perform the task in less time than a FPGA with a clock speed counted in megahertz. A software based equivalent of this FPGA-based approach would be a aerospace-grade embedded processor. An embedded processor would also be less performant than modern PC CPUs, in terms of execution time.
+The performance of the pre-processing pipeline can be measured in the same way as any algorithm. The implemented performance measurement metric is execution time. Compared to a software based approach, it can be expected that the variation in execution time is smaller in a hardware based approach since there is no abstraction such as an operating system between the task and the computation element. Otherwise, a software based approach executed on an up-to-date CPU with multi-gigahertz clock speed is expected to perform a task in less time than an FPGA with a clock speed counted in megahertz. A software based equivalent of this FPGA-based approach would be an aerospace-grade embedded processor. An embedded processor would also be less performant than modern PC CPUs, in terms of execution time.
 \par
-The execution time comparison between the FPGA and software based approach is executed on a 10th generation intel i5 CPU. 
+The execution time comparison between the FPGA and a software based approach is executed on a 10th generation intel i5 CPU. 
 
 \subsection{Software based approach}
-To enable comparison between the FPGA-design and a software based counterpart, a test bench in C++ was developed. The software test bench contains the same features, regarding image and parameter input and output metrics, as the FPGA-design \citep{cppImgProc}. Table \ref{table:res_sw} shows a summary of runs performed with the software based test bench using the same input images and parameters as used with the FPGA-based pre-processing pipeline. The results show noticeable differences in all output metrics. The complex hardware implementation of CCL is proven to be approximately 3 times slower than its software counterpart. On the other hand, the box filter is approximately 3 times faster when performed on the FPGA. The variation of difference in centroiding is larger since the test input runs T1 and T2 show an approximately 5 times faster centroiding performance by the software. The sample runs show a difference between 1 to 3 times faster performance by the software.
+To enable a comparison between the FPGA-design and a software based counterpart, a test bench in C++ was developed. The software test bench contains the same features, regarding image and parameter input and output metrics, as the FPGA-design \citep{cppImgProc}. Table \ref{table:res_sw} shows a summary of runs performed with the software based test bench using the same input images and parameters as used with the FPGA-based pre-processing pipeline. The results show noticeable differences in all output metrics. The complex hardware implementation of CCL is proven to be approximately 3 times slower than its software counterpart. On the other hand, the box filter is approximately 3 times faster when performed on the FPGA. The variation of difference in centroiding is larger since the test input runs T1 and T2 show an approximately 5 times faster centroiding performance by the software. The sample runs show a difference between 1 to 3 times faster performance by the software.
 \par
-The general conclusion when comparing the results of the software based approach in Table \ref{table:res_sw} to the results given by the FPGA is that the software is faster. When comparing the systems, the difference in CPU clock speed is significant. Thus another comparison can be made where the clock frequencies are normalized. Since most of the image processing related computation is performed using the 87MHz clock on the FPGA, it is used for scaling the results. For each clock cycle on the FPGA, the Intel CPU performs approximately 23. Table \ref{table:res_sw_norm} shows the result using this ratio for normalizing the output metrics of the software based pre-processing pipeline. The performance of the Intel CPU with normalized clock speed shows CCL being approximately 7 times slower, while box filter is over 60 times slower than the FPGA. Centroiding is calculated to be approximately 5 times slower. This proves the FPGA to be more efficient, regarding number of operations on each clock cycle. It is notable that the two systems are not directly comparable despite normalizing the clock frequency due to differences in arithmetics of the processing elements, and implementation of the pre-processing pipeline.
+The general conclusion when comparing the results of the software based approach in Table \ref{table:res_sw} to the results given by the FPGA is that the software is faster. When comparing the systems, the difference in CPU clock speed is significant. Thus another comparison can be made where the clock frequencies are normalized. Since most of the image processing related computation is performed using the 87 MHz clock on the FPGA, it is used for scaling the results. For each clock cycle on the FPGA, the Intel CPU performs approximately 23. Table \ref{table:res_sw_norm} shows the result using this ratio for normalizing the output metrics of the software based pre-processing pipeline. The performance of the Intel CPU with normalized clock speed shows CCL being approximately 7 times slower, while the box filter is over 60 times slower than the FPGA. Centroiding is calculated to be approximately 5 times slower. This proves the FPGA to be more efficient, regarding the number of operations on each clock cycle. It is notable that the two systems are not directly comparable despite normalizing the clock frequency due to differences in the arithmetics of the processing elements and the implementation of the pre-processing pipeline.
 
 \begin{table}[!h]
     \centering
@@ -1106,15 +1106,15 @@ The general conclusion when comparing the results of the software based approach
 
 \chapter{Review and reflection}
 
-In this thesis a star tracker pre-processing pipeline has been developed with a technology used on the forefront of image processing and computer vision in general. As the pre-processing pipeline is essentially a sequence of image processing algorithms, the implementation on an FPGA-platform is a considerable option when designing a star tracker system. This thesis gives an overview of the required components and technologies to develop such a system. Beyond implementing the star tracker pre-processing pipeline in a star tracker system, this study gives a complete reference from digital circuitry to system level design, to help with comparing other platform options. 
+In this thesis a star tracker pre-processing pipeline has been developed with a technology used on the forefront of image processing and computer vision in general. As the pre-processing pipeline is essentially a sequence of image processing algorithms, the implementation on an FPGA-platform is an option worth consideration when designing a star tracker system. This thesis gives an overview of the required components and technologies to develop such a system. Beyond implementing the star tracker pre-processing pipeline in a star tracker system, this study gives a complete reference from digital circuitry to system level design, to help with comparing other platform options. 
 \par
 
 \section{System requirements}
-The gap between a functioning algorithm and its implementation in an FPGA design regarding technology is vast. The challenge in implementing a pre-processing pipeline to an FPGA-design is divided between solving problems within development of the image processing algorithm and computer hardware design practices. This resulted in some compromises and recommendations in respect to the system requirements in Table \ref*{table:sysreq}.
+The gap between a functioning algorithm and its implementation in an FPGA design regarding technology is vast. The challenge in implementing a pre-processing pipeline to an FPGA design is divided between solving problems within the development of the image processing algorithm and computer hardware design practices. This resulted in some compromises and recommendations with respect to the system requirements in Table \ref*{table:sysreq}.
 \par
-Implementation of requirement \hyperref[req3.2]{3.2}, centroiding of stars, could be revised to increase flexibility regarding feature size. The development was focused on the computation of the weighted centroid, leaving the operational functionality as a lower priority.
+The implementation of requirement \hyperref[req3.2]{3.2}, centroiding of stars, could be revised to increase the flexibility regarding feature size. The development was focused on the computation of the weighted centroid, leaving the operational functionality as a lower priority.
 \par
-Requirement \hyperref[req3.3]{3.3} involving error handling, could be implemented more thoroughly in the FPGA design. Even though error handling is enabled by exposing parameters in the pre-processing pipeline, some error correction could also be implemented.
+Requirement \hyperref[req3.3]{3.3}, involving error handling, could be implemented more thoroughly in the FPGA design. Even though error handling is enabled by exposing parameters in the pre-processing pipeline, some error correction could also be implemented.
 \par
 
 \section{FPGA design}
@@ -1138,13 +1138,13 @@ The reports generated by Vivado for this review focus on the resource utilizatio
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.65]{figures/utilization.png}
-    \caption{Utilization \% of available FPGA resources. Total LUT utilization and LUTs used as storage mechanism, LUTRAM, are shown. Together with flip flop utilization, the internal utilization of CLBs is described. The more specialized resources, BRAM and DSP's, are also reported.}
+    \caption{Utilization \% of available FPGA resources. Total LUT utilization and LUTs used as storage mechanism, LUTRAM, are shown. Together with flip flop utilization, the internal utilization of CLBs is described. The more specialized resources, BRAM and DSPs, are also reported.}
     \label{fig:fpga_util}
 \end{figure}
 
-As seen in Table \ref*{table:fpga_res}, the size of the FPGA design is reported to be 24131 LUT's, and 9242 flip flops, contributing to the 83\% slice utilization on the FPGA. The ratio between flip flops and LUTs is large due to the nature of the CLBs in Xilinx 7 series FPGAs, where each CLB contains more flip flops than LUTs.
+As seen in Table \ref*{table:fpga_res}, the size of the FPGA design is reported to be 24131 LUTs, and 9242 flip flops, contributing to the 83 \% slice utilization on the FPGA. The ratio between flip flops and LUTs is large due to the nature of the CLBs in Xilinx 7 series FPGAs, where each CLB contains more flip flops than LUTs.
 \par
-In addition to LUTs, Figure \ref*{fig:fpga_util} shows that also BRAM utilization is high, at almost 100\%. A part of the BRAM is utilized by the FIFO buffer used for image transfer, while the remaining parts are used by the line buffers. The FIFO buffer uses 38Kb BRAM arrays and the line buffer uses 18Kb arrays. The line buffer uses the 18Kb arrays to enable the multiport feature of the storage mechanism.
+In addition to LUTs, Figure \ref*{fig:fpga_util} shows that also BRAM utilization is high, at almost 100 \%. A part of the BRAM is utilized by the FIFO buffer used for image transfer, while the remaining parts are used by the line buffers. The FIFO buffer uses 38 Kb BRAM arrays and the line buffer uses 18 Kb arrays. The line buffer uses the 18 Kb arrays to enable the multiport feature of the storage mechanism.
 \par
 The high utilization means that the FPGA part used for this design is at the limit, making it a good fit for the current state of the design. It also means that adding features would be difficult without additional resources. An integration of the pre-processing pipeline thus requires a larger FPGA with more resources.
 \par
@@ -1152,7 +1152,7 @@ The low level storage mechanisms have a low utilization compared with the BRAM a
 \par
 The low utilization of DSP blocks is not unexpected because the parts of the design that most likely use these blocks are not parallelized. The pre-processing pipeline performance could be increased with higher utilization of the DSP blocks, the penalty being a higher power consumption. 
 \par
-The conclusion of the FPGA design based on the reports generated by Vivado is that the high degree of utilization of resources prohibits adding features requiring a large amount of LUTs or BRAM on the same FPGA. Optimizing the design to use more DSP blocks could release more LUTs to use.
+The conclusion of the FPGA design, based on the reports generated by Vivado, is that the high degree of utilization of resources prohibits adding features requiring a large amount of LUTs or BRAM on the same FPGA. Optimizing the design to use more DSP blocks could release more LUTs to use.
  
 % Streamlined CCL, preparing for centroid & feature detection
 \addcontentsline{toc}{chapter}{Bibliography}

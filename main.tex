@@ -153,7 +153,7 @@ When hardware is required for a single purpose with a finite set of tasks to be 
 Single purpose processors have a rich history with roots in the early ages of computers. Vector processors were, for example, used in supercomputers.
 This was before computers were seen as general purpose technology and high performance computing was about as common as ordinary PCs.
 In recent years, the utilization of specialized hardware has been rising, with new application areas evolving. Single purpose processors such as GPUs and field-programmable gate arrays (FPGAs) have found themselves into areas such as machine learning, cryptocurrency mining, and other high performance computing applications.
-As the hardware used in aerospace applications generally is specialized according to strict requirements, single purpose computing platforms are heavily used. For example, the Nasa Perseverance Mars rover relies heavily on Xilinx manufactured FPGAs for different tasks, such as image processing pipelines \
+As the hardware used in aerospace applications generally is specialized according to strict requirements, single purpose computing platforms are heavily used. For example, the Nasa Perseverance Mars rover relies heavily on Xilinx manufactured FPGAs for different tasks, such as image processing pipelines \citep
 {XilPerservance}.
 
 \begin{figure}
@@ -249,7 +249,7 @@ The hardware sector and consumer electronics industry rely heavily on reusable I
 \par
 In aerospace applications, the advantages of IP cores are utilized in the same manner as within the mobile phone industry. Additional requirements such as fault tolerance limits, redundancy, and formal verification of the IP cores increase the advantages of their usage when comparing with in-house developed solutions. This, however, comes with pricier licenses compared with non-aerospace grade IP core designs. Also, due to the specialized requirements, lower competition in the market sector can be expected, increasing the prices even more. \citep{DO254Cadence}
 \par
-In addition to FPGA products, Xilinx also provides design tools and IP cores to help with development on their FPGA platforms. Their IP core library ranges from common integrated circuits (IC) to complete microcontrollers. Some of the cores are available free to use through the Vivado design suite, and a majority of them are soft cores to allow compatibility across their FPGAs. Integration of the IP cores and other development are also done through Vivado. \citep{XilVivado}
+In addition to FPGA products, Xilinx also provides design tools and IP cores to help with development on their FPGA platforms. A selection ranging from small subsystem designs to complex embedded processors is available through the Xilinx IP core library. Some of the cores are available free to use through the Vivado design suite, and a majority of them are soft cores to allow compatibility across their FPGAs. Integration of the IP cores and other development are also done through Vivado. \citep{XilVivado}
 %OPENCORES
 % https://www.xilinx.com/content/dam/xilinx/support/documentation/white_papers/wp523-xqrku060.pdf
 % https://www.techspot.com/article/1989-arm-inside/
@@ -855,7 +855,7 @@ Figure \ref{res:t0} shows the result when a foreground threshold of 50 and featu
     \label{table:t_res}
 \end{table}
 
-The processing time for the test input runs are 0,1 ms apart, as seen in Table \ref{table:t_res}. The time difference originates from centroiding while other parts of the pre-processing pipeline remain unaffected by the foreground threshold increase. Since less pixels are processed in run T2, faster processing is expected. The increased number of weighted centroid calculations did also not contribute to any performance loss.
+The processing time for the test input runs are 0,1 ms apart, as seen in Table \ref{table:t_res}. The time difference originates from centroiding while other parts of the pre-processing pipeline remain unaffected by the foreground threshold increase. Since less pixels are processed in run T2, faster processing is expected. The increased number of weighted centroid calculations did also not contribute to any performance loss. The frame rate of the system is 16,93 frames per second (FPS) in T1, and 16,96 FPS in T2. 
 
 \subsection*{Sample 1}
 
@@ -864,7 +864,7 @@ Figure \ref{res:s0_in} shows the input image containing a moderate number of sta
 The results show that all the extracted stars are within limits for weighted centroiding. After run S1.1 the feature threshold is decreased from 800 to 400 to extract more stars. This parameter change to increase star extraction is unsuccessful since Figure \ref{res:s0_2} shows the same number of extracted stars as Figure \ref{res:s0_1}.  
 \par
 A 0,12 ms difference in processing time between run S1.1 and S1.2, caused by the change in feature threshold, is observed in Table \ref{table:s0_res}. Compared to the test runs, shown in Table \ref{table:t_res}, no change can be seen in box filter processing time. The time difference in CCL is likely explained by the lower number of stars extracted, requiring less computation and rendering.
-
+A frame rate of 17,12 FPS is achieved in S1.1, and 17,09 FPS in S1.2.
 \begin{table}[!h]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
@@ -884,9 +884,9 @@ A 0,12 ms difference in processing time between run S1.1 and S1.2, caused by the
 \subsection*{Sample 2}
 Sample 2 input image has a few stars that are expected to be extracted, standing out with their brightness and dimensions. An anomaly, caused by the camera system or an optical artifact, is seen in on the left side of the image, shown in Figure \ref{res:s1_in}. The pre-processing pipeline extracts the entire feature, including the anomaly, as seen in Figure \ref{res:s1_1} and \ref{res:s1_2}. In a star tracker this extraction is not valid since it gives a false representation of the celestial body in question.
 \par
-Run S2.1, shown in Figure \ref{res:s1_1}, contains four extracted stars using a foreground threshold of 40 and feature threshold of 800. This would otherwise be sufficient for star detection but since one of the stars is an anomaly the result is not reliable.
+Run S2.1, shown in Figure \ref{res:s1_1}, contains four extracted stars using a foreground threshold of 40 and feature threshold of 800. This would otherwise be sufficient for star detection but since one of the stars is an anomaly the result is not reliable. The frame rate of S2.1 is 17,14 FPS.
 \par
-Run S2.2, shown in Figure \ref{res:s1_2}, contains in addition to the four in S2.1, three additional stars. With a decrease of foreground threshold of 25\%, from 40 to 30, the number of extracted stars increased by 75\%.
+Run S2.2, shown in Figure \ref{res:s1_2}, contains in addition to the four in S2.1, three additional stars. With a decrease of foreground threshold of 25\%, from 40 to 30, the number of extracted stars increased by 75\%. The frame rate of S2.2 is 17,11 FPS.
 \par
 In the case of run S2.2 the 0,8 ms longer processing time, shown in Table \ref{table:s1_res}, compared to S2.1 is necessary to increase the quality of star extraction to an acceptable level.
 
@@ -909,7 +909,7 @@ In the case of run S2.2 the 0,8 ms longer processing time, shown in Table \ref{t
 \subsection*{Sample 3}
 The Sample 3 input image, shown in Figure \ref{res:s2_in}, contains a cloud of faint and small stars. By tuning the input parameters correctly, this proves not to be any obstacle for star extraction as the S3.1 output image shows in Figure \ref{res:s2_1}.
 \par
-To extract the best selection of stars as detection candidates, the parameters can be tuned further. Since the dimensions of the extracted stars are relatively small, an increase in the foreground threshold is ruled out due to the effect seen in previous results, for example test input run T1. The feature threshold is thus increased to extract the brightest stars, keeping the dimensions and centroid precision. The result of this parameter tuning for S3.2 is shown in Figure \ref{res:s2_2}. The increase in the feature threshold in run S3.2 decreases the processing time by 0.2 ms, as shown in Table \ref{table:s2_res}.
+To extract the best selection of stars as detection candidates, the parameters can be tuned further. Since the dimensions of the extracted stars are relatively small, an increase in the foreground threshold is ruled out due to the effect seen in previous results, for example test input run T1. The feature threshold is thus increased to extract the brightest stars, keeping the dimensions and centroid precision. The result of this parameter tuning for S3.2 is shown in Figure \ref{res:s2_2}. The increase in the feature threshold in run S3.2 decreases the processing time by 0.2 ms, as shown in Table \ref{table:s2_res}. The frame rate of S3.1 is 17,09 FPS, and 17,14 FPS in S3.2.
 \par
 A notable aspect of the results is that the rendering of the centroid of a few stars is not visible. This is likely due to the small dimensions of the features, or a rounding error of the weighted centroid calculation.
 
@@ -1153,7 +1153,15 @@ The low level storage mechanisms have a low utilization compared with the BRAM a
 The low utilization of DSP blocks is not unexpected because the parts of the design that most likely use these blocks are not parallelized. The pre-processing pipeline performance could be increased with higher utilization of the DSP blocks, the penalty being a higher power consumption. 
 \par
 The conclusion of the FPGA design, based on the reports generated by Vivado, is that the high degree of utilization of resources prohibits adding features requiring a large amount of LUTs or BRAM on the same FPGA. Optimizing the design to use more DSP blocks could release more LUTs to use.
- 
+\par
+The estimated power consumption can be seen in Figure \ref*{fig:fpga_power}, showing a total power consumption of 1,053 watt (W). This reinforces the confidence of the FPGA as computing platform for the star tracker pre-processing pipeline, as a low power consumption is preferred. For comparison, the 2GHz Intel i5 CPU used for the software based pre-processing pipeline in the previous chapter, consumes 28 W. Although this means that the Intel CPU has a smaller power consumption per clock cycle, the total power consumption is considerably lower.
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.9]{figures/power_report.PNG}
+    \caption{Summary of power consumption showing estimated usage by each section of the FPGA. A total power consumption of 1,053 W is consumed when the pre-processing pipeline is operational and 0,082 W in idle mode.}
+    \label{fig:fpga_power}
+\end{figure}
+
 % Streamlined CCL, preparing for centroid & feature detection
 \addcontentsline{toc}{chapter}{Bibliography}
 

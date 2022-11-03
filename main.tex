@@ -1164,6 +1164,29 @@ The estimated power consumption can be seen in Figure \ref*{fig:fpga_power}, sho
 \end{figure}
 
 % Streamlined CCL, preparing for centroid & feature detection
+
+\chapter{Summary in Swedish - Svensk sammanfattning}
+\section*{Implementering av FPGA-baserad förbearbetningssekvens för stjärnspårare}
+
+Algoritmer som kräver bästa möjliga prestanda använder sig ofta av en hårdvarubaserad lösning istället för en tillämpning i mjukvara. Inom flyg- och rymdindustrin är det ofta den mest optimerade lösningen som är det enda alternativet. I denna avhandling utvecklas en hårdvarubaserad implementering av en förbearbetningsmodul för ett stjärnspårarsystem tillsammans med Aboa Space Research Oy. Som grund för arbetet fungerar StreakDet mjukvran som behandlar bilder från omlopsbanan för analys. 
+\par
+Ett stjärnspårarsystem används vanligt på rymdfarkoster som ett navigationsmedel. Stjärnspårarens uppgift är att förse diverse system i rymdfarkosten med positionsdata. För att implementera denna vanligen mjukvarubaserade systemet i hårdvara krävs det utöver bildbehandlingsalgoritmerna från StreakDet, en mängd stödande arkitektur så som kommunikations- och minnessystem.
+\par
+Specialicerad processeringshårdvaraär till skillnad från allmännyttiga processorenheter, som en CPU, avsedd för att lösa problem inom en viss domän. En GPU är ett exempel på specialiserad processeringshårdvara, vars uppgift är att lösa problem inom datorgrafik, som ofta innebär matrisberäkningar. För att tillfredställa behovet av skräddarsydd och omprogrammerbar hårdvara kan en FPGA användas. I och med att en FPGA kan programmeras för att utföra matrisberäkningar har teknologin tillsammands med GPUn blivit vanlig inom accelerering av AI och kryptografi.
+\par
+En FPGA består huvudsakligen av logikblock, det vill säga CLB, och ett så kallat interconnect som används för att koppla ihop logikblocken. Figur \ref{fig:2} visar ett antal CLB sammankopplade i ett nätverk, med kanterna av FPGAn bestående av portar för externa signaler. En FPGA design beskriver hur logikblocken ska konfigureras och kopplas ihop. Detta är jämförbart ett schema som beskriver hur en integrerad krets ser ut och fungerar. En CLB består av varierande element beroende hurudan uppgift den har. Vissa CLB är ämnade för lagring av data, medan andra är ämnade för att utföra logiska operationer. \citep{XilVivado}
+\par
+Det huvudsakliga verktyget för att skapa en FPGA design är ett HDL. Verilog och VHDL är exempel på ett sådant. Til skillnad från programmeringspårk beskriver man med hjälp av HDL hur en digital krets fungerar från ett dataflödesperspektiv. En kretsbeskrivning i ett HDL programmeras på en FPGA genom ett antal processer som tar i beaktande den ifrågavarande FPGAns egenskaper. Denna process kan även användas för att tillåta simulering av designen, då är processen i regel avsevärt mycket kortare.
+\par
+Genom användning av IP-block kan hårdvarumoduler distribueras och återanvändas. Det är vanligt att använda IP-block som t.ex minneskontroller och kommunikationsmoduler. IP-block har i allmänhet en varierande grad av transparens gällande dess interna design. Det möjliggör distribution av designen som ofta sker via patent licenser. \citep{XilVivado} \citep{EERefBook}
+\par
+Systemspecifikationen för förbearbetningssekvensen beskriver hur FPGA-baserade systemet fungerar som helhet. Specifikationen är konstruerad på basis av StreakDet och diskussioner med Aboa Space Research Oy, och redogörs i Tabell \ref{table:sysreq}.
+\par
+Det centrala i systemet är FPGAn vars uppgift är att utvinna stjärnor från bilder. Bilden förväntas att härstamma från rymdfarkostens bildsensor, som är riktad mot en känd riktning. Denna implementering sker från ett integrerat perspektiv, där bildens ursprung inte har en inverkan. Specifikationen delar in helheten i en klient och FPGA modul, där klientens uppgift är att förse FPGA modulen med bild och konfiguration. Den ifrågavarande FPGA modulen är bestämd att vara av modell Opal Kelly XEM7305, som har en Xilinx 7-Series FPGA, en klock krets, USB C interface med kontroller, samt SDRAM. Resultatskraven för bildanalysen lägger vikt på vidareprocessering av den utvunna informationen, så som lagring av koordinaterna och centroiden av stjärnorna inom bildramen. Andra väsentliga funktioner som krävs är möjlighet för validering och verifiering av systemet. Både klienten och FPGA modulen har en bidragande roll i detta.
+\par
+Opal Kelly XEM7305 FGPA modulen med dess subsystem presenteras för att ge bakgrund för den implementerade designen. Systemspecifikationen anger en kommunikationskanal för delat minne och konfiguration av förbearbetningssekvensen, vilket USB C interfacet uppfyller.
+
+
 \addcontentsline{toc}{chapter}{Bibliography}
 
 \bibliographystyle{unsrt}

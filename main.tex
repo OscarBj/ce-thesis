@@ -104,7 +104,7 @@ Star tracker, image processing, CCL, box filter, FPGA design
         CCD&Charged-Coupled Device\\
         CMOS&Complementary Metal-Oxide-Semiconductor\\
         FIFO&First In First Out\\
-        CCL&Connected component labeling\\
+        CCL&Connected Component Labeling\\
         API&Application Programming Interface\\
         GUI&Graphical User Interface\\
         FPS&Frames Per Second\\
@@ -195,7 +195,7 @@ The architecture is illustrated in Figure \ref{fig:2} which shows a matrix arran
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.55]{figures/basic_fpga.png}
-    \caption{FPGA architecture. An FPGA consist of configurable logic blocks, input/output pads, and an interconnect \citep{XilFPGAIntro}.}
+    \caption{FPGA architecture. An FPGA consists of configurable logic blocks, input/output pads, and an interconnect \citep{XilFPGAIntro}.}
     \label{fig:2}
 \end{figure}
 
@@ -208,7 +208,7 @@ The architecture is illustrated in Figure \ref{fig:2} which shows a matrix arran
 
 The slices in Figure \ref{fig:3} represent core elements of an FPGA. Slices consist of look-up tables, storage elements, multiplexers, and carry logic. Depending on the FPGA, there are different numbers of slices per CLB. The slices are collectively responsible for implementing a significant portion of the FPGA design. \citep{XilClbMan}
 \par
-Look-up tables, or LUTs, are mainly used as logic elements in FPGAs. They can implement any boolean logic operation by combining memory cells with multiplexers. A look-up table is essentially a truth table that can be used for reading the result of boolean operations. Memory cells and multiplexer routings are initialized by the FPGA design, which is what makes the look-up table element configurable. An example of a four memory cell wide LUT is shown in Figure \ref{fig:4}. \citep{XilFPGAIntro}
+Look-up tables (LUT) are mainly used as logic elements in FPGAs. They can implement any boolean logic operation by combining memory cells with multiplexers. A look-up table is essentially a truth table that can be used for reading the result of boolean operations. Memory cells and multiplexer routings are initialized by the FPGA design, which is what makes the look-up table element configurable. An example of a four memory cell wide LUT is shown in Figure \ref{fig:4}. \citep{XilFPGAIntro}
 
 \begin{figure}[h]
     \centering
@@ -217,7 +217,7 @@ Look-up tables, or LUTs, are mainly used as logic elements in FPGAs. They can im
     \label{fig:4}
 \end{figure}
 
-The circuit elements discussed in this chapter form the basic blocks of FPGA technology. A larger set of elements are often included in an FPGA to enable some optimizations and further functionality in the design. For example, there are different types of slices a CLB can contain, which make it more suitable for storage purposes rather than logic. Signal processing pipelines are a popular use case for FPGAs and they often contain slices specialized for operations in this problem domain. Digital signal processing can be accelerated by parallelizing operations in a single instruction multiple data (SIMD) fashion, thus to maximize the advantage there can often be found a large number of these slices. Figure \ref{fig:5} shows an example of an FPGA configuration with some of these specialized blocks mapped out. The green CLBs are designated to memory usage and are closely coupled to the red digital signal processor (DSP) blocks to enable fast processing of the stored data. The purple external memory controllers use the input/output pads to interface with external memory such as SDRAM. \citep{XilFPGAIntro} \citep{XilClbMan}
+The circuit elements discussed in this chapter form the basic blocks of FPGA technology. A larger set of elements are often included in an FPGA to enable some optimizations and further functionality in the design. For example, there are different types of slices a CLB can contain, which make it more suitable for storage purposes rather than logic. Signal processing pipelines are a popular use case for FPGAs and they often contain slices specialized for operations in this problem domain. Digital signal processing can be accelerated by parallelizing operations in a single instruction multiple data (SIMD) fashion, thus to maximize signal processing performance a large number of this type of slices is found in FPGAs. Figure \ref{fig:5} shows an example of an FPGA configuration with some of these specialized blocks mapped out. The green CLBs are designated to memory usage and are closely coupled to the red digital signal processor (DSP) blocks to enable fast processing of the stored data. The purple external memory controllers use the input/output pads to interface with external memory such as SDRAM. \citep{XilFPGAIntro} \citep{XilClbMan}
 
 \begin{figure}[h]
     \centering
@@ -282,7 +282,7 @@ A hardware implementation of an image analysis software component is to be devel
 \end{figure}
 
 %\section{Scope}
-The star extraction process in StreakDet passes the input image through a series of algorithms to identify stars. The algorithms are well-known image filters and analysis methods, that in combination with each other, produce a way to extract objects from an image. The main task in this project is to implement the algorithms to a hardware design using a hardware description language.
+The star extraction process in StreakDet passes the input image through a series of algorithms to identify stars. The algorithms are well-known image filters and analysis methods that in combination with each other produce a way to extract objects from an image. The main task in this project is to implement the algorithms to a hardware design using a hardware description language.
 \par
 Star extraction is a key stage of a star tracker system which uses a star catalog to match the extracted stars against. Using the star matches and catalog information the position and orientation of the captured image can be determined. The goal of this project is to create a pre-processing pipeline to be used in a star tracker.
 
@@ -332,14 +332,14 @@ The system consists of two nodes, the host machine and the target FPGA. Because 
 The FPGA module Opal Kelly XEM7305 chip with a Xilinx Spartan-7 FPGA will function as a testbed for development. The module contains a part from the FPGA external SDRAM memory and communication interfaces such as USB 3. These features allow for host machine communication and data storage of features such as images, star catalog, and output. These data could be stored on the FPGA itself but using the SDRAM is a sustainable solution because it allows for shared memory usage in production and more flexible image and star catalog sizes.
 
 
-\chapter{FPGA-based computer hardware}
-Common computer hardware is the corner stone of any digital circuit that needs to perform common tasks, such as storing and transmitting data. With the help of the basic elements of an FPGA discussed in Chapter 2, circuits of this nature can be created. Although an 8-bit adder circuit can be regarded as common computer hardware, the focus of this chapter is on larger circuits used as hardware modules, such as memory and communication interfaces. The components discussed are essential building blocks for the image processing pipeline. Figure \ref{fig:xemOverview} shows an overview of these components on the XEM7305 FPGA module.
+\chapter{\mbox{FPGA-based computer hardware}}
+Common computer hardware is the cornerstone of any digital circuit that needs to perform common tasks, such as storing and transmitting data. With the help of the basic elements of an FPGA discussed in Chapter 2, circuits of this nature can be created. Although an 8-bit adder circuit can be regarded as common computer hardware, the focus of this chapter is on larger circuits used as hardware modules, such as memory and communication interfaces. The components discussed are essential building blocks for the image processing pipeline. Figure \ref{fig:xemOverview} shows an overview of these components on the XEM7305 FPGA module.
 
 \section{Communication}
 The system requirements state a communication channel to be available for shared memory usage and controlling the FPGA. Machine-to-machine communication is enabled through the interfaces available on the Opal Kelly FPGA module. The default interface on XEM7305 is USB C. \citep{XEM7305Man}
 \par
 The advantage of the USB is flexibility and ease of use. Transfer speed is not a high priority in this case because of the relatively small size of data, which is less than a megabyte. The USB module on the XEM7305 contains a USB C port and a Cypress FX3 peripheral controller, shown in Figure \ref{fig:xemOverview}.
-The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link, and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module, such as an image sensor or the FPGA itself. To allow the usage of the peripheral controllers programmable interface in the FPGA design, a hard IP core is provided. \citep{XEM7305Man} \citep{FX3Man}
+The peripheral controller operates the data bus by implementing a communication protocol stack consisting of a physical, link and protocol layer. It allows the usage of the USB communication link on the FPGA module by exposing a programmable interface. The programmable interface can be used by various systems on the FPGA module, such as an image sensor or the FPGA itself. To allow the usage of the programmable interface of the peripheral controller in the FPGA design, a hard IP core is provided. \citep{XEM7305Man} \citep{FX3Man}
 
 \begin{figure}
     \centering
@@ -355,7 +355,7 @@ The internal communication mechanism of an FPGA consists of the FPGA interconnec
 \par
 The limiting factor and bottleneck of the system is often some off-chip hardware module that places certain requirements on the communication, for example, the USB or memory controller. When working outside these types of requirements, the throughput of the FPGA-based system can be optimized by increasing the bit width between modules. When applying this to the image processing pipeline context, this might be practical within communication of image data. The implementation of this requires more memory cells and wires which, in turn, increases the footprint of the FPGA design.
 \par
-When compared with a software program, the same optimization method of maximizing bit width might be considered. This, however, does not inherently result in a gain in throughput because conventional CPUs have a fixed bit width for their operations. When this limit is exceeded, the operation needs to be performed across multiple clock cycles which counteracts the wanted result. The bit width of an operation on an FPGA during a clock cycle is consistent with the HDL design. 
+When compared with a software program, the same optimization method of maximizing bit width might be considered. This, however, does not inherently result in a gain in throughput because conventional CPUs have a fixed bit width for their operations. When this limit is exceeded, the operation needs to be performed across multiple clock cycles which counteracts the wanted result. The bit width of an operation on an FPGA during a clock cycle, is consistent with the HDL design. 
 \par
 % Image of low vs high bit width circuit/ footprint
 % More in depth on USB3, images
@@ -383,7 +383,7 @@ At the core of SDRAM lie capacitors trapping the charge representing a bit. An o
     \label{fig:7}
 \end{figure}
 
-The memory cells in SDRAM is ordered in rows and columns, forming an array. A collection of these arrays is referred to as memory banks. 
+The memory cells in SDRAM are ordered in rows and columns, forming an array. A collection of these arrays is referred to as memory banks. 
 %\begin{wrapfigure}{r}{0.5\textwidth}
 %\end{wrapfigure}
 The number of rows, columns, arrays, and banks varies depending on the type of SDRAM but is usually a power of two. Figure \ref{fig:8} shows the geometry of an SDRAM with four banks with four arrays each. The data width of a memory is the number of arrays that are stacked inside each memory bank. When accessing a specific row and column, the number of affected bits is the same as the data width of the memory.
@@ -435,9 +435,9 @@ Similarly as SDRAM, BRAM also is synchronous and requires a clock signal. The la
 \subsection{Distributed RAM}
 The lowest level of memory found in FPGAs is distributed RAM (DRAM). It is a type of on-chip memory which utilizes the same CLBs that are common with other logic of the FPGA design. This makes the use of DRAM a trade-off between fast memory and CLB resources. If the other parts of the FPGA design are large, there might not be room for DRAM, leading to slightly less performant BRAM to be used instead.
 \par
-The slices in Xilinx CLBs are either of type SLICEL or SLICEM. The slices in a Xilinx 7 series FPGA CLB consist either of two SLICELs or one SLICEL and one SLICEM. DRAM is available only on SLICEM type of slices. The SLICEM contains a superset of SLICEL elements, allowing SLICEM to be used for non-storage purposes as well. The geometry of DRAM memory is defined by the configuration of SLICEM slices. The configuration and decision to use DRAM is inferred from the FPGA design. A single SLICEM CLB in the Xilinx 7 series FPGA allows the LUT to be used for 64 bits of RAM storage. The DRAM capacity is increased beyond this by connecting DRAM enabled CLBs together. The DRAM capacity and number of SLICEM enabled CLBs are often mentioned in the FPGA product specification. \citep{XilClbMan} 
+The slices in Xilinx CLBs are either of type SLICEL or SLICEM. DRAM is available only on SLICEM type of slices. The SLICEM contains a superset of SLICEL elements, allowing SLICEM to be used for non-storage purposes as well. The slices in a Xilinx 7 series FPGA CLB consist either of two SLICELs or one SLICEL and one SLICEM. The geometry of DRAM memory is defined by the configuration of SLICEM slices. The configuration and decision to use DRAM is inferred from the FPGA design. A single SLICEM CLB in the Xilinx 7 series FPGA allows the LUT to be used for 64 bits of RAM storage. The DRAM capacity is increased beyond this by connecting DRAM enabled CLBs together. The DRAM capacity and number of SLICEM enabled CLBs are often mentioned in the FPGA product specification. \citep{XilClbMan} 
 \par
-Since DRAM resides in the FPGA fabric, it communicates through the FPGA interconnect making read and write operations fast. Read and write operations require a single clock cycle to complete, making DRAM also very simple to use from a HDL design perspective. \citep{XilMemMan}  
+Since DRAM resides in the FPGA fabric, it communicates through the FPGA interconnect making read and write operations fast. Read and write operations require a single clock cycle to complete, making DRAM also very simple to use from an HDL design perspective. \citep{XilMemMan}  
 
 \section{Clock}
 As most digital hardware systems, FPGAs use clocks to synchronize operations. The clock is an off-chip component, providing the signal through input/output pads to the FPGA. Figure \ref{fig:xemOverview} shows the off-chip clock circuit on the left side of the FPGA on the XEM7305 module. The clock signal is generated by an oscillator circuit that produces a specific frequency. This frequency may then be used as such or transformed into additional clock signals within an HDL design or IP core. For example, the DDR SDRAM utilizes the clock signal on both the rising and falling edge to increase the throughput of data. The clock signal on the XEM7305 is passed from the external clock module to the SDRAM module within the HDL design. This ensures that the SDRAM and FPGA design are synchronized. \citep{XEM7305Man}
@@ -449,7 +449,7 @@ In addition to using the clock signal to drive tasks, a common practice within s
 \chapter{Star tracker systems}
 Determining the position of an object in space is a task where multiple observations and instruments are used to produce an understanding of the orbit or trajectory. The position can be described by different means. Astronomical coordinate systems and reference frames are used depending on the type of object and orbit. Objects in earth orbit are commonly described using the equatorial coordinate system. The equatorial coordinate system is geocentric and uses right ascension and declination as spherical coordinates, comparable to the geographical coordinates longitude and latitude. Figure \ref*{fig:orbit} illustrates the spherical coordinates in the context of a satellite orbit. \citep{SatDesgin}
 \par
-To determine the position of a spacecraft in earth orbit, estimations on can be done remotely by the use of orbital mechanics. The position of a satellite with a known orbit can be determined by its six Keplerian orbital elements. Five of the elements contribute to size, shape, and orientation of the orbit. The sixth element allows for calculation of the satellite position at a given moment in time. As time passes, the elements used for position estimation need to be adjusted to maintain an accurate model of the orbit. Remote observations and onboard measurements are used for making this possible. \citep{SatDesgin}
+To determine the position of a spacecraft in earth orbit, estimations can be done remotely by the use of orbital mechanics. The position of a satellite with a known orbit can be determined by its six Keplerian orbital elements. Five of the elements contribute to size, shape, and orientation of the orbit. The sixth element allows for calculation of the satellite position at a given moment in time. As time passes, the elements used for position estimation need to be adjusted to maintain an accurate model of the orbit. Remote observations and onboard measurements are used for making this possible. \citep{SatDesgin}
 \par
 Satellites are monitored and tracked remotely by ground stations across the globe using radar and radio communication systems. The onboard systems of a satellite often include a number of instruments for determining the position and attitude. This information is often needed for managing the mission of the satellite. If the mission involves remote sensing tasks, such as multispectral imaging for example, maintaining the attitude of the spacecraft at a specific position in orbit might be mission critical.  
 \par
@@ -481,7 +481,7 @@ Star tracker systems depend on image processing and analysis that run on varying
 %Satellites in low-earth orbit can use onboard GPS, to accurately and reliably determine the position. A star tracker can then be used to reinforce the estimate of position and attitude. In deep space missions, the star tracker can be used together with passive radar systems to determine the position and attitude.
 
 \section{Argumentation}
-There are multiple ways to determine the position and attitude of a spacecraft. When the accuracy of the attitude needs to be better than $0.1{^\circ}$, a star tracker is to be used. When the high accuracy of a star tracker is not needed, other methods, such as navigation satellite systems or momentum wheels, can be used for determining the attitude and position. Often however, a star tracker is used in combination with other attitude and position determination systems to reinforce the estimates.
+There are multiple ways to determine the position and attitude of a spacecraft. When the accuracy of the attitude needs to be better than $0.1{^\circ}$, a star tracker is to be used. When the high accuracy of a star tracker is not needed, other methods, such as navigation satellite systems or momentum wheels, can be used for determining the attitude and position. Often, however, a star tracker is used in combination with other attitude and position determination systems to reinforce the estimates.
 \par
 Other than accuracy advantages, the star tracker is also more independent than navigation satellite systems and mechanically simpler than momentum wheels. On the other hand, star trackers require more complexity in a computational sense. \citep{SatDesgin}
 \par
@@ -491,32 +491,32 @@ A unique feature of star trackers is the ability to find the attitude and positi
 Images are usually captured by a charged-coupled device, or CCD, sensor. In contrast to another common image sensor type, the complementary metal-oxide-semiconductor (CMOS) sensor, CCD is more resistant to noise, resulting in higher quality images.
 \citep*{SatDesgin}
 \par
-Star tracker cameras use a fixed focal length lens and a large field of view (FOV) to capture as many stars in the image as possible. A large FOV camera system consists of a large image sensor and a lens with small focal length. To maximize the brightness of the stars, the lens is equipped with a wide aperture for allowing more light to enter the image sensor. The camera system FOV is visualized in figure \ref*{fig:orbit}. \citep*{SatDesgin}
+Star tracker cameras use a fixed focal length lens and a large field of view (FOV) to capture as many stars in the image as possible. A large FOV camera system consists of a large image sensor and a lens with small focal length. To maximize the brightness of the stars, the lens is equipped with a wide aperture for allowing more light to enter the image sensor. The camera system FOV is visualized in Figure \ref*{fig:orbit}. \citep*{SatDesgin}
 \par
-Star tracker camera sensors generally use the visible light spectrum to capture images. The images are stored in single channel, or black and white, format. Any color information is useless in star trackers, which  benefits from high contrast and brightness of image features. This makes the image features more likely to be extracted and used for star detection. \citep*{SatDesgin}
+Star tracker camera sensors generally use the visible light spectrum to capture images. The images are stored in single channel, or black and white, format. Any color information is useless in star trackers, which benefit from high contrast and brightness of image features. This makes the image features more likely to be extracted and used for star detection. \citep*{SatDesgin}
 \par
-Star trackers in low-earth orbit satellites are faced with challenges due to the moon, earth, and sun. Images containing these objects are often overexposed, and unusable for the star tracker. To overcome these problems, a satellite can be fitted with two cameras, oriented 90\textdegree apart. Another option is to mount the camera on a side facing away from bright objects, and maneuvering the spacecraft to maintain the orientation. Other objects such as nearby satellites can also cause overexposure. The effect of these type of objects are less predictable, making it more difficult to mitigate the problems caused by them. \citep*{SatDesgin}
+Star trackers in low-earth orbit satellites are faced with challenges due to the moon, earth, and sun. Images containing these objects are often overexposed, and unusable for the star tracker. To overcome these problems, a satellite can be fitted with two cameras, oriented 90\textdegree\ apart. Another option is to mount the camera on a side facing away from bright objects, and maneuvering the spacecraft to maintain the orientation. Other objects such as nearby satellites can also cause overexposure. The effect of these type of objects is less predictable, making it more difficult to mitigate the problems caused by them. \citep*{SatDesgin}
 
 \section{Image processing}
 The image processor of a star tracker extracts data from the captured image to use for star detection. The extracted data and processing algorithms vary between implementations, but the general idea is that the extraction process enhances the image features, scans the image for targets, and stores information about the targets for star detection.
 \par
-At the image processing stage, issues such as overexposed images and false star extractions are encountered. In worst case, this leads to halting the star tracker, losing the currently prepared attitude and position update. In best case, the issue can be corrected and the currently prepared update can be resumed.   
+At the image processing stage, issues such as overexposed images and false star extractions are encountered. In the worst case, this leads to halting the star tracker, losing the currently prepared attitude and position update. In the best case, the issue can be corrected and the currently prepared update can be resumed.   
 \par
 The ideal output of the image processing is to have at least four bright stars extracted from the background. Using the relative position of each extracted star, the star tracker system is able to proceed to star detection. The image data is only used up to this stage, making it unnecessary from this point forward.
 
 \section{Star detection}
 The identification of stars is generally carried out by comparing identifiers, consisting of multiple stars. The identifiers are created by calculating the angular separation between bright stars found in the image. The angular separation can be determined relatively easily with a fixed FOV camera. \citep*{SatDesgin}
 \par
-The angular separation between any two stars is generally a unique identifier. This makes the process of star detection essentially a look up operation, where known angular separations are compared against the identifiers created from the captured image. \citep*{SatDesgin}
+The angular separation between any two stars is generally a unique identifier. This makes the process of star detection essentially a look-up operation, where known angular separations are compared against the identifiers created from the captured image. \citep*{SatDesgin}
 \par
-Four stars are used for creating the identifiers. The first two can be used as unit vector, while the third is required to resolve ambiguity. A 4th star is required for positive identification. \citep*{SatDesgin} \citep*{StreakDet}
+Four stars are used for creating the identifiers. The first two can be used as unit vector, while the third is required to resolve ambiguity. A fourth star is required for positive identification. \citep*{SatDesgin} \citep*{StreakDet}
 \par
-Given a set of recognized stars, or identifiers, the attitude and position can be calculated. The error detection and correction in this step is crucial, but somewhat easier than up to this point. False positives, as in stars that are mistakenly recognized can be voted out when multiple stars has been matched. False positives are recognized by verifying their position in relation to other recognized stars. False negatives are more difficult to detect, and not a problem as long as there are enough recognized stars.
+Given a set of recognized stars, or identifiers, the attitude and position can be calculated. The error detection and correction in this step is crucial, but somewhat easier than up to this point. False positives, as in stars that are mistakenly recognized, can be voted out when multiple stars have been matched. False positives are recognized by verifying their position in relation to other recognized stars. False negatives are more difficult to detect, and not a problem as long as there are enough recognized stars.
 
 \section{Attitude and position}
-The attitude and position are determined based on the recognized stars. With the known coordinates of the stars, the position and attitude of the satellite are calculated with the help of linear algebra. Finding the attitude can be generalized to solving to the Wahba problem, where a rotation matrix between two coordinate systems are sought. By solving this problem, for example with singular value decomposition, the attitude matrix of the satellite can be obtained. To maximize the accuracy of the attitude estimation, the stars in the largest identifiers in the image are used for the matrix calculations.\citep*{StRef} \citep*{StreakDet}
+The attitude and position are determined based on the recognized stars. With the known coordinates of the stars, the position and attitude of the satellite are calculated with the help of linear algebra. Finding the attitude can be generalized to solving the Wahba problem, where a rotation matrix between two coordinate systems is sought. By solving this problem, for example with singular value decomposition, the attitude matrix of the satellite can be obtained. To maximize the accuracy of the attitude estimation, the stars in the largest identifiers in the image are used for the matrix calculations. \citep*{StRef} \citep*{StreakDet}
 \par
-The position of the satellite can be estimated using trigonometric calculations using the recognized stars. The known positions and separation angles of the stars, together with the camera system FOV parameters, enables the satellite position to be calculated in relation to the stars. The position estimation is also reinforced with the help of multiple results. \citep*{StDev}
+The position of the satellite can be estimated using trigonometric calculations using the recognized stars. The known positions and separation angles of the stars, together with the camera system FOV parameters, enable the satellite position to be calculated in relation to the stars. The position estimation is also reinforced with the help of multiple results. \citep*{StDev}
 
 \chapter{Pre-processing pipeline documentation}
 
@@ -678,9 +678,9 @@ A big portion of the logic in the pre-processing pipeline is for moving around i
 \end{figure}
 
 \subsubsection{3x3 Kernel}
-The lowest level storage mechanism where image pixels are kept is 3 small line buffers, forming a 3 x 3 pixel sliding window, or image processing kernel. It is implemented in distributed memory, within the FPGA fabric. The kernel consists of three pixels from each column in the line buffer, creating the 3 x 3 pixel geometry shown in Figure \ref*{fig:mem_overview}. Data from the line buffer is fed into the kernel data structure which is then used for image processing and analysis. The results of these operations are written directly to a higher level storage. Thus the data flow is directional within this storage mechanism. \citep{stpp}
+The lowest level storage mechanism where image pixels are kept are three small line buffers, forming a 3 x 3 pixel sliding window, or image processing kernel. It is implemented in distributed memory, within the FPGA fabric. The kernel consists of three pixels from each column in the line buffer, creating the 3 x 3 pixel geometry shown in Figure \ref*{fig:mem_overview}. Data from the line buffer is fed into the kernel data structure which is then used for image processing and analysis. The results of these operations are written directly to a higher level storage. Thus the data flow is directional within this storage mechanism. \citep{stpp}
 \par
-Between each processed pixel, the kernel moves one step. This movement consists of three read-operations from BRAM to the kernel, each line buffer contributing with three pixels. The entire kernel is overwritten each time, since the data transfer is relatively low. \citep{stpp}
+Between each processed pixel, the kernel moves one step. This movement consists of three read operations from BRAM to the kernel, each line buffer contributing with three pixels. The entire kernel is overwritten each time, since the data transfer is relatively low. \citep{stpp}
 \par
 The image processing kernel contributes to system requirements \hyperref[req2.2]{2.2}, \hyperref[req3.1]{3.1}, and \hyperref[req3.2]{3.2}.
 
@@ -724,7 +724,7 @@ Image edges are handled by ignoring the pixel value and setting them to 0. This 
 \subsubsection{Thresholding}
 Thresholding is done to separate the background from the foreground in the image. The foreground needs to contain enough pixels to enable successful star extraction. The box filter allows foreground feature edges to be brighter, which otherwise might be categorized as background in this step. If the threshold is too low, background and noise blend together with foreground features, making the choice of optimal threshold a complex problem. This is out of scope of this project and the threshold is manually set.
 \par
-An example solution for setting the threshold could be to use a feedback loop to adjust the parameter. The loop would use previous output of the pipeline to use as input, providing the number of stars, brightness and distance to determine a threshold setting and acceptable result.
+An example solution for setting the threshold could be to use a feedback loop to adjust the parameter. The loop would use previous output of the pipeline to use as input, providing the number of stars, brightness, and distance to determine a threshold setting and acceptable result.
 \par
 The thresholding process transforms each pixel value to either 0, being background, or 255 as foreground. Figure \ref*{fig:thresholding} shows an example of the thresholding process. The example shows most of the original pixels passing the threshold. These are assigned to foreground, with the value 255. Some pixels around the edges are too faint to pass the threshold. These pixels are assigned to background with the value 0. \citep{stpp}
 \par
@@ -744,7 +744,7 @@ Every encountered foreground pixel is updated depending on its neighbors. The fo
 \par
 The requirement for a component to be connected to a feature is that at least one side of the pixel touches the feature, making it a 4-connected feature. In contrast, an 8-connected feature accepts diagonally connected components. Diagonally connected components are not detected in this CCL implementation because the previously performed box filtering already exaggerates the component connections, filling the gaps between pixels. \citep{stpp}
 \par
-The 4-connect comparison is done by comparing the top center and left center to the center pixel in the kernel. The movement of the kernel mitigates the need for comparing all 4 connections surrounding the center pixel in the kernel. This simplifies the design while keeping the line buffer mechanism uniform with the other parts of image processing. \citep{stpp}
+The 4-connect comparison is done by comparing the top center and left center to the center pixel in the kernel. The movement of the kernel mitigates the need for comparing all four connections surrounding the center pixel in the kernel. This simplifies the design while keeping the line buffer mechanism uniform with the other parts of image processing. \citep{stpp}
 \par
 Conflicts in the feature table are encountered when connected components refer to multiple features. This happens when the shape of the feature is unfavorable in regard to kernel movement and the component comparison process. A conflict is resolved by merging the connected features. This is done by merging the brightness of the features involved, updating the feature coordinates, and reassigning the feature label. Depending on the number of mergers, a single feature might be mapped to a number of pixel values. Figure \ref*{fig:feature_tables} shows an example of a resolved conflict, where pixel values \textbf{0x04} and \textbf{0x05} are mapped to the same feature, \textbf{0x03}. \citep{stpp}
 \par
@@ -760,7 +760,7 @@ The implemented CCL algorithm is streamlined and simple, but not without drawbac
 \end{figure}
 
 \subsubsection{Feature detection and centroiding}
-Feature detection is the process of using the feature tables, shown in Figure \ref*{fig:feature_tables}, to create image data to indicate detected features. Centroiding gives a more accurate indicator of the detected features by further analyzing them. Feature detection and centroiding are the final step of the pre-processing pipeline, resulting in a output image and data points for the extracted stars. 
+Feature detection is the process of using the feature tables, shown in Figure \ref*{fig:feature_tables}, to create image data to indicate detected features. Centroiding gives a more accurate indicator of the detected features by further analyzing them. Feature detection and centroiding are the final step of the pre-processing pipeline, resulting in an output image and data points for the extracted stars. 
 \par
 The feature detection process filters out features that are too faint or small. The threshold is specified by the parameter configuration system. Table \ref*{table:regs1} shows the register and format of the threshold. The threshold is compared with the brightness of each feature, which is calculated in the CCL process. An example of the feature brightness table is shown in Figure \ref*{fig:feature_tables} on the right. When the brightness of a feature is below the threshold, it is discarded. The process then moves on to validate the next feature in the feature table. \citep{stpp}
 \par
@@ -799,12 +799,12 @@ The client endpoint is a Java-based PC application with a graphical user interfa
 \par
 
 \subsection{Connecting and initializing FPGA}
-The base class, called \texttt{okCFrontPanel}, is the entry point for operating the FPGA module. It provides methods for device interaction, device configuration, and FPGA communication. The FPGA-module is initialized by calling the API to open a connection. This enables the communication layers required for interacting with the FPGA module. \citep*{FrontPanelMan} \citep{stpp}
+The base class, called \texttt{okCFrontPanel}, is the entry point for operating the FPGA module. It provides methods for device interaction, device configuration, and FPGA communication. The FPGA module is initialized by calling the API to open a connection. This enables the communication layers required for interacting with the FPGA module. \citep*{FrontPanelMan} \citep{stpp}
 \par
 Before programming the FPGA, the device is configured with a default configuration from on-chip flash memory, and checked for errors. When encountering errors, they are reported to the user, but no further action is taken. \citep{stpp}
 
 \subsection{Bitsream programming}
-The bitstream file, containing the FPGA-design, is programmed to the FGPA using the \texttt{okCFrontPanel} class. To program a bitsream file to the FPGA, an open and initialized device is required. When encountering errors in the programming stage, these are reported to the user, and a reset signal is sent to the FPGA. The memory calibration is initiated on the FPGA as it is programmed. The test result is verified by reading the Wire Out value from the FPGA, shown in Table \ref*{table:wireOutState}. Errors encountered in this stage are simply reported to the user. \citep{stpp}
+The bitstream file, containing the FPGA design, is programmed to the FGPA using the \texttt{okCFrontPanel} class. To program a bitsream file to the FPGA, an open and initialized device is required. When encountering errors in the programming stage, these are reported to the user, and a reset signal is sent to the FPGA. The memory calibration is initiated on the FPGA as it is programmed. The test result is verified by reading the Wire Out value from the FPGA, shown in Table \ref*{table:wireOutState}. Errors encountered in this stage are simply reported to the user. \citep{stpp}
 
 \subsection{Pre-processing pipeline configuration and control}
 The configurable parameters and triggers are listed in Tables \ref*{table:wireInState} and \ref*{table:regs1}. To enable these features, a programmed device is required. \citep{stpp}
@@ -829,7 +829,7 @@ The output image can be viewed after it is transferred from the FPGA-module to t
 % The output of the pre-processing pipeline is the data generated by the system processing an image. User-friendly validation and verification of the success of the process is done using the client endpoint. The raw data, generated by each process in the pipeline, is used to rendered an image, which leads to it containing more information than the raw data separately. The output image is thus used for result analysis.
 
 \section{Pre-processing pipeline results}
-The results of the pre-processing pipeline are presented as four use cases. The standard procedure of the pre-processing pipeline is to use an input file together with input parameters to produce an output. Each use-case contains two runs, each consisting of input parameters, output image, and metrics.  
+The results of the pre-processing pipeline are presented as four use cases. The standard procedure of the pre-processing pipeline is to use an input file together with input parameters to produce an output. Each use case contains two runs, each consisting of input parameters, output image, and metrics.  
 \par
 The data set consists of generated test data and image data from the StreakDet input dataset. The images from the Streakdet dataset are selected to highlight features of the pre-processing pipeline, such as thresholds and weighted centroiding.
 
@@ -840,7 +840,7 @@ To showcase weighted centroiding, the dimensions and pixel value gradient of the
 \par
 Figure \ref{res:t0} shows the result when a foreground threshold of 50 and feature threshold of 300 are applied. All features are detected, and one gets a weighted centroid, seen in the top right corner. Feature \ref{res:t1} shows the result when increasing the foreground threshold to 100 and keeping the feature threshold at 300. Less pixels are assigned to foreground, making the features smaller. This enables more features to receive a weighted centroid. 
 
-\begin{table}[!h]
+\begin{table}[h!]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
         \hline
@@ -855,7 +855,24 @@ Figure \ref{res:t0} shows the result when a foreground threshold of 50 and featu
     \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. Data shows result of increasing the foreground threshold, as less time spent centroiding while other processes are unaffected.}
     \label{table:t_res}
 \end{table}
-
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/t_in.png}
+    \caption{Synthesized star image used as test input.}
+    \label{res:t_in}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/t0.png}
+    \caption{Run T1 output image.}
+    \label{res:t0}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/t1.png}
+    \caption{Run T2 output image.}
+    \label{res:t1}
+\end{figure}
 The processing time for the test input runs are 0,1 ms apart, as seen in Table \ref{table:t_res}. The time difference originates from centroiding while other parts of the pre-processing pipeline remain unaffected by the foreground threshold increase. Since less pixels are processed in run T2, faster processing is expected. The increased number of weighted centroid calculations did also not contribute to any performance loss. The system is capable of a frame rate of 16,93 frames per second (FPS) in T1, and 16,96 FPS in T2. 
 
 \subsection*{Sample 1}
@@ -866,7 +883,8 @@ The results show that all the extracted stars are within limits for weighted cen
 \par
 A 0,12 ms difference in processing time between run S1.1 and S1.2, caused by the change in feature threshold, is observed in Table \ref{table:s0_res}. Compared to the test runs, shown in Table \ref{table:t_res}, no change can be seen in box filter processing time. The time difference in CCL is likely explained by the lower number of stars extracted, requiring less computation and rendering.
 A frame rate of 17,12 FPS is achieved in S1.1, and 17,09 FPS in S1.2.
-\begin{table}[!h]
+
+\begin{table}[h!]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
         \hline
@@ -881,9 +899,28 @@ A frame rate of 17,12 FPS is achieved in S1.1, and 17,09 FPS in S1.2.
     \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. Data shows increase in centroid time when decreasing feature threshold.}
     \label{table:s0_res}
 \end{table}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.7]{results/s0_in.png}
+    \caption{Sample 1 input image.}
+    \label{res:s0_in}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s0_1.png}
+    \caption{Run S1.1 output image.}
+    \label{res:s0_1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s0_2.png}
+    \caption{Run S1.2 output image.}
+    \label{res:s0_2}
+\end{figure}
 
+\newpage
 \subsection*{Sample 2}
-Sample 2 input image has a few stars that are expected to be extracted, standing out with their brightness and dimensions. An anomaly, caused by the camera system or an optical artifact, is seen in on the left side of the image, shown in Figure \ref{res:s1_in}. The pre-processing pipeline extracts the entire feature, including the anomaly, as seen in Figure \ref{res:s1_1} and \ref{res:s1_2}. In a star tracker this extraction is not valid since it gives a false representation of the celestial body in question.
+Sample 2 input image has a few stars that are expected to be extracted, standing out with their brightness and dimensions. An anomaly, caused by the camera system or an optical artifact, is seen on the left side of the image, shown in Figure \ref{res:s1_in}. The pre-processing pipeline extracts the entire feature, including the anomaly, as seen in Figure \ref{res:s1_1} and \ref{res:s1_2}. In a star tracker this extraction is not valid since it gives a false representation of the celestial body in question.
 \par
 Run S2.1, shown in Figure \ref{res:s1_1}, contains four extracted stars using a foreground threshold of 40 and feature threshold of 800. This would otherwise be sufficient for star detection but since one of the stars is an anomaly the result is not reliable. The frame rate of S2.1 is 17,14 FPS.
 \par
@@ -891,7 +928,7 @@ Run S2.2, shown in Figure \ref{res:s1_2}, contains in addition to the four in S2
 \par
 In the case of run S2.2 the 0,8 ms longer processing time, shown in Table \ref{table:s1_res}, compared to S2.1 is necessary to increase the quality of star extraction to an acceptable level.
 
-\begin{table}[!h]
+\begin{table}[h!]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
         \hline
@@ -906,6 +943,24 @@ In the case of run S2.2 the 0,8 ms longer processing time, shown in Table \ref{t
     \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. Data shows that decreasing foreground threshold increases the processing time.}
     \label{table:s1_res}
 \end{table}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s1_in.png}
+    \caption{Sample 2 input image.}
+    \label{res:s1_in}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s1_1.png}
+    \caption{Run S2.1 output image.}
+    \label{res:s1_1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s1_2.png}
+    \caption{Run S2.2 output image.}
+    \label{res:s1_2}
+\end{figure}
 
 \subsection*{Sample 3}
 The Sample 3 input image, shown in Figure \ref{res:s2_in}, contains a cloud of faint and small stars. By tuning the input parameters correctly, this proves not to be any obstacle for star extraction as the S3.1 output image shows in Figure \ref{res:s2_1}.
@@ -914,7 +969,7 @@ To extract the best selection of stars as detection candidates, the parameters c
 \par
 A notable aspect of the results is that the rendering of the centroid of a few stars is not visible. This is likely due to the small dimensions of the features, or a rounding error of the weighted centroid calculation.
 
-\begin{table}[!h]
+\begin{table}[h!]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
         \hline
@@ -929,7 +984,25 @@ A notable aspect of the results is that the rendering of the centroid of a few s
     \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. Data shows that increasing feature threshold decreases processing time.}
     \label{table:s2_res}
 \end{table}
-
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s2_in.png}
+    \caption{Sample 3 input image.}
+    \label{res:s2_in}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s2_1.png}
+    \caption{Run S3.1 output image.}
+    \label{res:s2_1}
+\end{figure}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=1.2]{results/s2_2.png}
+    \caption{Run S3.2 output image.}
+    \label{res:s2_2}
+\end{figure}
+\newpage
 \subsection{Conclusion}
 To summarize the results, the star tracker pre-processing pipeline works as intended, extracting stars from the input images. The procedure of the image processing system is clearly seen, when comparing input images to the output. 
 \par
@@ -969,7 +1042,7 @@ To enable a comparison between the FPGA-design and a software based counterpart,
 \par
 The general conclusion when comparing the results of the software based approach in Table \ref{table:res_sw} to the results given by the FPGA is that the software is faster. When comparing the systems, the difference in CPU clock speed is significant. Thus another comparison can be made where the clock frequencies are normalized. Since most of the image processing related computation is performed using the 87 MHz clock on the FPGA, it is used for scaling the results. For each clock cycle on the FPGA, the Intel CPU performs approximately 23. Table \ref{table:res_sw_norm} shows the result using this ratio for normalizing the output metrics of the software based pre-processing pipeline. The performance of the Intel CPU with normalized clock speed shows CCL being approximately 7 times slower, while the box filter is over 60 times slower than the FPGA. Centroiding is calculated to be approximately 5 times slower. This proves the FPGA to be more efficient, regarding the number of operations on each clock cycle. It is notable that the two systems are not directly comparable despite normalizing the clock frequency due to differences in the arithmetics of the processing elements and the implementation of the pre-processing pipeline.
 
-\begin{table}[!h]
+\begin{table}[h!]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
         \hline
@@ -996,7 +1069,7 @@ The general conclusion when comparing the results of the software based approach
     \label{table:res_sw}
 \end{table}
 
-\begin{table}[!h]
+\begin{table}[h!]
     \centering
     \begin{tabular}{|p{0.8cm}|p{2.5cm}|p{2cm}||p{1.25cm}|p{1.25cm}|p{1.9cm}|p{1cm}|}
         \hline
@@ -1019,7 +1092,7 @@ The general conclusion when comparing the results of the software based approach
         S3.2&15&100&287,5&1230,5&1,7\\
         \hline
     \end{tabular}
-    \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. $^{3}$Performance metric of the pre-processing pipeline, measured in microseconds. \newline Results of the software based approach, produced by averaging the outputs of 10 runs and normalizing the clock speed.}
+    \caption{$^{1}$Input parameter to the pre-processing pipeline, specified as pixel value. $^{2}$Performance metric of the pre-processing pipeline, measured in milliseconds. \newline Results of the software based approach, produced by averaging the outputs of 10 runs and normalizing the clock speed.}
     \label{table:res_sw_norm}
 \end{table}
 
@@ -1032,82 +1105,82 @@ The general conclusion when comparing the results of the software based approach
 % What can results be compared to  
 % Compare with CCL
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/t_in.png}
-    \caption{Synthesized star image used as test input.}
-    \label{res:t_in}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/t0.png}
-    \caption{Run T1 output image.}
-    \label{res:t0}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/t1.png}
-    \caption{Run T2 output image.}
-    \label{res:t1}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.7]{results/s0_in.png}
-    \caption{Sample 1 input image.}
-    \label{res:s0_in}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s0_1.png}
-    \caption{Run S1.1 output image.}
-    \label{res:s0_1}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s0_2.png}
-    \caption{Run S1.2 output image.}
-    \label{res:s0_2}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s1_in.png}
-    \caption{Sample 2 input image.}
-    \label{res:s1_in}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s1_1.png}
-    \caption{Run S2.1 output image.}
-    \label{res:s1_1}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s1_2.png}
-    \caption{Run S2.2 output image.}
-    \label{res:s1_2}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s2_in.png}
-    \caption{Sample 3 input image.}
-    \label{res:s2_in}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s2_1.png}
-    \caption{Run S3.1 output image.}
-    \label{res:s2_1}
-\end{figure}
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.2]{results/s2_2.png}
-    \caption{Run S3.2 output image.}
-    \label{res:s2_2}
-\end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/t_in.png}
+%     \caption{Synthesized star image used as test input.}
+%     \label{res:t_in}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/t0.png}
+%     \caption{Run T1 output image.}
+%     \label{res:t0}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/t1.png}
+%     \caption{Run T2 output image.}
+%     \label{res:t1}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=0.7]{results/s0_in.png}
+%     \caption{Sample 1 input image.}
+%     \label{res:s0_in}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s0_1.png}
+%     \caption{Run S1.1 output image.}
+%     \label{res:s0_1}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s0_2.png}
+%     \caption{Run S1.2 output image.}
+%     \label{res:s0_2}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s1_in.png}
+%     \caption{Sample 2 input image.}
+%     \label{res:s1_in}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s1_1.png}
+%     \caption{Run S2.1 output image.}
+%     \label{res:s1_1}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s1_2.png}
+%     \caption{Run S2.2 output image.}
+%     \label{res:s1_2}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s2_in.png}
+%     \caption{Sample 3 input image.}
+%     \label{res:s2_in}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s2_1.png}
+%     \caption{Run S3.1 output image.}
+%     \label{res:s2_1}
+% \end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[scale=1.2]{results/s2_2.png}
+%     \caption{Run S3.2 output image.}
+%     \label{res:s2_2}
+% \end{figure}
 
 \chapter{Review and reflection}
 
-In this thesis a star tracker pre-processing pipeline has been developed with a technology used on the forefront of image processing and computer vision in general. As the pre-processing pipeline is essentially a sequence of image processing algorithms, the implementation on an FPGA-platform is an option worth consideration when designing a star tracker system. This thesis gives an overview of the required components and technologies to develop such a system. Beyond implementing the star tracker pre-processing pipeline in a star tracker system, this study gives a complete reference from digital circuitry to system level design, to help with comparing other platform options. 
+In this thesis a star tracker pre-processing pipeline has been developed with a technology used on the forefront of image processing and computer vision in general. As the pre-processing pipeline is essentially a sequence of image processing algorithms, the implementation on an FPGA platform is an option worth consideration when designing a star tracker system. This thesis gives an overview of the required components and technologies to develop such a system. Beyond implementing the star tracker pre-processing pipeline in a star tracker system, this study gives a complete reference from digital circuitry to system level design, to help with comparing other platform options. 
 \par
 
 \section{System requirements}
@@ -1155,7 +1228,7 @@ The low utilization of DSP blocks is not unexpected because the parts of the des
 \par
 The conclusion of the FPGA design, based on the reports generated by Vivado, is that the high degree of utilization of resources prohibits adding features requiring a large amount of LUTs or BRAM on the same FPGA. Optimizing the design to use more DSP blocks could release more LUTs to use.
 \par
-The estimated power consumption can be seen in Figure \ref*{fig:fpga_power}, showing a total power consumption of 1,053 watt (W). This reinforces the confidence of using an FPGA as computing platform for the star tracker pre-processing pipeline, as a low power consumption is preferred. For comparison, the 2GHz Intel i5 CPU used for the software based pre-processing pipeline in the previous chapter, consumes 28 W. Although this means that the Intel CPU has a smaller power consumption per clock cycle, the total power consumption is considerably lower.
+The estimated power consumption can be seen in Figure \ref*{fig:fpga_power}, showing a total power consumption of 1,053 watt (W). This reinforces the confidence of using an FPGA as computing platform for the star tracker pre-processing pipeline, as a low power consumption is preferred. For comparison, the 2 GHz Intel i5 CPU used for the software based pre-processing pipeline in the previous chapter consumes 28 W. Although this means that the Intel CPU has a smaller power consumption per clock cycle, the total power consumption is considerably lower.
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.9]{figures/power_report.PNG}
